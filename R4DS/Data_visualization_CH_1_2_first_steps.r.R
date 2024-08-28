@@ -3,6 +3,7 @@
 library(tidyverse)
 library(palmerpenguins)
 library(ggthemes)
+library(ggplot2)
 
 penguins = palmerpenguins::penguins
 
