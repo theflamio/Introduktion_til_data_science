@@ -71,8 +71,8 @@ ggplot( data = penguins,
 
 # 5. Why does the following give an error and how would you fix it?
 
-ggplot(data = penguins) + 
-  geom_point()
+#ggplot(data = penguins) + 
+#  geom_point()
 
 # Answer missing x and y arguments
 
@@ -88,3 +88,56 @@ ggplot(data = penguins) +
 # 7.Add the following caption to the plot you made in the previous exercise: 
 #   “Data come from the palmerpenguins package.” Hint: Take a look at the documentation for labs().
 
+ggplot( data = penguins,
+        mapping = aes(x = species, y = bill_depth_mm)
+) +
+  geom_point(mapping = aes(color = species, shape = species)) +
+  labs(caption = "(Data come from the palmerpenguins package.)") +
+  scale_color_colorblind()
+
+# 8. Recreate the following visualization. What aesthetic should bill_depth_mm be mapped to? 
+# And should it be mapped at the global level or at the geom level?
+
+# Answer aesthetic bill_depth_mm should be mapped to geom_smooth
+# Answer at the geom level
+
+ggplot( data = penguins,
+        mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = bill_depth_mm)) +
+  geom_smooth()
+
+
+# 9. Run this code in your head and predict what the output will look like. 
+# Then, run the code in R and check your predictions.
+
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, color = island)
+) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+
+# Answer geom_smooth(se = FALSE) = Display confidence interval around smooth? (TRUE by default, see level to control.) 
+# Answer color = island shows the color of each of the island's compare the body_mass_G an flipper_length_mm
+
+# 10. Will these two graphs look different? Why/why not?
+
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point() +
+  geom_smooth()
+
+ggplot() +
+  geom_point(
+    data = penguins,
+    mapping = aes(x = flipper_length_mm, y = body_mass_g)
+  ) +
+  geom_smooth(
+    data = penguins,
+    mapping = aes(x = flipper_length_mm, y = body_mass_g)
+  )
+
+# Answer they use the same global level data from the first in both geom levels
