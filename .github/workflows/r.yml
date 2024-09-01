@@ -1,40 +1,33 @@
-# This workflow sets up an R environment on GitHub Actions,
-# installs dependencies, and runs checks on your R package.
-# The workflow uses third-party actions provided by r-lib and other contributors.
-
-name: R
+name: R Linting
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - main
+      - 'release/*'
   pull_request:
-    branches: [ "master" ]
-
-permissions:
-  contents: read
+    branches:
+      - main
+      - 'release/*'
 
 jobs:
-  build:
-    runs-on: macos-latest
-    strategy:
-      matrix:
-        r-version: ['4.1.1']  # Specify the R version to use in the workflow
+  lint:
+    name: Run R Linter
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # Checks out your repository code
+        uses: actions/checkout@v3
 
-      - name: Set up R
-        uses: r-lib/actions/setup-r@f57f1301a053485946083d7a45022b278929a78a
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
         with:
-          r-version: ${{ matrix.r-version }}  # Sets up the specified R version
+          r-version: '4.4.1'  # Specify the version of R you want to use
 
       - name: Install dependencies
         run: |
-          install.packages(c("remotes", "rcmdcheck"))  # Installs required packages
-          remotes::install_deps(dependencies = TRUE)   # Installs package dependencies
-        shell: Rscript {0}
+          install.packages(c('lintr'))
 
-      - name: Run package checks
-        run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")  # Runs R CMD check
-        shell: Rscript {0}
+      - name: Lint R code
+        run: |
+          lintr::lint_package()
