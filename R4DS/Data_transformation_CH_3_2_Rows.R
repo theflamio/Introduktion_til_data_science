@@ -3,6 +3,12 @@ library(tidyverse)
 
 flights = nycflights13::flights
 
+airlines = nycflights13::airlines
+
+glimpse(flights)
+
+glimpse(airlines)
+
 "
 The most important verbs that operate on rows of a dataset are filter(), 
 which changes which rows are present without changing their order, and arrange(), 
@@ -82,6 +88,23 @@ flights |> distinct(origin, dest, .keep_all = TRUE)
 flights |> count(origin, dest, sort = TRUE)
 
 
-# 3.2.5 Excerises
+# 3.2.5 Exercises
 
+# 1. In a single pipeline for each condition, find all flights that meet the condition:
+  
+# Had an arrival delay of two or more hours
+# Flew to Houston (IAH or HOU)
+# Were operated by United, American, or Delta "can be found in the airlines data set"
+# Departed in summer (July, August, and September)
+# Arrived more than two hours late, but didn’t leave late
+# Were delayed by at least an hour, but made up over 30 minutes in flight
+
+# United = UA
+# American = AA
+# Delta =
+
+flights |> 
+  filter(dep_delay >= 120) |> 
+  filter(dest == "IAH" | dest == "HOU") |>
+  filter(carrier == "United")
 
