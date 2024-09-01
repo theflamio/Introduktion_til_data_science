@@ -104,7 +104,10 @@ flights |> count(origin, dest, sort = TRUE)
 # Delta =
 
 flights |> 
-  filter(dep_delay >= 120) |> 
+  filter(arr_delay >= 120) |> 
   filter(dest == "IAH" | dest == "HOU") |>
-  filter(carrier == "United")
+  filter(carrier == "UA" | carrier == "AA" | carrier == "DL") |>
+  filter(month %in% c(7, 8, 9)) |>
+  filter(arr_delay > 120 & sched_dep_time >= dep_time) |> # wrong
+  filter(dep_delay >= 60 & air_time > 30) # also wrong
 
