@@ -1,0 +1,1 @@
+Pipeline status [![R Linting](https://github.com/theflamio/Introduktion_til_data_science/actions/workflows/r.yml/badge.svg?branch=master)](https://github.com/theflamio/Introduktion_til_data_science/actions/workflows/r.yml)
