@@ -4,9 +4,10 @@ library(ggthemes)
 library(ggplot2)
 library(forcats)
 
-"
-1.5.1 A numerical and a categorical variable
 
+# 1.5.1 A numerical and a categorical variable ----------------------------
+
+"
 To visualize a relationship we need to have at least two variables mapped to aesthetics of a plot. 
 In the following sections you will learn about commonly used plots for visualizing relationships 
 between two or more variables and the geoms used for creating them.
@@ -40,7 +41,7 @@ ggplot(penguins, aes(x = body_mass_g, color = species, fill = species)) +
   geom_density(alpha = 0.5)
 
 
-# 1.5.2 Two categorical variables
+# 1.5.2 Two categorical variables -----------------------------------------
 
 # example island and species is categorical variables
 
@@ -55,14 +56,18 @@ ggplot(penguins, aes(x = island, fill = species)) +
   geom_bar(position = "fill")+
   labs(title = "comparing species distributions across islands")
 
-# 1.5.3 Two numerical variables
+
+# 1.5.3 Two numerical variables -------------------------------------------
+
 
 # A scatterplot is probably the most commonly used plot for visualizing the relationship between two numerical variables.
 
 ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point()
 
-# 1.5.4 Three or more variables
+
+# 1.5.4 Three or more variables -------------------------------------------
+
 
 # we can incorporate more variables into a plot by mapping them to additional aesthetics.
 
@@ -79,7 +84,8 @@ ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point(aes(color = species, shape = species)) +
   facet_wrap(~island)
 
-# 1.5.5 Exercises
+# 1.5.5 Exercises ---------------------------------------------------------
+
 
 # 1. The mpg data frame that is bundled with the ggplot2 package contains 234 observations 
 # collected by the US Environmental Protection Agency on 38 car models. 
