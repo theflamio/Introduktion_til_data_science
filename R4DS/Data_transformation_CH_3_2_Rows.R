@@ -55,7 +55,7 @@ jan1 <- flights |>  filter(month == 1 & day == 1)
 # 3.2.2 Common mistakes ---------------------------------------------------
 
 
-flights |> filter(month = 1) # use of = instead of ==
+#flights |> filter(month = 1) # use of == instead of = This mean months is equal 1
 
 # Another mistakes is you write “or” statements like you would in English:
 
@@ -111,12 +111,14 @@ flights |> count(origin, dest, sort = TRUE)
 # American = AA
 # Delta =
 
+flights$dep_delay
+
 flights |> 
   filter(arr_delay >= 120) |> 
   filter(dest == "IAH" | dest == "HOU") |>
   filter(carrier == "UA" | carrier == "AA" | carrier == "DL") |>
   filter(month %in% c(7, 8, 9)) |>
-  filter(arr_delay > 120) #wrong
+  filter(arr_delay > 120 & dep_delay < 0) #wrong
   #filter(dep_delay >= 60 & air_time > 30) # also wrong
 
 
