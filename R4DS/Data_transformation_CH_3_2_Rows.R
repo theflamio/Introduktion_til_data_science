@@ -21,7 +21,9 @@ it can also optionally modify the columns.
 "
 
 
-# 3.2.1 filter()
+
+# 3.2.1 filter() ----------------------------------------------------------
+
 
 # filter() allows you to keep rows based on the values of the columns1. 
 # The first argument is the data frame. 
@@ -49,7 +51,8 @@ flights |> filter(month %in% c(1, 2))
 jan1 <- flights |>  filter(month == 1 & day == 1)
 
 
-# 3.2.2 Common mistakes
+
+# 3.2.2 Common mistakes ---------------------------------------------------
 
 
 flights |> filter(month = 1) # use of = instead of ==
@@ -59,7 +62,8 @@ flights |> filter(month = 1) # use of = instead of ==
 flights |> filter(month == 1 | 2) # correct way is filter((month == 1) | (month ==2))
 
 
-# 3.2.3 arrange()
+# 3.2.3 arrange() ---------------------------------------------------------
+
 
 # arrange() changes the order of the rows based on the value of the columns.
 
@@ -70,7 +74,9 @@ flights |> arrange(year, month, day, dep_time)
 
 flights |> arrange(desc(dep_delay))
 
-# 3.2.4 distinct()
+
+# 3.2.4 distinct() --------------------------------------------------------
+
 
 # distinct() finds all the unique rows in a dataset, so in a technical sense, it primarily operates on the rows.
 
@@ -88,7 +94,9 @@ flights |> distinct(origin, dest, .keep_all = TRUE)
 flights |> count(origin, dest, sort = TRUE)
 
 
-# 3.2.5 Exercises
+
+# 3.2.5 Exercises ---------------------------------------------------------
+
 
 # 1. In a single pipeline for each condition, find all flights that meet the condition:
   
@@ -108,6 +116,8 @@ flights |>
   filter(dest == "IAH" | dest == "HOU") |>
   filter(carrier == "UA" | carrier == "AA" | carrier == "DL") |>
   filter(month %in% c(7, 8, 9)) |>
-  filter(arr_delay > 120 & sched_dep_time >= dep_time) |> # wrong
-  filter(dep_delay >= 60 & air_time > 30) # also wrong
+  filter(arr_delay > 120) #wrong
+  #filter(dep_delay >= 60 & air_time > 30) # also wrong
+
+
 
