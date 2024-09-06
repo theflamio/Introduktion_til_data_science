@@ -13,8 +13,10 @@ ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point()
 ggsave(filename = "penguin-plot.png")
 
-# 1.6.1 Exercises 
-# 
+
+# 1.6.1 Exercises  --------------------------------------------------------
+
+ 
 # 1. Run the following lines of code. Which of the two plots is saved as mpg-plot.png? Why?
 
 ggplot(mpg, aes(x = class)) +

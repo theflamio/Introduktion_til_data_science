@@ -8,7 +8,10 @@ library(ggthemes)
 library(ggplot2)
 library(forcats)
 
-# 1.4.1 A categorical variable
+
+# 1.4.1 A categorical variable --------------------------------------------
+
+
 # A variable is categorical if it can only take one of a small set of values. 
 
 ggplot(penguins, aes(x = species)) +
@@ -29,8 +32,11 @@ it’s often preferable to reorder the bars based on their frequencies.
 ggplot(penguins, aes(x = fct_infreq(species))) +
   geom_bar()
 
+
+# 1.4.2 A numerical variable ----------------------------------------------
+
+
 "
-1.4.2 A numerical variable
 A variable is numerical (or quantitative) if it can take on a wide range of numerical values, 
 and it is sensible to add, subtract, or take averages with those values. 
 Numerical variables can be continuous or discrete.
@@ -47,7 +53,9 @@ ggplot(penguins, aes(x = body_mass_g)) +
 #> Warning: Removed 2 rows containing non-finite outside the scale range
 #> (`stat_density()`).
 
-# 1.4.3 Exercises
+
+# 1.4.3 Exercises ---------------------------------------------------------
+
 
 # 1 Make a bar plot of species of penguins, where you assign species to the y aesthetic. How is this plot different?
 
@@ -80,4 +88,4 @@ ggplot(penguins, aes(x = species)) +
 ggplot(diamonds, aes(x = carat)) +
   geom_histogram(binwidth = 0.3)
 
-# aroung 0.3 gives a nice histogram were it is possible to read x amount of diamons with a given carat.
+# around 0.3 gives a nice histogram were it is possible to read x amount of diamons with a given carat.

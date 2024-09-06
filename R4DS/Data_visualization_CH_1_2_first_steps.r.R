@@ -29,7 +29,9 @@ ggplot( data = penguins,
 
 
 
-# 1.2.5 Exercises
+
+# 1.2.5 Exercises ---------------------------------------------------------
+
 
 # 1. How many rows are in penguins? How many columns?
 glimpse(penguins)
