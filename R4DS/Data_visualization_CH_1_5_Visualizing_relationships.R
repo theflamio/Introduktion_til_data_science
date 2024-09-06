@@ -120,9 +120,9 @@ ggplot(mpg, aes(x = displ, y = hwy, color = displ, size = displ)) +
   geom_point() +
   labs(title = "Scatterplot of hwy vs. displ and cty as size and color", x = "Displacement", y = "Highway Mileage")
 
-ggplot(mpg, aes(x = displ, y = hwy, shape = displ)) + #Error can't use numerical for shape
-  geom_point() +
-  labs(title = "Scatterplot of hwy vs. displ and cty as shaper", x = "Displacement", y = "Highway Mileage")
+# ggplot(mpg, aes(x = displ, y = hwy, shape = displ)) + #Error can't use numerical for shape
+#   geom_point() +
+#   labs(title = "Scatterplot of hwy vs. displ and cty as shaper", x = "Displacement", y = "Highway Mileage")
 
 # Answer: 
 "

@@ -27,9 +27,44 @@ library(broom)
 ```
 
 ```{r}
-## YOUR CODE GOES HERE...
+dat |> ggplot(aes(flipper_length_mm, body_mass_g,color = species)) +
+  geom_point()
 ```
 
 ```{r}
-## AND HERE...
+mm1 <- lm(body_mass_g ~ flipper_length_mm, data = dat)
+
+ggplot(dat,aes(flipper_length_mm, body_mass_g)) +
+  geom_point() +
+  geom_line(aes(y = fitted(mm1)))
+```
+
+```{r}
+mm1 |> tidy()
+```
+
+```{r}
+# Model fits
+
+mm1 |> glance()
+```
+
+```{r}
+mm1 |> doBy::plot_lm()
+```
+
+```{r}
+
+dat <- modelr::add_residuals(dat, mm1)
+
+dat <- modelr::add_predictions(dat, mm1)
+
+dat
+```
+
+```{r}
+# Model evaluation
+
+
+
 ```
