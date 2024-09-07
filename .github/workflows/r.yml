@@ -26,4 +26,4 @@ jobs:
 
       - name: Lint R code
         run: |
-          Rscript -e "lintr::lint_package()"
+          lintr::lint_package()
