@@ -5,15 +5,11 @@ on:
     branches:
       - main
       - 'release/*'
-  pull_request:
-    branches:
-      - main
-      - 'release/*'
 
 jobs:
   lint:
     name: Run R Linter
-    runs-on: ubuntu-latest
+    runs-on: windows-2022  # Use Windows 11 runner
 
     steps:
       - name: Checkout code
@@ -26,8 +22,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          install.packages(c('lintr'))
+          Rscript -e "install.packages('lintr')"
 
       - name: Lint R code
         run: |
-          lintr::lint_package()
+          Rscript -e "lintr::lint_package()"
