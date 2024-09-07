@@ -3,7 +3,7 @@ name: R Linting
 on:
   push:
     branches:
-      - main
+      - master
       - 'release/*'
 
 jobs:
