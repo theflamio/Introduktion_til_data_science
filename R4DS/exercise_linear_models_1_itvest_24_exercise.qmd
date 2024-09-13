@@ -1,0 +1,128 @@
+---
+title: "Exercise - some linear models"
+author: "Søren Højsgaard"
+format: html
+editor: visual
+---
+
+We will use the `palmerpenguins` data set. It is a data set with information on penguins. We will use the `body_mass_g` as the response variable and `species`, `island`, `sex`, `culmen_length_mm`, `culmen_depth_mm`, `flipper_length_mm`, and `year` as explanatory variables.
+
+```{r}
+dat <- palmerpenguins::penguins
+dat <- dat[complete.cases(dat),]
+head(dat)
+```
+
+We ask the following question:
+
+1.  How well can we predict the body mass of a penguin based on species and flipper length?
+
+2.  Are predictions improved by including other variables?
+
+We encourage you to take as much inspiration from the lecture slides/notes as you feel like :)
+
+```{r}
+library(ggplot2) 
+library(broom)
+```
+
+```{r}
+
+#First look at the data in a scatter plot.
+
+scatterplot <- dat |> ggplot(aes(x=flipper_length_mm, y=body_mass_g, color=species)) +
+  geom_point()
+
+print(" Linear model with flipper_length_mm")
+
+mm1 <- lm(body_mass_g ~ flipper_length_mm, data=dat)
+
+summary(mm1)
+
+names(mm1)
+
+scatterplot + geom_line(aes(y=fitted(mm1)))
+
+# Now to answeer the question "How well can we predict the body mass of a penguin based on species and flipper length?"
+
+# Answer the T value is 32.56 on flipper_length and p value is way below 0.5 this is having a great impact 
+```
+
+```{r}
+
+# Now we add species
+
+scatterplot <- dat |> ggplot(aes(x=flipper_length_mm, y=body_mass_g, color=species)) +
+  geom_point()
+
+print(" Linear model with flipper_length_mm and species")
+
+mm2 <- lm(body_mass_g ~ flipper_length_mm + species, data=dat)
+
+summary(mm2)
+
+scatterplot + geom_line(aes(y=fitted(mm2)))
+```
+
+```{r}
+
+# Now we remove species and use bill_depth
+
+scatterplot <- dat |> ggplot(aes(x=flipper_length_mm, y=body_mass_g, color=species)) +
+  geom_point()
+
+print(" Linear model with flipper_length_mm and bill_depth")
+
+mm3 <- lm(body_mass_g ~ flipper_length_mm + bill_depth_mm, data=dat)
+
+summary(mm3)
+
+scatterplot + geom_line(aes(y=fitted(mm3)))
+```
+
+```{r}
+# Now we remove species and use bill_depth as interaction
+
+scatterplot <- dat |> ggplot(aes(x=flipper_length_mm, y=body_mass_g, color=species)) +
+  geom_point()
+
+print(" Linear model with flipper_length_mm and bill_depth")
+
+mm4 <- lm(body_mass_g ~ flipper_length_mm * bill_depth_mm, data=dat)
+
+summary(mm4)
+
+scatterplot + geom_line(aes(y=fitted(mm4)))
+
+#Dose not look very good
+```
+
+```{r}
+# Now we remove bill_length
+
+scatterplot <- dat |> ggplot(aes(x=flipper_length_mm, y=body_mass_g, color=species)) +
+  geom_point()
+
+print(" Linear model with flipper_length_mm and bill_length_mm")
+
+mm5 <- lm(body_mass_g ~ flipper_length_mm + bill_length_mm, data=dat)
+
+summary(mm5)
+
+scatterplot + geom_line(aes(y=fitted(mm5)))
+```
+
+```{r}
+# Now we use bill_depth and sex
+
+scatterplot <- dat |> ggplot(aes(x=flipper_length_mm, y=body_mass_g, color=sex)) +
+  geom_point()
+
+print(" Linear model with flipper_length_mm and bill_depth")
+
+mm6 <- lm(body_mass_g ~ flipper_length_mm + sex, data=dat)
+
+summary(mm6)
+
+scatterplot + geom_line(aes(y=fitted(mm6)))
+```
