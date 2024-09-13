@@ -145,6 +145,8 @@ scatterplot + geom_line(aes(y=fitted(mm6)))
 
 # A summary of how well the models fit the data is given by the residual standard deviation. And by the coefficient of determination R2 which is the squared correlation between the observed and fitted values.
 
+# cor(y, ˆy)2
+
 mm1 |> glance()
 mm2 |> glance()
 mm3 |> glance()
@@ -186,8 +188,6 @@ mm6 |> glance()
 # deviance: Residual deviance for the fitted model.
 
 # aic: Akaike Information Criterion (for model comparison).
-
-mm1 |> augment()
 ```
 
 ```{r}
