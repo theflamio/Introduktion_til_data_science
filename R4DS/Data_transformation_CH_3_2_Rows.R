@@ -111,17 +111,27 @@ flights |> count(origin, dest, sort = TRUE)
 # American = AA
 # Delta =
 
-flights$dep_delay
+#flights$dep_delay
 
-flights |> 
-  filter(arr_delay >= 120) |> 
-  filter(dest == "IAH" | dest == "HOU") |>
-  filter(carrier == "UA" | carrier == "AA" | carrier == "DL") |>
-  filter(month %in% c(7, 8, 9)) |>
-  filter(arr_delay > 120 & dep_delay < 0) #wrong
-  #filter(dep_delay >= 60 & air_time > 30) # also wrong
-  #
-  #Test
+flights |>
+  filter(arr_delay >= 120) 
+
+flights |>
+  filter(dest == "IAH" | dest == "HOU")
+
+flights |>
+  filter(carrier == "UA" | carrier == "AA" | carrier == "DL")
+
+flights |>
+  filter(month %in% c(7, 8, 9))
+
+flights |>
+  filter(arr_delay > 120 & dep_delay <= 0)
+
+flights |>
+  filter(dep_delay >= 60 & dep_delay - arr_delay > 30)
+
+  
 
 
 
