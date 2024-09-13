@@ -41,6 +41,8 @@ summary(mm1)
 
 names(mm1)
 
+mm1 |> tidy()
+
 scatterplot + geom_line(aes(y=fitted(mm1)))
 
 # Now to answeer the question "How well can we predict the body mass of a penguin based on species and flipper length?"
@@ -61,6 +63,8 @@ mm2 <- lm(body_mass_g ~ flipper_length_mm + species, data=dat)
 
 summary(mm2)
 
+mm2 |> tidy()
+
 scatterplot + geom_line(aes(y=fitted(mm2)))
 ```
 
@@ -77,6 +81,8 @@ mm3 <- lm(body_mass_g ~ flipper_length_mm + bill_depth_mm, data=dat)
 
 summary(mm3)
 
+mm3 |> tidy()
+
 scatterplot + geom_line(aes(y=fitted(mm3)))
 ```
 
@@ -91,6 +97,8 @@ print(" Linear model with flipper_length_mm and bill_depth")
 mm4 <- lm(body_mass_g ~ flipper_length_mm * bill_depth_mm, data=dat)
 
 summary(mm4)
+
+mm4 |> tidy()
 
 scatterplot + geom_line(aes(y=fitted(mm4)))
 
@@ -109,6 +117,8 @@ mm5 <- lm(body_mass_g ~ flipper_length_mm + bill_length_mm, data=dat)
 
 summary(mm5)
 
+mm5 |> tidy()
+
 scatterplot + geom_line(aes(y=fitted(mm5)))
 ```
 
@@ -124,5 +134,70 @@ mm6 <- lm(body_mass_g ~ flipper_length_mm + sex, data=dat)
 
 summary(mm6)
 
+mm6 |> tidy()
+
 scatterplot + geom_line(aes(y=fitted(mm6)))
+```
+
+```{r}
+
+# Model fits
+
+# A summary of how well the models fit the data is given by the residual standard deviation. And by the coefficient of determination R2 which is the squared correlation between the observed and fitted values.
+
+mm1 |> glance()
+mm2 |> glance()
+mm3 |> glance()
+mm4 |> glance()
+mm5 |> glance()
+mm6 |> glance()
+
+# For Linear Models (lm):
+
+# r.squared: R-squared, the proportion of the variance in the dependent variable     explained by the model.
+
+# adj.r.squared: Adjusted R-squared, a version of R-squared that has been adjusted   for the number of predictors in the model.
+
+# sigma: Residual standard error (the estimated standard deviation of the residuals).
+
+# statistic: The F-statistic of the model (used to test the overall significance of   the model).
+
+# p.value: The p-value corresponding to the F-statistic.
+
+# df: Degrees of freedom of the model.
+
+# logLik: The log-likelihood of the model (useful for comparing models).
+
+# AIC: Akaike Information Criterion (AIC), a metric for model comparison (lower is   better).
+
+# BIC: Bayesian Information Criterion (BIC), another metric for model comparison (lower is better).
+
+# deviance: Residual deviance (the measure of model fit for generalized models).
+
+# df.residual: Degrees of freedom of the residuals (number of observations minus     number of parameters).
+
+# For Generalized Linear Models (glm):
+# In addition to the values above, generalized linear models may also return:
+# 
+# null.deviance: The deviance of the null model (the model with only an intercept).
+
+# df.null: Degrees of freedom of the null model.
+
+# deviance: Residual deviance for the fitted model.
+
+# aic: Akaike Information Criterion (for model comparison).
+
+mm1 |> augment()
+```
+
+```{r}
+
+# Model evaluation
+
+# first put all models into a list
+
+ml <- list(mm1, mm2, mm3, mm4, mm5, mm6)
+
+
+sapply(ml, function(x) modelr::rmse(x, dat))
 ```
