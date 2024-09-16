@@ -15,6 +15,7 @@ We start by loading `tidyverse` and setting a theme for `ggplot2`:
 
 ```{r}
 library(tidyverse)
+library(dbplyr)
 theme_set(theme_bw())
 ```
 
@@ -48,9 +49,8 @@ Use RStudio's interface to read in the data file called `congo.txt` (Go to "Envi
 
 Your command should look something like (note the code in the chunk below is not evaluated due to the option `eval: false`):
 ```{r}
-#| eval: false
 library(readr)
-congo <- read_delim("SOME-PATH-TO-POPULATION/congo.txt", 
+congo <- read_delim("C:/Dev/Introduktion_til_data_science/R4DS/data/population/congo.txt", 
     delim = "\t", escape_double = FALSE, 
     trim_ws = TRUE)
 View(congo)
@@ -78,8 +78,9 @@ colspec <- cols(year = col_integer(),
 
 Your exercise is to modify the command below to correctly use `here::here()` and the column specification `colspec` we just made to read in the data (add argument `col_types = colspec`) and make sure the chuck is evaluated (remove or change `eval: false`):
 ```{r}
-#| eval: false
-data_dir <- here::here("SOME", "PATH", "TO", "population")
+# why use function here::here ? No Hardcoding: You avoid hardcoding file paths, making your code portable across different systems or environments.
+
+data_dir <- here::here("data", "population")
 congo <- read_delim(here::here(data_dir, "congo.txt"), 
     delim = "\t", escape_double = FALSE, 
     trim_ws = TRUE)
@@ -91,13 +92,24 @@ congo <- read_delim(here::here(data_dir, "congo.txt"),
 Add lines to the chunk below to read in data from all 8 countries (remember to turn chunk evaluation on once it works):
 
 ```{r}
-#| eval: false
-data_dir <- here::here("SOME", "PATH", "TO", "population")
-congo <- read_delim(here::here(data_dir, "congo.txt"), 
-    delim = "\t", escape_double = FALSE, 
-    trim_ws = TRUE)
-denmark <- read_delim(...)
-...
+data_dir <- here::here("data", "population")
+
+# Define a function to load a file based on the name
+load_data <- function(file_name) {
+  read_delim(file.path(data_dir, file_name), 
+             delim = "\t", escape_double = FALSE, 
+             trim_ws = TRUE)
+}
+
+# Load each file individually
+congo <- load_data("congo.txt")
+denmark <- load_data("denmark.txt")
+ghana <- load_data("ghana.txt")
+ireland <- load_data("ireland.txt")
+japan <- load_data("japan.txt")
+nepal <- load_data("nepal.txt")
+russia <- load_data("russia.txt")
+usa <- load_data("usa.txt")
 ```
 
 ### Exercise 1.4: Add information to each data set and combine
@@ -119,7 +131,7 @@ usa <- usa |> mutate(country = "US")
 Modify the command below to use `bind_rows()` to combine all data sets into a single data set `popstat1`:
 
 ```{r}
-popstat1 <- bind_rows()
+popstat1 <- bind_rows(congo, denmark, ghana, ireland, japan, nepal, russia, usa)
 ```
 
 ## Exercise 2: Reading in data programatically
