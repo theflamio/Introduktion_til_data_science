@@ -262,5 +262,6 @@ sapply(ml_train, function(x) modelr::rmse(x, test))
 ```
 
 ```{r}
-# Seems like model6 is the best BUT if I want to generelise and look away from SEX then I would pick model4 which is flipper length + bill depth 
+# Seems like model6 is the best BUT if I want to generelise and look away from SEX then I would pick model4 which is flipper 
+length + bill depth 
 ```
