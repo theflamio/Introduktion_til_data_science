@@ -10,7 +10,26 @@ We will use the `palmerpenguins` data set. It is a data set with information on 
 ```{r}
 dat <- palmerpenguins::penguins
 dat <- dat[complete.cases(dat),]
+
+# 1. Preview the dataset
 head(dat)
+summary(dat)
+
+# 2. Check for missing values
+print("Check total missing values per column") 
+colSums(is.na(dat))
+
+# 3. Check data types
+#str(dat)
+
+# 4. Handle outliers
+# Identify outliers by visualizing (e.g., using boxplots)
+boxplot(dat$bill_length_mm, main = "Bill Length")
+boxplot(dat$bill_depth_mm, main = "Bill depth")
+boxplot(dat$flipper_length_mm, main = "Flipper length")
+boxplot(dat$body_mass_g, main = "body mass g")
+
+
 ```
 
 We ask the following question:
@@ -191,6 +210,15 @@ mm6 |> glance()
 ```
 
 ```{r}
+mm1 |> doBy::plot_lm()
+mm2 |> doBy::plot_lm()
+mm3 |> doBy::plot_lm()
+mm4 |> doBy::plot_lm()
+mm5 |> doBy::plot_lm()
+mm6 |> doBy::plot_lm()
+```
+
+```{r}
 
 # Model evaluation
 
@@ -200,4 +228,39 @@ ml <- list(mm1, mm2, mm3, mm4, mm5, mm6)
 
 
 sapply(ml, function(x) modelr::rmse(x, dat))
+```
+
+```{r}
+# setting up training data and test data ration 20/80
+
+i <- sample(nrow(dat), size=0.8*nrow(dat))
+head(i)
+
+train <- dat[i,]
+test <- dat[-i,]
+
+#Check that the ratio is correct
+nrow(dat)
+nrow(train)
+nrow(test)
+
+
+```
+
+```{r}
+# Now retrain our models.
+
+ml_train <- sapply(ml, function(x) update(x, data=train))
+sapply(ml_train, function(x) modelr::rmse(x, train))
+```
+
+```{r}
+# check our trained models up against the test set
+
+sapply(ml_train, function(x) modelr::rmse(x, test))
+
+```
+
+```{r}
+# Seems like model6 is the best BUT if I want to generelise and look away from SEX then I would pick model4 which is flipper length + bill depth 
 ```
