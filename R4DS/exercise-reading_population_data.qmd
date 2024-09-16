@@ -117,7 +117,6 @@ usa <- load_data("usa.txt")
 This command adds the country to each data set (remember to turn chunk evaulation on):
 
 ```{r}
-#| eval: false
 congo <- congo |> mutate(country = "Congo")
 denmark <- denmark |> mutate(country = "Denmark")
 ghana <- ghana |> mutate(country = "Ghana")
