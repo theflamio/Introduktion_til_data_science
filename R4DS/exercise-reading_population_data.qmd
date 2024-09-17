@@ -16,6 +16,9 @@ We start by loading `tidyverse` and setting a theme for `ggplot2`:
 ```{r}
 library(tidyverse)
 library(dbplyr)
+library(tools)     # For file_path_sans_ext
+library(stringr)   # For str_to_title
+library(purrr)    # For map()
 theme_set(theme_bw())
 ```
 
@@ -139,30 +142,46 @@ popstat1 <- bind_rows(congo, denmark, ghana, ireland, japan, nepal, russia, usa)
 
 Modify this function such that it takes a single filename as input and outputs the relevant data set (as a `tibble`) with an additional column `country` containing the filename the data comes from (e.g. `congo.txt` for Congo), and test that it works as expected for e.g. Congo (i.e. run `read_country("congo.txt")` once you think the function works):
 ```{r}
-read_country <- function(fname) {
-  d <- read_delim(SOMETHING_HERE, delim = "\t", col_types = colspec) |> 
-    mutate(country = SOMETHING_HERE)
-  return(SOMETHING_HERE)
+data_dir <- here::here("data", "population")
+
+read_country <- function(file_name) {
+  # Remove the file extension from the file_name and capitalize it
+  country_name <- str_to_title(file_path_sans_ext(file_name))
+  
+  # Read the file and mutate to add the country column without the file extension
+  d <- read_delim(file.path(data_dir, file_name), delim = "\t", col_types = colspec) |> 
+    mutate(country = country_name)
+  return(d)
 }
+
+read_country("congo.txt")
 ```
 
 ### Exercise 2.2: Read a list of data files and combine them
 
 Modify the use of `list.files()` to make a vector of filenames for every country:
 ```{r}
-fls <- list.files()
+data_dir <- here::here("data", "population")
+
+# List all files in the data_dir directory
+fls <- list.files(data_dir)
+
+# Print the vector of filenames
+print(fls)
+
 ```
 
 Modify the command below to use `lapply` with your own function and the `fls` vector of filenames to make a list of data sets (`tibble`s) (remember to turn on chunk evaulation):
 
 ```{r}
-#| eval: false
-data_list <- lapply()
+data_list <- lapply(fls, read_country)
 ```
 
 Modify the command to use `bind_rows()` to combine the results to a single data set (`tibble`):
 ```{r}
-popstat2 <- bind_rows()
+popstat2 <- bind_rows(data_list)
+
+print(popstat2)
 ```
 
 ### Exercise 2.3: Modifying the country name
@@ -174,35 +193,133 @@ x <- "congo.txt"
 str_sub(x, 1, 5)
 str_sub(x, end = -3)
 str_replace(x, "xt", "")
+str_to_title(file_path_sans_ext(x))
+
+print(x)
 ```
 
 Now use your knowledge and `str_to_title()` and `mutate()` to change the `country` column of `popstat2` to have one of the values `Congo`, `Denmark`, ..., `Russia`, `Usa` by modifying this command:
 ```{r}
+# All ready did that in exercises 2.1
 popstat2 <- popstat2 |> 
-  mutate()
+  mutate(country = country_name)
 ```
 
 ### Exercise 2.4 (extra -- skip if difficult):
 
 Use `case_when()` together with mutate to change `Usa` to `US` in the `country` column (remember to turn on chunk evaluation when it works):
 ```{r}
-#| eval: false
 popstat2 <- popstat2 |> 
-  mutate() |> 
-  mutate(case_when())
+  mutate(country = case_when(country == "Usa" ~ "US", TRUE ~ country))
+
+# mutate(country = case_when(...)): Modifies the country column using case_when():
+# country == "Usa" ~ "US": Changes any instance of "Usa" to "US".
+# TRUE ~ country: Keeps all other values in the country column unchanged.
+
+#print(popstat2)
 ```
 
 ## Exercise 3: Data summaries, cleaning and plotting
 
 ### Exercise 3.1:
 
-Use `group_by()` and/or `count()` to find how many observations there are for each country (insert your own chunk). 
+Use `group_by()` and/or `count()` to find how many observations there are for each country (insert your own chunk).
+
+```{r}
+# Use group_by() and count() to find the number of observations for each country
+country_counts <- popstat2 |> 
+  group_by(country) |> 
+  count() |> 
+  arrange(desc(n))  # Optional: Arrange counts in descending order
+
+# Print the result
+print(country_counts)
+```
+
 
 ### Exercise 3.2:
 
 It seems like the countries have different years represented. 
 Find out which and clean the data such that all countries have data 
 for the same years (insert your own chunk).
+
+```{r}
+# Insert chunk: Clean data to ensure all countries have data for the same years
+
+# Step 1: Find unique years across all countries
+unique_years <- popstat2 |>
+  pull(year) |>
+  unique() |>
+  sort() 
+
+# 1 popstat2 |> pull(year):
+# 
+# Purpose: Extracts the year column from the popstat2 tibble.
+# Result: A vector of all the years present in the dataset.
+# 
+# 2 pull(year) |> unique():
+# 
+# Purpose: unique() function is used to get all distinct years.
+# Result: A vector of unique years from the year column.
+#
+# 3 unique() |> sort():
+# 
+# Purpose: sort() function is used to arrange these years in ascending order.
+# Result: A sorted vector of unique years.
+
+print(unique_years)
+
+# Step 2: Find common years across all countries
+common_years <- popstat2 |>
+  group_by(year) |>
+  tally() |>
+  filter(n == length(fls)) |>
+  pull(year) |>
+  sort()
+
+# 1 popstat2 |> group_by(year):
+# 
+# Purpose: Groups the data by the year column.
+# Result: Data is now grouped by year, so any summary operations will be done within each year.
+# 
+# 2 group_by(year) |> tally():
+# 
+# Purpose: tally() counts the number of rows (observations) for each year group.
+# Result: A tibble with two columns: year and n. The n column represents the number of observations for each year.
+# 
+# 3 tally() |> filter(n == length(fls)):
+# 
+# Purpose: filter() is used to keep only the years where the count (n) matches the number of files (length(fls)).
+# Explanation: length(fls) gives the total number of datasets (or countries). By filtering n to be equal to length(fls), you ensure that # only those years are retained where data is present in all datasets.
+# Result: A tibble with years that have data for every country.
+# 
+# 4 filter(n == length(fls)) |> pull(year):
+# 
+# Purpose: Extracts the year column from the filtered tibble.
+# Result: A vector of years where data is available in all datasets.
+# 
+# 5 pull(year) |> sort():
+# 
+# Purpose: sort() function is used to sort these common years in ascending order.
+
+
+# Step 3: Filter data to include only the common years
+cleaned_data <- popstat2 |>
+  filter(year %in% common_years)
+
+# 1 combined_data |> filter(year %in% common_years):
+# Purpose: Filters the combined_data tibble to include only rows where the year is in the common_years vector.
+# Result: A filtered tibble where only the rows with years common to all datasets are kept.
+
+# Print the cleaned data
+print(cleaned_data)
+
+# Optionally, check the result to ensure all countries now have the same years
+summary(cleaned_data)
+  
+
+```
+
 
 ### Exercise 3.3:
 
