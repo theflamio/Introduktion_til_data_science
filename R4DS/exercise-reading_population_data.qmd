@@ -201,8 +201,8 @@ print(x)
 Now use your knowledge and `str_to_title()` and `mutate()` to change the `country` column of `popstat2` to have one of the values `Congo`, `Denmark`, ..., `Russia`, `Usa` by modifying this command:
 ```{r}
 # All ready did that in exercises 2.1
-popstat2 <- popstat2 |> 
-  mutate(country = country_name)
+#popstat2 <- popstat2 |> 
+#  mutate(country = country_name)
 ```
 
 ### Exercise 2.4 (extra -- skip if difficult):
