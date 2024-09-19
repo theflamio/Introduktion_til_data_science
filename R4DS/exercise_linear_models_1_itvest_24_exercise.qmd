@@ -105,6 +105,9 @@ mm3 |> tidy()
 scatterplot + geom_line(aes(y=fitted(mm3)))
 ```
 
+\# Markdown message
+cat("\# Linear model with interaction between flipper_length_mm and bill_depth_mm\\n")
+
 ```{r}
 # Now we remove species and use bill_depth as interaction
 
@@ -149,7 +152,7 @@ scatterplot <- dat |> ggplot(aes(x=flipper_length_mm, y=body_mass_g, color=sex))
 
 print(" Linear model with flipper_length_mm and bill_depth")
 
-mm6 <- lm(body_mass_g ~ flipper_length_mm + sex, data=dat)
+mm6 <- lm(body_mass_g ~ flipper_length_mm * sex, data=dat)
 
 summary(mm6)
 
@@ -182,6 +185,11 @@ mm6 |> glance()
 # sigma: Residual standard error (the estimated standard deviation of the residuals).
 
 # statistic: The F-statistic of the model (used to test the overall significance of   the model).
+
+# Interpretation:
+# High F-statistic value: A large F-statistic means that the variance explained by # the model (RSS) is much larger than the unexplained variance (ESS), suggesting   # that the model fits the data well.
+# Low F-statistic value: A low F-statistic means that the model doesn't explain    # much more variance than what would be expected by random chance.
+
 
 # p.value: The p-value corresponding to the F-statistic.
 
@@ -262,6 +270,6 @@ sapply(ml_train, function(x) modelr::rmse(x, test))
 ```
 
 ```{r}
-# Seems like model6 is the best BUT if I want to generelise and look away from SEX then I would pick model4 which is flipper 
-length + bill depth 
+# Seems like model6 is the best BUT if I want to generelise and look away from SEX # then I would pick model4 which is flipper 
+# length + bill depth 
 ```
