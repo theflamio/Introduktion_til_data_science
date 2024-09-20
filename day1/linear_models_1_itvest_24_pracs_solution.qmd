@@ -1,0 +1,172 @@
+---
+title: "Exercise - some linear models part 1"
+author: "Søren Højsgaard"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.height=3)
+```
+
+*SOLUTION comment*\n
+This is a very rough suggested solution 
+\n*end of SOLUTION comment*
+
+# Introduction
+
+We will use the `palmerpenguins` data set. It is a data set with information on penguins. We will use the `body_mass_g` as the response variable and `species`, `island`, `sex`, `culmen_length_mm`, `culmen_depth_mm`, `flipper_length_mm`, and `year` as explanatory variables.
+
+The idea is to repeat what you saw in the lecture on linear models on another dataset.
+
+```{r}
+dat <- palmerpenguins::penguins
+dat <- dat[complete.cases(dat),]
+head(dat)
+```
+
+```{r}
+library(ggplot2) 
+library(broom)
+```
+
+We ask the following question:
+
+1.  How well can we predict the body mass of a penguin based on species and flipper length?
+
+2.  Are predictions improved by including other variables?
+
+We encourage you to take inspiration from the lecture slides/notes. 
+
+
+```{r}
+pl0 <- dat |>
+    ggplot(aes(x=flipper_length_mm, y=body_mass_g, color=species)) +
+    geom_jitter(width=0.1)
+pl0 + geom_smooth(se=FALSE)
+```
+
+# Tasks
+
+## Task 
+Fit the following models to data and think carefully about their interpretation. Call the corresponding models `mm1`, `mm2`, `mm3`, and `mm4`.
+
+```{r}
+formula1 <- body_mass_g ~ flipper_length_mm
+formula2 <- body_mass_g ~ species
+formula3 <- body_mass_g ~ species + flipper_length_mm
+formula4 <- body_mass_g ~ species * flipper_length_mm
+```
+
+
+```{r}
+## YOUR CODE
+```
+
+```{r}
+## SOLUTION
+mm1 <- lm(body_mass_g ~ flipper_length_mm, data = dat)
+mm2 <- lm(body_mass_g ~ species, data = dat)
+mm3 <- lm(body_mass_g ~ species + flipper_length_mm, data = dat)
+mm4 <- lm(body_mass_g ~ species * flipper_length_mm, data = dat)
+```
+
+
+## Task
+
+Use the `tidy` function in the `broom` package to get a nice summary of the models.
+
+```{r}
+## YOUR CODE
+```
+
+```{r}
+## SOLUTION
+mm1 |> tidy()
+mm2 |> tidy()
+mm3 |> tidy()
+mm4 |> tidy()
+```
+
+## Task 
+1. Create plots of the fitted values on top of the data. Call these plots `pl1`, `pl2`, `pl3`, and `pl4`.
+
+```{r}
+## YOUR CODE
+```
+
+```{r}
+## SOLUTION
+pl1 <- pl0 + geom_line(aes(y=fitted(mm1)))
+pl2 <- pl0 + geom_line(aes(y=fitted(mm2)))
+pl3 <- pl0 + geom_line(aes(y=fitted(mm3)))
+pl4 <- pl0 + geom_line(aes(y=fitted(mm4)))
+```
+
+Display the plots side by side with:
+
+```{r}
+library(patchwork)
+(pl1 + pl2) / (pl3 + pl4)
+```
+
+Create a list of models along these lines:
+
+```{r}
+ml <- list(m1=mm1, m2=mm2, m3=mm3, m4=mm4)
+```
+
+## Task
+Use the `rmse` function in the `modelr` package to calculate the root mean squared error of the models on the data set.
+
+```{r}
+## YOUR CODE
+```
+
+```{r}
+## SOLUTION
+sapply(ml, function(x) modelr::rmse(x, dat))
+```
+
+## Task
+Split data randomly into a training dataset (with 80 pct of the observations) and a test dataset with the remaining observations. Set the seed as:
+
+```{r}
+set.seed(2024)
+```
+
+```{r}
+## YOUR CODE
+```
+
+
+```{r}
+## SOLUTION
+i <- sample(nrow(dat), size=0.8*nrow(dat))
+i |> head()
+train <- dat[i,]
+test <- dat[-i,]
+```
+
+## Task
+Refit the models on the training data and calculate the RMSE on the training and test data.
+
+```{r}
+## YOUR CODE
+```
+
+```{r}
+## SOLUTION
+ml_train <- sapply(ml, function(x) update(x, data=train))
+sapply(ml_train, function(x) modelr::rmse(x, train))
+sapply(ml_train, function(x) modelr::rmse(x, test))
+```
+
+THE END ! 
+
+<!-- This file has been generated automatically from linear_models_1_itvest_24_pracs.qmd -->
+
+<!-- time: 2024-09-20 08:54:30.953138 do not edit manually -->
+
