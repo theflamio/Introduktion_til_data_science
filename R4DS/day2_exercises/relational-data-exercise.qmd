@@ -65,6 +65,10 @@ Show the name of both the carrier and airport, not the id codes, and sorted by a
 *Hint:* We need to join three different tables and notice that two tables have a variable `name` with different meanings so they will appear with two different suffixes (you can rename them if you like).
 
 ```{r}
-
+# 
+number_of_fligths <- flights |> 
+  inner_join(airlines, by = "carrier") |> 
+  inner_join(airports, by = c("dest" = "faa"))
+  
 ```
 
