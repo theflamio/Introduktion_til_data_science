@@ -27,7 +27,14 @@ Make pairwise plots of all variables. Make sure that the varieties are shown in 
 
 ```{r}
 library(GGally)
+library(ggplot2)
 ## your code
+
+# Sample data (iris dataset)
+df <- iris  # Replace with your own dataframe
+
+# Pairwise plot of all variables with different colors for the variety
+ggpairs(df, aes(colour = Species))
 ```
 
 
