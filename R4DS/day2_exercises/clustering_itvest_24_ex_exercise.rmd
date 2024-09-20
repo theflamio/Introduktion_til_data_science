@@ -40,21 +40,44 @@ ggpairs(df, aes(colour = Species))
 
 Define dataset with the numerical values only:
 ```{r}
-ir <- iris[,1:4]
-head(ir)
+iris_numeric <- iris[,1:4]
+head(iris_numeric)
 ```
 
 Run a clustering algorithm on this dataset. Should data be scaled before doing the clustering?
 
 ```{r, eval=F}
-hc <- hclust("YOUR_CODE")
+# without scaling
+hc <- hclust(dist(iris_numeric))
+
+print(head(iris_numeric))
+
+
+df_scaled <- scale(iris_numeric)
+
+print(head(df_scaled))
+
+hc <- hclust(dist(df_scaled))
+
+print(hc)
+
+# answer yes it should be scaled before otherwised Big numeric numbers could screwer the culster. But it is not allways the case
+
+# scaling makes the number between -2 to 2
 ```
 
 
 Extract 10 clusters and make a cross tabulation of the clusters and the species in the `iris` dataset. Here, `table()` is a good friend.
 
 ```{r, eval=F}
-table("YOUR_CODE", iris$Species)
+
+cluster <- cutree(hc, k = 10)
+
+table(cluster, iris$Species)
+
+# Plot the dendrogram
+plot(hc, labels = iris$Species, main = "Dendrogram of Iris Clustering", xlab = "", sub = "")
+
 ```
 
 
