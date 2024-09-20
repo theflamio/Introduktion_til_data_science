@@ -50,7 +50,8 @@ library(broom)
 #First look at the data in a scatter plot.
 
 scatterplot <- dat |> ggplot(aes(x=flipper_length_mm, y=body_mass_g, color=species)) +
-  geom_point()
+  geom_point() +
+  geom_smooth(se=FALSE)
 
 print(" Linear model with flipper_length_mm")
 
@@ -61,6 +62,10 @@ summary(mm1)
 names(mm1)
 
 mm1 |> tidy()
+
+mm1 |> confint()
+
+
 
 scatterplot + geom_line(aes(y=fitted(mm1)))
 
@@ -105,8 +110,7 @@ mm3 |> tidy()
 scatterplot + geom_line(aes(y=fitted(mm3)))
 ```
 
-\# Markdown message
-cat("\# Linear model with interaction between flipper_length_mm and bill_depth_mm\\n")
+\# Markdown message cat("\# Linear model with interaction between flipper_length_mm and bill_depth_mm\\n")
 
 ```{r}
 # Now we remove species and use bill_depth as interaction
@@ -236,6 +240,8 @@ ml <- list(mm1, mm2, mm3, mm4, mm5, mm6)
 
 
 sapply(ml, function(x) modelr::rmse(x, dat))
+
+# lowest value has the best prediction but it was on the hole dataset which is cheating next blocks shows how we devived trained set and test set.
 ```
 
 ```{r}
