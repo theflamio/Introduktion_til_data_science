@@ -87,6 +87,14 @@ Experiment with extracting 2, 3 and 4 clusters from data and cross tabulate thes
 
 Create scatterplots where you label points according to  the case `k=3`:
 
+```{r}
+cluster <- cutree(hc, k = 3)
+
+table(cluster, iris$Species)
+
+# Plot the dendrogram
+plot(hc, labels = iris$Species, main = "Dendrogram of Iris Clustering", xlab = "", sub = "")
+```
 
 
 
