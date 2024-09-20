@@ -30,9 +30,18 @@ efficiency numbers originally given in `cty` and `hwy` and the latter indicates
 whether the driving type is city or highway (remember to enable chunk evaluation).
 
 ```{r eval=FALSE}
+head(mpg)
+
+# Reshaping the data
 mpg_long <- mpg |> 
-  pivot_longer()
-mpg_long
+  pivot_longer(
+    cols = c(cty, hwy),        # Specify the columns to pivot
+    names_to = "type",          # New column for type (cty or hwy)
+    values_to = "efficiency"    # New column for the efficiency values
+  )
+
+# View the reshaped data
+head(mpg_long)
 ```
 
 ### Exercise 2
@@ -45,7 +54,7 @@ relationship (remember to enable chunk evaluation).
 
 ```{r eval=FALSE}
 mpg_long |> 
-  ggplot() +
+  ggplot(aes(efficiency, displ, colour = type)) +
   geom_point() +
   geom_smooth()
 ```
