@@ -1,0 +1,140 @@
+---
+title: "Data Science Exam: Part 1"
+author: "Flemming Christensen"
+date: "2024-09-21"
+format:
+  html:
+    toc: true  # Enable the table of contents
+    toc_depth: 2  # Specify the depth of headers to include in the TOC
+---
+
+
+```{r}
+library(readr)
+library(rvest)
+library(dplyr)
+```
+
+
+# Introduction
+This exam is constructed with 24 Exercises that need to be solved and argumented.
+Why this solution or method has been used.
+
+# Exercise 1
+Read in the data in the file world_population.csv and select/deselect and rename 
+columns so you end up with a tibble (tbl) named wpop_full with 266 rows and 65 
+columns with names as shown in the output below (the last column being 2022). 
+Hint: Use skip in read_csv to avoid header lines not containing data or names of data.
+
+## import data from csv
+
+```{r}
+here::here()
+
+data_dir <- here::here("world_population.csv") #set the directory to were the project and dataset is used
+
+wpop_raw_dat = read_csv(data_dir, skip = 3) # Read csv file and skip the last update info and empty rows
+
+# lets take a look of the data
+glimpse(wpop_raw_dat) #looks like there is a lot of NA's in 2023 and the data dose not have column names
+
+```
+
+## Add column names and renaming
+
+```{r}
+colnames(wpop_raw_dat) <- as.character(unlist(wpop_raw_dat[1,])) # Make the first row the column names
+
+# next two steps are need to remove exstra column added when making column names
+
+wpop_raw_dat <- wpop_raw_dat[-1, ] # Remove the first row
+
+rownames(wpop_raw_dat) <- NULL # Reset row names
+
+head(wpop_raw_dat) # Confirm that data set now have column names
+
+wpop_raw_dat <- wpop_raw_dat |> # Rename of duplicated meaning in column names
+  rename(
+    Country = `Country Name`,
+    Code = `Country Code`
+  )
+
+head(wpop_raw_dat) # see data structure
+```
+## Remove unwanted columns
+```{r}
+wpop_raw_dat <- wpop_raw_dat |> # remove column "indicator Name" and "Indicator Code".
+  select(-`Indicator Name`, -`Indicator Code`)
+
+head(wpop_raw_dat) # confirm that columns have been removed.
+
+wpop_full <- wpop_raw_dat |> # Remove year 2023 so that 2022 is last column
+  select(-`2023`)
+```
+## wpop_full result
+```{r}
+glimpse(wpop_full)
+```
+
+
+# Exercise 2
+Use the package rvest to read in the list of country codes from the main table 
+at https://en.wikipedia.org/wiki/ISO_3166-1 and select/deselect and rename 
+columns so you end up with a tibble (tbl) named iso_codes_all with 249 rows and 
+3 columns with names as shown in the output below.
+
+## Web scrape 
+```{r}
+url <- "https://en.wikipedia.org/wiki/ISO_3166-1"
+
+webpage <- read_html(url)
+
+data <- webpage %>%
+  html_node("table") %>%  # Specify the CSS selector for the table
+  html_table()            # Convert the HTML table to a data frame
+
+```
+
+# Exercise 3
+
+# Exercise 4
+
+# Exercise 5
+
+# Exercise 6
+
+# Exercise 7
+
+# Exercise 8
+
+# Exercise 9
+
+# Exercise 10
+
+# Exercise 11
+
+# Exercise 12
+
+# Exercise 13
+
+# Exercise 14
+
+# Exercise 15
+
+# Exercise 16
+
+# Exercise 17
+
+# Exercise 18
+
+# Exercise 19
+
+# Exercise 20
+
+# Exercise 21
+
+# Exercise 22
+
+# Exercise 23
+
+# Exercise 24
