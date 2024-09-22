@@ -91,14 +91,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#exercise-2" id="toc-exercise-2" class="nav-link" data-scroll-target="#exercise-2">Exercise 2</a>
   <ul class="collapse">
-  <li><a href="#web-scrape-data-from-wiki" id="toc-web-scrape-data-from-wiki" class="nav-link" data-scroll-target="#web-scrape-data-from-wiki">Web scrape data from wiki</a></li>
+  <li><a href="#web-scraping-data-from-wikipedia" id="toc-web-scraping-data-from-wikipedia" class="nav-link" data-scroll-target="#web-scraping-data-from-wikipedia">Web scraping data from Wikipedia</a></li>
   <li><a href="#remove-and-rename-columns" id="toc-remove-and-rename-columns" class="nav-link" data-scroll-target="#remove-and-rename-columns">remove and rename columns</a></li>
   <li><a href="#iso_codes_all-result" id="toc-iso_codes_all-result" class="nav-link" data-scroll-target="#iso_codes_all-result">iso_codes_all result</a></li>
   </ul></li>
   <li><a href="#exercise-3" id="toc-exercise-3" class="nav-link" data-scroll-target="#exercise-3">Exercise 3</a></li>
   <li><a href="#exercise-4" id="toc-exercise-4" class="nav-link" data-scroll-target="#exercise-4">Exercise 4</a></li>
   <li><a href="#exercise-5" id="toc-exercise-5" class="nav-link" data-scroll-target="#exercise-5">Exercise 5</a></li>
-  <li><a href="#exercise-6" id="toc-exercise-6" class="nav-link" data-scroll-target="#exercise-6">Exercise 6</a></li>
+  <li><a href="#exercise-6" id="toc-exercise-6" class="nav-link" data-scroll-target="#exercise-6">Exercise 6</a>
+  <ul class="collapse">
+  <li><a href="#web-scraping-data-from-wikipedia-1" id="toc-web-scraping-data-from-wikipedia-1" class="nav-link" data-scroll-target="#web-scraping-data-from-wikipedia-1">Web scraping data from Wikipedia</a></li>
+  <li><a href="#remove-and-rename-columns-1" id="toc-remove-and-rename-columns-1" class="nav-link" data-scroll-target="#remove-and-rename-columns-1">remove and rename columns</a></li>
+  <li><a href="#result" id="toc-result" class="nav-link" data-scroll-target="#result">Result</a></li>
+  </ul></li>
   <li><a href="#exercise-7" id="toc-exercise-7" class="nav-link" data-scroll-target="#exercise-7">Exercise 7</a></li>
   <li><a href="#exercise-8" id="toc-exercise-8" class="nav-link" data-scroll-target="#exercise-8">Exercise 8</a></li>
   <li><a href="#exercise-9" id="toc-exercise-9" class="nav-link" data-scroll-target="#exercise-9">Exercise 9</a></li>
@@ -470,27 +475,94 @@ $ ...68 &lt;dbl&gt; 2023, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 <section id="exercise-2" class="level1">
 <h1>Exercise 2</h1>
 <p>Use the package rvest to read in the list of country codes from the main table at https://en.wikipedia.org/wiki/ISO_3166-1 and select/deselect and rename columns so you end up with a tibble (tbl) named iso_codes_all with 249 rows and 3 columns with names as shown in the output below.</p>
-<section id="web-scrape-data-from-wiki" class="level2">
-<h2 class="anchored" data-anchor-id="web-scrape-data-from-wiki">Web scrape data from wiki</h2>
+<section id="web-scraping-data-from-wikipedia" class="level2">
+<h2 class="anchored" data-anchor-id="web-scraping-data-from-wikipedia">Web scraping data from Wikipedia</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://en.wikipedia.org/wiki/ISO_3166-1"</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>webpage <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>tables <span class="ot">&lt;-</span> webpage <span class="sc">|&gt;</span> </span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">"table"</span>)  <span class="co"># Specify the CSS selector for the table. "html_nodes" takes all tables. "html_node" takes only the first.</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tables) <span class="co"># we need table number 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">"table"</span>) <span class="sc">|&gt;</span>  <span class="co"># Specify the CSS selector for the table. "html_nodes" takes all tables. "html_node" takes only the first.</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>()            <span class="co"># Convert the HTML table to a data frame</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tables) <span class="co"># we need table number 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>{xml_nodeset (5)}
-[1] &lt;table class="wikitable sortable"&gt;&lt;tbody&gt;\n&lt;tr&gt;\n&lt;th&gt;Short name &lt;br&gt; uppe ...
-[2] &lt;table class="wikitable sortable sticky-header"&gt;\n&lt;caption&gt;ISO 3166-1 tab ...
-[3] &lt;table class="wikitable"&gt;&lt;tbody&gt;\n&lt;tr&gt;\n&lt;th scope="col"&gt;Edition/Newslette ...
-[4] &lt;table class="nowraplinks hlist mw-collapsible autocollapse navbox-inner" ...
-[5] &lt;table class="nowraplinks navbox-subgroup" style="border-spacing:0"&gt;&lt;tbod ...</code></pre>
+<pre><code>[[1]]
+# A tibble: 7 × 6
+  Short name  upper case  in ISO…¹ Short name lower cas…² Listed as independen…³
+  &lt;chr&gt;                            &lt;chr&gt;                  &lt;chr&gt;                 
+1 AFGHANISTAN                      "Afghanistanthe Islam… Yes[6]                
+2 CHINA                            "China\nthe People's … Yes[7]                
+3 CYPRUS                           "Cyprus\nthe Republic… Yes[8]                
+4 FALKLAND ISLANDS  (MALVINAS)     "Falkland Islands (th… No[9]                 
+5 PALESTINE,  STATE OF             "Palestine, State of\… No[10]                
+6 TAIWAN,  PROVINCE OF CHINA       "Taiwan (Province of … No[11]                
+7 WESTERN SAHARA                   "Western Sahara[a]"    No[12]                
+# ℹ abbreviated names: ¹​`Short name  upper case  in ISO 3166`,
+#   ²​`Short name lower case  in ISO 3166\nFull name`,
+#   ³​`Listed as independent  in ISO 3166`
+# ℹ 3 more variables: `Local  short name` &lt;chr&gt;, Dispute &lt;chr&gt;,
+#   `Link to ISO 3166-2` &lt;chr&gt;
+
+[[2]]
+# A tibble: 249 × 6
+   English short name  (using tit…¹ `Alpha-2 code` `Alpha-3 code` `Numeric code`
+   &lt;chr&gt;                            &lt;chr&gt;          &lt;chr&gt;                   &lt;int&gt;
+ 1 Afghanistan[c]                   AF             AFG                         4
+ 2 Åland Islands                    AX             ALA                       248
+ 3 Albania                          AL             ALB                         8
+ 4 Algeria                          DZ             DZA                        12
+ 5 American Samoa                   AS             ASM                        16
+ 6 Andorra                          AD             AND                        20
+ 7 Angola                           AO             AGO                        24
+ 8 Anguilla                         AI             AIA                       660
+ 9 Antarctica                       AQ             ATA                        10
+10 Antigua and Barbuda              AG             ATG                        28
+# ℹ 239 more rows
+# ℹ abbreviated name: ¹​`English short name  (using title case)`
+# ℹ 2 more variables: `Link to ISO 3166-2` &lt;chr&gt;, `Independent[b]` &lt;chr&gt;
+
+[[3]]
+# A tibble: 37 × 3
+   `Edition/Newsletter`                                   `Date issued` Contents
+   &lt;chr&gt;                                                  &lt;chr&gt;         &lt;chr&gt;   
+ 1 ISO 3166:1974                                          1974          First e…
+ 2 ISO 3166:1981                                          1981          Second …
+ 3 ISO 3166:1988                                          1988-08-15    Third e…
+ 4 ISO 3166:1994                                          1994-02-10    Fourth …
+ 5 ISO 3166-1:1997                                        1997-09-25    First e…
+ 6 Newsletter V-1 Archived 2018-12-07 at the Wayback Mac… 1998-02-05    Change …
+ 7 Newsletter V-2 Archived 2011-07-22 at the Wayback Mac… 1999-10-01    Inclusi…
+ 8 Newsletter V-3                                         2002-02-01    Change …
+ 9 Newsletter V-4 Archived 2018-12-07 at the Wayback Mac… 2002-05-20    Name ch…
+10 Newsletter V-5 Archived 2018-12-07 at the Wayback Mac… 2002-05-20    Change …
+# ℹ 27 more rows
+
+[[4]]
+# A tibble: 7 × 6
+  .mw-parser-output .navbar{dis…¹ .mw-parser-output .n…² ``    ``    ``    ``   
+  &lt;chr&gt;                           &lt;chr&gt;                  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 "list of ISO 3166 country code… "list of ISO 3166 cou…  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt;   &lt;NA&gt;
+2 "ISO 3166-1 – country codes"    "alpha-2\nalpha-3\nnu…  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt;   &lt;NA&gt;
+3 "ISO 3166-2 – countrysubdivisi… "AD\nAE\nAF\nAG\nAI\n… "AD\… "AD\… dele… "AN\…
+4 "AD\nAE\nAF\nAG\nAI\nAL\nAM\nA… "AD\nAE\nAF\nAG\nAI\n…  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt;   &lt;NA&gt;
+5 "deleted"                       "AN\nCSb"               &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt;   &lt;NA&gt;
+6 "ISO 3166-3 – codes forformer … "List"                  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt;   &lt;NA&gt;
+7 "a changed from TP\nb changed … "a changed from TP\nb…  &lt;NA&gt;  &lt;NA&gt; &lt;NA&gt;   &lt;NA&gt;
+# ℹ abbreviated names:
+#   ¹​`.mw-parser-output .navbar{display:inline;font-size:88%;font-weight:normal}.mw-parser-output .navbar-collapse{float:left;text-align:left}.mw-parser-output .navbar-boxtext{word-spacing:0}.mw-parser-output .navbar ul{display:inline-block;white-space:nowrap;line-height:inherit}.mw-parser-output .navbar-brackets::before{margin-right:-0.125em;content:"[ "}.mw-parser-output .navbar-brackets::after{margin-left:-0.125em;content:" ]"}.mw-parser-output .navbar li{word-spacing:-0.125em}.mw-parser-output .navbar a&gt;span,.mw-parser-output .navbar a&gt;abbr{text-decoration:inherit}.mw-parser-output .navbar-mini abbr{font-variant:small-caps;border-bottom:none;text-decoration:none;cursor:inherit}.mw-parser-output .navbar-ct-full{font-size:114%;margin:0 7em}.mw-parser-output .navbar-ct-mini{font-size:114%;margin:0 4em}html.skin-theme-clientpref-night .mw-parser-output .navbar li a abbr{color:var(--color-base)!important}@media(prefers-color-scheme:dark){html.skin-theme-clientpref-os .mw-parser-output .navbar li a abbr{color:var(--color-base)!important}}@media print{.mw-parser-output .navbar{display:none!important}}vteISO 3166 – codes for the representation of names of countries and their subdivisions`,
+#   ²​`.mw-parser-output .navbar{display:inline;font-size:88%;font-weight:normal}.mw-parser-output .navbar-collapse{float:left;text-align:left}.mw-parser-output .navbar-boxtext{word-spacing:0}.mw-parser-output .navbar ul{display:inline-block;white-space:nowrap;line-height:inherit}.mw-parser-output .navbar-brackets::before{margin-right:-0.125em;content:"[ "}.mw-parser-output .navbar-brackets::after{margin-left:-0.125em;content:" ]"}.mw-parser-output .navbar li{word-spacing:-0.125em}.mw-parser-output .navbar a&gt;span,.mw-parser-output .navbar a&gt;abbr{text-decoration:inherit}.mw-parser-output .navbar-mini abbr{font-variant:small-caps;border-bottom:none;text-decoration:none;cursor:inherit}.mw-parser-output .navbar-ct-full{font-size:114%;margin:0 7em}.mw-parser-output .navbar-ct-mini{font-size:114%;margin:0 4em}html.skin-theme-clientpref-night .mw-parser-output .navbar li a abbr{color:var(--color-base)!important}@media(prefers-color-scheme:dark){html.skin-theme-clientpref-os .mw-parser-output .navbar li a abbr{color:var(--color-base)!important}}@media print{.mw-parser-output .navbar{display:none!important}}vteISO 3166 – codes for the representation of names of countries and their subdivisions`
+
+[[5]]
+# A tibble: 2 × 2
+  X1                                                                       X2   
+  &lt;chr&gt;                                                                    &lt;chr&gt;
+1 "AD\nAE\nAF\nAG\nAI\nAL\nAM\nAO\nAQ\nAR\nAS\nAT\nAU\nAW\nAX\nAZ\nBA\nBB… "AD\…
+2 "deleted"                                                                "AN\…</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>raw_dat <span class="ot">&lt;-</span> tables[[<span class="dv">2</span>]] <span class="sc">|&gt;</span>    <span class="co"># number 2 table aka ISO 3166-1 table</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>()            <span class="co"># Convert the HTML table to a data frame</span></span>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>raw_dat <span class="ot">&lt;-</span> tables[[<span class="dv">2</span>]] <span class="co"># number 2 table aka ISO 3166-1 table</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(raw_dat) <span class="co"># OBS Afghanistan[c] the [C] means that the country is under that category "Naming and disputes" which is correct</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -649,6 +721,233 @@ $ ...68 &lt;dbl&gt; 2023, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 </section>
 <section id="exercise-6" class="level1">
 <h1>Exercise 6</h1>
+<p>Use the package rvest to read in the list of countries with corresponding continent codes from the main table at https://en.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_by_continent_(data_file) and select/deselect and rename columns so you end up with a tibble (tbl) named continents with 253 rows and 2 columns with names as shown in the output below.</p>
+<p>Important hint: you need convert = FALSE in html_table() to avoid the text string “NA” (North America) to be interpreted as missing data (Not Available).</p>
+<section id="web-scraping-data-from-wikipedia-1" class="level2">
+<h2 class="anchored" data-anchor-id="web-scraping-data-from-wikipedia-1">Web scraping data from Wikipedia</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://en.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_by_continent_(data_file)"</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>webpage <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>tables <span class="ot">&lt;-</span> webpage <span class="sc">|&gt;</span> </span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">"table"</span>) <span class="sc">|&gt;</span> <span class="co"># Specify the CSS selector for the table.</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>(<span class="at">convert =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tables)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+# A tibble: 2 × 2
+  X1             X2                                                      
+  &lt;chr&gt;          &lt;chr&gt;                                                   
+1 Type of format Document file format                                    
+2 Standard       ISO 3166-1 alpha-2;ISO 3166-1 alpha-3;ISO 3166-1 numeric
+
+[[2]]
+# A tibble: 2 × 5
+  X1                                                     X2    X3    X4    X5   
+  &lt;chr&gt;                                                  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 ".mw-parser-output .hidden-begin{box-sizing:border-bo… Coun… Coun… Coun… Engl…
+2 ".mw-parser-output .hidden-begin{box-sizing:border-bo… Two-… Thre… Thre… Engl…
+
+[[3]]
+# A tibble: 253 × 5
+   CC    `a-2` `a-3` `#`   Name                                        
+   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;                                       
+ 1 AS    AF    AFG   004   Afghanistan, Islamic Republic of            
+ 2 EU    AL    ALB   008   Albania, Republic of                        
+ 3 AN    AQ    ATA   010   Antarctica (the territory South of 60 deg S)
+ 4 AF    DZ    DZA   012   Algeria, People's Democratic Republic of    
+ 5 OC    AS    ASM   016   American Samoa                              
+ 6 EU    AD    AND   020   Andorra, Principality of                    
+ 7 AF    AO    AGO   024   Angola, Republic of                         
+ 8 NA    AG    ATG   028   Antigua and Barbuda                         
+ 9 AS    AZ    AZE   031   Azerbaijan, Republic of                     
+10 SA    AR    ARG   032   Argentina, Argentine Republic               
+# ℹ 243 more rows
+
+[[4]]
+# A tibble: 20 × 53
+   Links to related artic…¹ Links to related art…² ``    ``    ``    ``    ``   
+   &lt;chr&gt;                    &lt;chr&gt;                  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+ 1 ".mw-parser-output .hli… ".mw-parser-output .h… ".mw… ".mw… "Afr… "Afr… "Afr…
+ 2 ".mw-parser-output .nav… ".mw-parser-output .n…  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+ 3 "Africa\n\n\nAntarctica… "Africa\n\n\nAntarcti… "Afr… "Afr… ""    "Afr… "Ant…
+ 4 "Africa\n\n\nAntarctica… "Africa\n\n\nAntarcti… ""    "Afr… "Ant… "Asi… "Aus…
+ 5 ""                       "Africa"               "Ant… "Asi… "Aus… "Eur… "Nor…
+ 6 "Afro-Eurasia\n\n\nAmer… "Afro-Eurasia\n\n\nAm… "Afr… "Afr… ""    "Afr… "Ame…
+ 7 "Afro-Eurasia\n\n\nAmer… "Afro-Eurasia\n\n\nAm… ""    "Afr… "Ame… "Eur… "Oce…
+ 8 ""                       "Afro-Eurasia"         "Ame… "Eur… "Oce…  &lt;NA&gt;  &lt;NA&gt;
+ 9 "Prehistoric superconti… "Prehistoric supercon… "Pre… "Pre… ""    "Pre… "Oth…
+10 "Prehistoric superconti… "Prehistoric supercon… ""    "Pre… "Oth…  &lt;NA&gt;  &lt;NA&gt;
+11 ""                       "Prehistoric supercon… "Oth…  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+12 "Submerged continent/la… "Submerged continent/… "Sub… "Sub… ""    "Sub… "Pos…
+13 "Submerged continent/la… "Submerged continent/… ""    "Sub… "Pos… "Myt… "Sub…
+14 ""                       "Submerged continent/… "Pos… "Myt… "Sub…  &lt;NA&gt;  &lt;NA&gt;
+15 "See also:  World porta… "See also:  World por…  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+16 "vteList of sovereign s… "vteList of sovereign…  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+17 "Continents"             "Africa\nAntarctica\n…  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+18 "Landmasses"             "Americas\nEurasia"     &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+19 "Islands"                "Island countries"      &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+20 "Transcontinental"       "Transcontinental cou…  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+# ℹ abbreviated names: ¹​`Links to related articles`,
+#   ²​`Links to related articles`
+# ℹ 46 more variables: `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;,
+#   `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;,
+#   `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;,
+#   `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;,
+#   `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, …
+
+[[5]]
+# A tibble: 13 × 12
+   .mw-parser-output .nav…¹ .mw-parser-output .n…² ``    ``    ``    ``    ``   
+   &lt;chr&gt;                    &lt;chr&gt;                  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+ 1 "Africa\n\n\nAntarctica… "Africa\n\n\nAntarcti… "Afr… "Afr… ""    "Afr… "Ant…
+ 2 "Africa\n\n\nAntarctica… "Africa\n\n\nAntarcti… ""    "Afr… "Ant… "Asi… "Aus…
+ 3 ""                       "Africa"               "Ant… "Asi… "Aus… "Eur… "Nor…
+ 4 "Afro-Eurasia\n\n\nAmer… "Afro-Eurasia\n\n\nAm… "Afr… "Afr… ""    "Afr… "Ame…
+ 5 "Afro-Eurasia\n\n\nAmer… "Afro-Eurasia\n\n\nAm… ""    "Afr… "Ame… "Eur… "Oce…
+ 6 ""                       "Afro-Eurasia"         "Ame… "Eur… "Oce…  &lt;NA&gt;  &lt;NA&gt;
+ 7 "Prehistoric superconti… "Prehistoric supercon… "Pre… "Pre… ""    "Pre… "Oth…
+ 8 "Prehistoric superconti… "Prehistoric supercon… ""    "Pre… "Oth…  &lt;NA&gt;  &lt;NA&gt;
+ 9 ""                       "Prehistoric supercon… "Oth…  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+10 "Submerged continent/la… "Submerged continent/… "Sub… "Sub… ""    "Sub… "Pos…
+11 "Submerged continent/la… "Submerged continent/… ""    "Sub… "Pos… "Myt… "Sub…
+12 ""                       "Submerged continent/… "Pos… "Myt… "Sub…  &lt;NA&gt;  &lt;NA&gt;
+13 "See also:  World porta… "See also:  World por…  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+# ℹ abbreviated names:
+#   ¹​`.mw-parser-output .navbar{display:inline;font-size:88%;font-weight:normal}.mw-parser-output .navbar-collapse{float:left;text-align:left}.mw-parser-output .navbar-boxtext{word-spacing:0}.mw-parser-output .navbar ul{display:inline-block;white-space:nowrap;line-height:inherit}.mw-parser-output .navbar-brackets::before{margin-right:-0.125em;content:"[ "}.mw-parser-output .navbar-brackets::after{margin-left:-0.125em;content:" ]"}.mw-parser-output .navbar li{word-spacing:-0.125em}.mw-parser-output .navbar a&gt;span,.mw-parser-output .navbar a&gt;abbr{text-decoration:inherit}.mw-parser-output .navbar-mini abbr{font-variant:small-caps;border-bottom:none;text-decoration:none;cursor:inherit}.mw-parser-output .navbar-ct-full{font-size:114%;margin:0 7em}.mw-parser-output .navbar-ct-mini{font-size:114%;margin:0 4em}html.skin-theme-clientpref-night .mw-parser-output .navbar li a abbr{color:var(--color-base)!important}@media(prefers-color-scheme:dark){html.skin-theme-clientpref-os .mw-parser-output .navbar li a abbr{color:var(--color-base)!important}}@media print{.mw-parser-output .navbar{display:none!important}}vteContinents of Earth`,
+#   ²​`.mw-parser-output .navbar{display:inline;font-size:88%;font-weight:normal}.mw-parser-output .navbar-collapse{float:left;text-align:left}.mw-parser-output .navbar-boxtext{word-spacing:0}.mw-parser-output .navbar ul{display:inline-block;white-space:nowrap;line-height:inherit}.mw-parser-output .navbar-brackets::before{margin-right:-0.125em;content:"[ "}.mw-parser-output .navbar-brackets::after{margin-left:-0.125em;content:" ]"}.mw-parser-output .navbar li{word-spacing:-0.125em}.mw-parser-output .navbar a&gt;span,.mw-parser-output .navbar a&gt;abbr{text-decoration:inherit}.mw-parser-output .navbar-mini abbr{font-variant:small-caps;border-bottom:none;text-decoration:none;cursor:inherit}.mw-parser-output .navbar-ct-full{font-size:114%;margin:0 7em}.mw-parser-output .navbar-ct-mini{font-size:114%;margin:0 4em}html.skin-theme-clientpref-night .mw-parser-output .navbar li a abbr{color:var(--color-base)!important}@media(prefers-color-scheme:dark){html.skin-theme-clientpref-os .mw-parser-output .navbar li a abbr{color:var(--color-base)!important}}@media print{.mw-parser-output .navbar{display:none!important}}vteContinents of Earth`
+# ℹ 5 more variables: `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;, `` &lt;chr&gt;
+
+[[6]]
+# A tibble: 2 × 10
+  X1                       X2    X3    X4    X5    X6    X7    X8    X9    X10  
+  &lt;chr&gt;                    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 "Africa\n\n\nAntarctica… "Afr… ""    Afri… Anta… Asia  Aust… Euro… Nort… Sout…
+2 ""                       "Afr… "Ant… Asia  Aust… Euro… Nort… Sout… &lt;NA&gt;  &lt;NA&gt; 
+
+[[7]]
+# A tibble: 1 × 8
+  X1    X2     X3         X4    X5        X6     X7            X8           
+  &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;         &lt;chr&gt;        
+1 ""    Africa Antarctica Asia  Australia Europe North America South America
+
+[[8]]
+# A tibble: 2 × 7
+  X1                                         X2    X3    X4    X5    X6    X7   
+  &lt;chr&gt;                                      &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 "Afro-Eurasia\n\n\nAmericas\n\n\nEurasia\… "Afr… ""    Afro… Amer… Eura… Ocea…
+2 ""                                         "Afr… "Ame… Eura… Ocea… &lt;NA&gt;  &lt;NA&gt; 
+
+[[9]]
+# A tibble: 1 × 5
+  X1    X2           X3       X4      X5     
+  &lt;chr&gt; &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;  
+1 ""    Afro-Eurasia Americas Eurasia Oceania
+
+[[10]]
+# A tibble: 2 × 5
+  X1                                                     X2    X3    X4    X5   
+  &lt;chr&gt;                                                  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 "Prehistoric supercontinentsColumbia\nGondwana\nKenor… "Pre… ""    "Pre… "Oth…
+2 ""                                                     "Pre… "Oth…  &lt;NA&gt;  &lt;NA&gt;
+
+[[11]]
+# A tibble: 1 × 3
+  X1    X2                                                                 X3   
+  &lt;chr&gt; &lt;chr&gt;                                                              &lt;chr&gt;
+1 ""    "Prehistoric supercontinentsColumbia\nGondwana\nKenorland\nLauras… "Oth…
+
+[[12]]
+# A tibble: 2 × 7
+  X1                                         X2    X3    X4    X5    X6    X7   
+  &lt;chr&gt;                                      &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 "Submerged continent/lands and microconti… "Sub… ""    "Sub… "Pos… "Myt… "Sub…
+2 ""                                         "Sub… "Pos… "Myt… "Sub…  &lt;NA&gt;  &lt;NA&gt;
+
+[[13]]
+# A tibble: 1 × 5
+  X1    X2                                                     X3    X4    X5   
+  &lt;chr&gt; &lt;chr&gt;                                                  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 ""    "Submerged continent/lands and microcontinentsBeringi… "Pos… "Myt… "Sub…
+
+[[14]]
+# A tibble: 4 × 2
+  vteList of sovereign states and dependent territories…¹ vteList of sovereign…²
+  &lt;chr&gt;                                                   &lt;chr&gt;                 
+1 Continents                                              "Africa\nAntarctica\n…
+2 Landmasses                                              "Americas\nEurasia"   
+3 Islands                                                 "Island countries"    
+4 Transcontinental                                        "Transcontinental cou…
+# ℹ abbreviated names:
+#   ¹​`vteList of sovereign states and dependent territories by continent`,
+#   ²​`vteList of sovereign states and dependent territories by continent`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>raw_continents <span class="ot">&lt;-</span> tables[[<span class="dv">3</span>]]</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>raw_continents</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 253 × 5
+   CC    `a-2` `a-3` `#`   Name                                        
+   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;                                       
+ 1 AS    AF    AFG   004   Afghanistan, Islamic Republic of            
+ 2 EU    AL    ALB   008   Albania, Republic of                        
+ 3 AN    AQ    ATA   010   Antarctica (the territory South of 60 deg S)
+ 4 AF    DZ    DZA   012   Algeria, People's Democratic Republic of    
+ 5 OC    AS    ASM   016   American Samoa                              
+ 6 EU    AD    AND   020   Andorra, Principality of                    
+ 7 AF    AO    AGO   024   Angola, Republic of                         
+ 8 NA    AG    ATG   028   Antigua and Barbuda                         
+ 9 AS    AZ    AZE   031   Azerbaijan, Republic of                     
+10 SA    AR    ARG   032   Argentina, Argentine Republic               
+# ℹ 243 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="remove-and-rename-columns-1" class="level2">
+<h2 class="anchored" data-anchor-id="remove-and-rename-columns-1">remove and rename columns</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(raw_continents)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "CC"   "a-2"  "a-3"  "#"    "Name"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>raw_continents <span class="ot">&lt;-</span> raw_continents <span class="sc">|&gt;</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">continent =</span> <span class="st">`</span><span class="at">CC</span><span class="st">`</span>,</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">iso3 =</span> <span class="st">`</span><span class="at">a-3</span><span class="st">`</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(raw_continents) <span class="co">#check rename was done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "continent" "a-2"       "iso3"      "#"         "Name"     </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>continents <span class="ot">&lt;-</span> raw_continents <span class="sc">|&gt;</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(continent, iso3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="result" class="level2">
+<h2 class="anchored" data-anchor-id="result">Result</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>continents</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 253 × 2
+   continent iso3 
+   &lt;chr&gt;     &lt;chr&gt;
+ 1 AS        AFG  
+ 2 EU        ALB  
+ 3 AN        ATA  
+ 4 AF        DZA  
+ 5 OC        ASM  
+ 6 EU        AND  
+ 7 AF        AGO  
+ 8 NA        ATG  
+ 9 AS        AZE  
+10 SA        ARG  
+# ℹ 243 more rows</code></pre>
+</div>
+</div>
+</section>
 </section>
 <section id="exercise-7" class="level1">
 <h1>Exercise 7</h1>

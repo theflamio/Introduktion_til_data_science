@@ -83,19 +83,20 @@ at https://en.wikipedia.org/wiki/ISO_3166-1 and select/deselect and rename
 columns so you end up with a tibble (tbl) named iso_codes_all with 249 rows and 
 3 columns with names as shown in the output below.
 
-## Web scrape data from wiki
+## Web scraping data from Wikipedia
 ```{r}
 url <- "https://en.wikipedia.org/wiki/ISO_3166-1"
 
 webpage <- read_html(url)
 
 tables <- webpage |> 
-  html_nodes("table")  # Specify the CSS selector for the table. "html_nodes" takes all tables. "html_node" takes only the first.
+  html_nodes("table") |>  # Specify the CSS selector for the table. "html_nodes" takes all tables. "html_node" takes only the first.
+  html_table()            # Convert the HTML table to a data frame
 
 head(tables) # we need table number 2
   
-raw_dat <- tables[[2]] |>    # number 2 table aka ISO 3166-1 table
-  html_table()            # Convert the HTML table to a data frame
+raw_dat <- tables[[2]] # number 2 table aka ISO 3166-1 table
+  
 
 head(raw_dat) # OBS Afghanistan[c] the [C] means that the country is under that category "Naming and disputes" which is correct
 
@@ -163,6 +164,47 @@ result
 
 
 # Exercise 6
+Use the package rvest to read in the list of countries with corresponding continent codes from the main table at https://en.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_by_continent_(data_file) and select/deselect and rename columns so you end up with a tibble (tbl) named continents with 253 rows and 2 columns with names as shown in the output below.
+
+Important hint: you need convert = FALSE in html_table() to avoid the text string "NA" (North America) to be interpreted as missing data (Not Available).
+
+## Web scraping data from Wikipedia
+```{r}
+url <- "https://en.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_by_continent_(data_file)"
+
+webpage <- read_html(url)
+
+tables <- webpage |> 
+  html_nodes("table") |> # Specify the CSS selector for the table.
+  html_table(convert = FALSE)
+
+print(tables)
+
+raw_continents <- tables[[3]]
+
+raw_continents
+```
+
+## remove and rename columns
+```{r}
+colnames(raw_continents)
+
+raw_continents <- raw_continents |>
+  rename(
+    continent = `CC`,
+    iso3 = `a-3`
+  )
+
+colnames(raw_continents) #check rename was done
+
+continents <- raw_continents |>
+  select(continent, iso3)
+```
+## Result
+```{r}
+continents
+```
+
 
 # Exercise 7
 
