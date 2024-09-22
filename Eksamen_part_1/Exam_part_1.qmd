@@ -150,6 +150,14 @@ wpop
 Show the countries/areas which have the same ISO country code in both wpop and iso_codes but different (spellings of) country names.
 
 ```{r}
+join_data <- inner_join(wpop, iso_codes, by = c("code" = "iso3"))
+
+different_spelling <- filter(join_data, country != name)
+
+result <- different_spelling |> 
+  select(name, code, country)
+
+result
 
 ```
 

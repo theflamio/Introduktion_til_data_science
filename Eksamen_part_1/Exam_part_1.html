@@ -619,6 +619,33 @@ $ ...68 &lt;dbl&gt; 2023, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 </section>
 <section id="exercise-5" class="level1">
 <h1>Exercise 5</h1>
+<p>Show the countries/areas which have the same ISO country code in both wpop and iso_codes but different (spellings of) country names.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>join_data <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(wpop, iso_codes, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"code"</span> <span class="ot">=</span> <span class="st">"iso3"</span>))</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>different_spelling <span class="ot">&lt;-</span> <span class="fu">filter</span>(join_data, country <span class="sc">!=</span> name)</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> different_spelling <span class="sc">|&gt;</span> </span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, code, country)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 28 × 3
+   name                              code  country              
+   &lt;chr&gt;                             &lt;chr&gt; &lt;chr&gt;                
+ 1 Afghanistan[c]                    AFG   Afghanistan          
+ 2 Bahamas                           BHS   Bahamas, The         
+ 3 Bolivia, Plurinational State of   BOL   Bolivia              
+ 4 China[c]                          CHN   China                
+ 5 Côte d'Ivoire                     CIV   Cote d'Ivoire        
+ 6 Congo, Democratic Republic of the COD   Congo, Dem. Rep.     
+ 7 Congo                             COG   Congo, Rep.          
+ 8 Cyprus[c]                         CYP   Cyprus               
+ 9 Egypt                             EGY   Egypt, Arab Rep.     
+10 Micronesia, Federated States of   FSM   Micronesia, Fed. Sts.
+# ℹ 18 more rows</code></pre>
+</div>
+</div>
 </section>
 <section id="exercise-6" class="level1">
 <h1>Exercise 6</h1>
