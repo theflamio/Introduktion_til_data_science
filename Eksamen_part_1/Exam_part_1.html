@@ -384,14 +384,14 @@ $ ...68 &lt;dbl&gt; 2023, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 </div>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>wpop_raw_dat <span class="ot">&lt;-</span> wpop_raw_dat <span class="sc">|&gt;</span> <span class="co"># Rename of duplicated meaning in column names</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">Country =</span> <span class="st">`</span><span class="at">Country Name</span><span class="st">`</span>,</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Code =</span> <span class="st">`</span><span class="at">Country Code</span><span class="st">`</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">country =</span> <span class="st">`</span><span class="at">Country Name</span><span class="st">`</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">code =</span> <span class="st">`</span><span class="at">Country Code</span><span class="st">`</span></span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wpop_raw_dat) <span class="co"># see data structure</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 68
-  Country    Code  `Indicator Name` `Indicator Code` `1960` `1961` `1962` `1963`
+  country    code  `Indicator Name` `Indicator Code` `1960` `1961` `1962` `1963`
   &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;            &lt;chr&gt;             &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
 1 Aruba      ABW   Population, tot… SP.POP.TOTL      5.46e4 5.58e4 5.67e4 5.75e4
 2 Africa Ea… AFE   Population, tot… SP.POP.TOTL      1.31e8 1.34e8 1.38e8 1.42e8
@@ -418,7 +418,7 @@ $ ...68 &lt;dbl&gt; 2023, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wpop_raw_dat) <span class="co"># confirm that columns have been removed.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 66
-  Country   Code  `1960` `1961` `1962` `1963` `1964` `1965` `1966` `1967` `1968`
+  country   code  `1960` `1961` `1962` `1963` `1964` `1965` `1966` `1967` `1968`
   &lt;chr&gt;     &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
 1 Aruba     ABW   5.46e4 5.58e4 5.67e4 5.75e4 5.82e4 5.88e4 5.93e4 5.95e4 5.95e4
 2 Africa E… AFE   1.31e8 1.34e8 1.38e8 1.42e8 1.46e8 1.50e8 1.54e8 1.58e8 1.63e8
@@ -444,7 +444,7 @@ $ ...68 &lt;dbl&gt; 2023, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>wpop_full</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 266 × 65
-   Country  Code  `1960` `1961` `1962` `1963` `1964` `1965` `1966` `1967` `1968`
+   country  code  `1960` `1961` `1962` `1963` `1964` `1965` `1966` `1967` `1968`
    &lt;chr&gt;    &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
  1 Aruba    ABW   5.46e4 5.58e4 5.67e4 5.75e4 5.82e4 5.88e4 5.93e4 5.95e4 5.95e4
  2 Africa … AFE   1.31e8 1.34e8 1.38e8 1.42e8 1.46e8 1.50e8 1.54e8 1.58e8 1.63e8
@@ -561,9 +561,61 @@ $ ...68 &lt;dbl&gt; 2023, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 </section>
 <section id="exercise-3" class="level1">
 <h1>Exercise 3</h1>
+<p>Use filter() to extract the independent countries from iso_codes_all and save the result as iso_codes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>iso_codes <span class="ot">&lt;-</span> iso_codes_all <span class="sc">|&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(independent <span class="sc">==</span> <span class="st">"Yes"</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>iso_codes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 194 × 3
+   name                iso3  independent
+   &lt;chr&gt;               &lt;chr&gt; &lt;chr&gt;      
+ 1 Afghanistan[c]      AFG   Yes        
+ 2 Albania             ALB   Yes        
+ 3 Algeria             DZA   Yes        
+ 4 Andorra             AND   Yes        
+ 5 Angola              AGO   Yes        
+ 6 Antigua and Barbuda ATG   Yes        
+ 7 Argentina           ARG   Yes        
+ 8 Armenia             ARM   Yes        
+ 9 Australia           AUS   Yes        
+10 Austria             AUT   Yes        
+# ℹ 184 more rows</code></pre>
+</div>
+</div>
 </section>
 <section id="exercise-4" class="level1">
 <h1>Exercise 4</h1>
+<p>Use a suitable join (and/or filter) command to make a dataset wpop only containing those rows of wpop_full which have a matching ISO country code in iso_codes:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># return only rows that have a match in the iso_codes without columns therefore semi_join and not inner_join</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>wpop <span class="ot">&lt;-</span> <span class="fu">semi_join</span>(wpop_full, iso_codes, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"code"</span> <span class="ot">=</span> <span class="st">"iso3"</span>)) </span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>wpop</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 193 × 65
+   country  code  `1960` `1961` `1962` `1963` `1964` `1965` `1966` `1967` `1968`
+   &lt;chr&gt;    &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Afghani… AFG   8.62e6 8.79e6 8.97e6 9.16e6 9.36e6 9.57e6 9.78e6 1.00e7 1.02e7
+ 2 Angola   AGO   5.36e6 5.44e6 5.52e6 5.60e6 5.67e6 5.74e6 5.79e6 5.83e6 5.87e6
+ 3 Albania  ALB   1.61e6 1.66e6 1.71e6 1.76e6 1.81e6 1.86e6 1.91e6 1.97e6 2.02e6
+ 4 Andorra  AND   9.44e3 1.02e4 1.10e4 1.18e4 1.27e4 1.36e4 1.45e4 1.57e4 1.71e4
+ 5 United … ARE   1.33e5 1.41e5 1.49e5 1.57e5 1.65e5 1.74e5 1.83e5 1.91e5 2.14e5
+ 6 Argenti… ARG   2.03e7 2.07e7 2.10e7 2.14e7 2.17e7 2.21e7 2.24e7 2.28e7 2.31e7
+ 7 Armenia  ARM   1.90e6 1.97e6 2.04e6 2.11e6 2.17e6 2.23e6 2.30e6 2.36e6 2.42e6
+ 8 Antigua… ATG   5.53e4 5.62e4 5.70e4 5.78e4 5.87e4 5.96e4 6.06e4 6.16e4 6.27e4
+ 9 Austral… AUS   1.03e7 1.05e7 1.07e7 1.10e7 1.12e7 1.14e7 1.17e7 1.18e7 1.20e7
+10 Austria  AUT   7.05e6 7.09e6 7.13e6 7.18e6 7.22e6 7.27e6 7.32e6 7.38e6 7.42e6
+# ℹ 183 more rows
+# ℹ 54 more variables: `1969` &lt;dbl&gt;, `1970` &lt;dbl&gt;, `1971` &lt;dbl&gt;, `1972` &lt;dbl&gt;,
+#   `1973` &lt;dbl&gt;, `1974` &lt;dbl&gt;, `1975` &lt;dbl&gt;, `1976` &lt;dbl&gt;, `1977` &lt;dbl&gt;,
+#   `1978` &lt;dbl&gt;, `1979` &lt;dbl&gt;, `1980` &lt;dbl&gt;, `1981` &lt;dbl&gt;, `1982` &lt;dbl&gt;,
+#   `1983` &lt;dbl&gt;, `1984` &lt;dbl&gt;, `1985` &lt;dbl&gt;, `1986` &lt;dbl&gt;, `1987` &lt;dbl&gt;,
+#   `1988` &lt;dbl&gt;, `1989` &lt;dbl&gt;, `1990` &lt;dbl&gt;, `1991` &lt;dbl&gt;, `1992` &lt;dbl&gt;,
+#   `1993` &lt;dbl&gt;, `1994` &lt;dbl&gt;, `1995` &lt;dbl&gt;, `1996` &lt;dbl&gt;, `1997` &lt;dbl&gt;, …</code></pre>
+</div>
+</div>
 </section>
 <section id="exercise-5" class="level1">
 <h1>Exercise 5</h1>

@@ -125,10 +125,34 @@ iso_codes_all
 ```
 
 # Exercise 3
+Use filter() to extract the independent countries from iso_codes_all and save the result as iso_codes.
+
+```{r}
+iso_codes <- iso_codes_all |>
+  filter(independent == "Yes")
+
+iso_codes
+```
+
 
 # Exercise 4
+Use a suitable join (and/or filter) command to make a dataset wpop only containing those rows of wpop_full which have a matching ISO country code in iso_codes:
+
+```{r}
+# return only rows that have a match in the iso_codes without columns therefore semi_join and not inner_join
+wpop <- semi_join(wpop_full, iso_codes, by = c("code" = "iso3")) 
+
+wpop
+```
+
 
 # Exercise 5
+Show the countries/areas which have the same ISO country code in both wpop and iso_codes but different (spellings of) country names.
+
+```{r}
+
+```
+
 
 # Exercise 6
 
