@@ -89,7 +89,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#remove-unwanted-columns" id="toc-remove-unwanted-columns" class="nav-link" data-scroll-target="#remove-unwanted-columns">Remove unwanted columns</a></li>
   <li><a href="#wpop_full-result" id="toc-wpop_full-result" class="nav-link" data-scroll-target="#wpop_full-result">wpop_full result</a></li>
   </ul></li>
-  <li><a href="#exercise-2" id="toc-exercise-2" class="nav-link" data-scroll-target="#exercise-2">Exercise 2</a></li>
+  <li><a href="#exercise-2" id="toc-exercise-2" class="nav-link" data-scroll-target="#exercise-2">Exercise 2</a>
+  <ul class="collapse">
+  <li><a href="#web-scrape-data-from-wiki" id="toc-web-scrape-data-from-wiki" class="nav-link" data-scroll-target="#web-scrape-data-from-wiki">Web scrape data from wiki</a></li>
+  <li><a href="#remove-and-rename-columns" id="toc-remove-and-rename-columns" class="nav-link" data-scroll-target="#remove-and-rename-columns">remove and rename columns</a></li>
+  <li><a href="#iso_codes_all-result" id="toc-iso_codes_all-result" class="nav-link" data-scroll-target="#iso_codes_all-result">iso_codes_all result</a></li>
+  </ul></li>
   <li><a href="#exercise-3" id="toc-exercise-3" class="nav-link" data-scroll-target="#exercise-3">Exercise 3</a></li>
   <li><a href="#exercise-4" id="toc-exercise-4" class="nav-link" data-scroll-target="#exercise-4">Exercise 4</a></li>
   <li><a href="#exercise-5" id="toc-exercise-5" class="nav-link" data-scroll-target="#exercise-5">Exercise 5</a></li>
@@ -150,7 +155,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'rvest'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:readr':
+
+    guess_encoding</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>
 Attaching package: 'dplyr'</code></pre>
@@ -176,13 +191,13 @@ Attaching package: 'dplyr'</code></pre>
 <section id="import-data-from-csv" class="level2">
 <h2 class="anchored" data-anchor-id="import-data-from-csv">import data from csv</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>here<span class="sc">::</span><span class="fu">here</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>here<span class="sc">::</span><span class="fu">here</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "C:/Dev/Introduktion_til_data_science/Eksamen_part_1"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data_dir <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"world_population.csv"</span>) <span class="co">#set the directory to were the project and dataset is used</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>wpop_raw_dat <span class="ot">=</span> <span class="fu">read_csv</span>(data_dir, <span class="at">skip =</span> <span class="dv">3</span>) <span class="co"># Read csv file and skip the last update info and empty rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>data_dir <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"world_population.csv"</span>) <span class="co">#set the directory to were the project and dataset is used</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>wpop_raw_dat <span class="ot">=</span> <span class="fu">read_csv</span>(data_dir, <span class="at">skip =</span> <span class="dv">3</span>) <span class="co"># Read csv file and skip the last update info and empty rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>New names:
 Rows: 267 Columns: 68
@@ -261,8 +276,8 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 • `` -&gt; `...67`
 • `` -&gt; `...68`</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lets take a look of the data</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(wpop_raw_dat) <span class="co">#looks like there is a lot of NA's in 2023 and the data dose not have column names</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lets take a look of the data</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(wpop_raw_dat) <span class="co">#looks like there is a lot of NA's in 2023 and the data dose not have column names</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 267
 Columns: 68
@@ -340,15 +355,15 @@ $ ...68 &lt;dbl&gt; 2023, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 <section id="add-column-names-and-renaming" class="level2">
 <h2 class="anchored" data-anchor-id="add-column-names-and-renaming">Add column names and renaming</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(wpop_raw_dat) <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">unlist</span>(wpop_raw_dat[<span class="dv">1</span>,])) <span class="co"># Make the first row the column names</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># next two steps are need to remove exstra column added when making column names</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>wpop_raw_dat <span class="ot">&lt;-</span> wpop_raw_dat[<span class="sc">-</span><span class="dv">1</span>, ] <span class="co"># Remove the first row</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(wpop_raw_dat) <span class="ot">&lt;-</span> <span class="cn">NULL</span> <span class="co"># Reset row names</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wpop_raw_dat) <span class="co"># Confirm that data set now have column names</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(wpop_raw_dat) <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">unlist</span>(wpop_raw_dat[<span class="dv">1</span>,])) <span class="co"># Make the first row the column names</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># next two steps are need to remove exstra column added when making column names</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>wpop_raw_dat <span class="ot">&lt;-</span> wpop_raw_dat[<span class="sc">-</span><span class="dv">1</span>, ] <span class="co"># Remove the first row</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(wpop_raw_dat) <span class="ot">&lt;-</span> <span class="cn">NULL</span> <span class="co"># Reset row names</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wpop_raw_dat) <span class="co"># Confirm that data set now have column names</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 68
   `Country Name`  `Country Code` `Indicator Name` `Indicator Code` `1960` `1961`
@@ -367,13 +382,13 @@ $ ...68 &lt;dbl&gt; 2023, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 #   `1986` &lt;dbl&gt;, `1987` &lt;dbl&gt;, `1988` &lt;dbl&gt;, `1989` &lt;dbl&gt;, `1990` &lt;dbl&gt;,
 #   `1991` &lt;dbl&gt;, `1992` &lt;dbl&gt;, `1993` &lt;dbl&gt;, `1994` &lt;dbl&gt;, `1995` &lt;dbl&gt;, …</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>wpop_raw_dat <span class="ot">&lt;-</span> wpop_raw_dat <span class="sc">|&gt;</span> <span class="co"># Rename of duplicated meaning in column names</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">Country =</span> <span class="st">`</span><span class="at">Country Name</span><span class="st">`</span>,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Code =</span> <span class="st">`</span><span class="at">Country Code</span><span class="st">`</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wpop_raw_dat) <span class="co"># see data structure</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>wpop_raw_dat <span class="ot">&lt;-</span> wpop_raw_dat <span class="sc">|&gt;</span> <span class="co"># Rename of duplicated meaning in column names</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">Country =</span> <span class="st">`</span><span class="at">Country Name</span><span class="st">`</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Code =</span> <span class="st">`</span><span class="at">Country Code</span><span class="st">`</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wpop_raw_dat) <span class="co"># see data structure</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 68
   Country    Code  `Indicator Name` `Indicator Code` `1960` `1961` `1962` `1963`
@@ -397,10 +412,10 @@ $ ...68 &lt;dbl&gt; 2023, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 <section id="remove-unwanted-columns" class="level2">
 <h2 class="anchored" data-anchor-id="remove-unwanted-columns">Remove unwanted columns</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>wpop_raw_dat <span class="ot">&lt;-</span> wpop_raw_dat <span class="sc">|&gt;</span> <span class="co"># remove column "indicator Name" and "Indicator Code".</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="st">`</span><span class="at">Indicator Name</span><span class="st">`</span>, <span class="sc">-</span><span class="st">`</span><span class="at">Indicator Code</span><span class="st">`</span>)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wpop_raw_dat) <span class="co"># confirm that columns have been removed.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>wpop_raw_dat <span class="ot">&lt;-</span> wpop_raw_dat <span class="sc">|&gt;</span> <span class="co"># remove column "indicator Name" and "Indicator Code".</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="st">`</span><span class="at">Indicator Name</span><span class="st">`</span>, <span class="sc">-</span><span class="st">`</span><span class="at">Indicator Code</span><span class="st">`</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wpop_raw_dat) <span class="co"># confirm that columns have been removed.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 66
   Country   Code  `1960` `1961` `1962` `1963` `1964` `1965` `1966` `1967` `1968`
@@ -419,82 +434,35 @@ $ ...68 &lt;dbl&gt; 2023, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 #   `1993` &lt;dbl&gt;, `1994` &lt;dbl&gt;, `1995` &lt;dbl&gt;, `1996` &lt;dbl&gt;, `1997` &lt;dbl&gt;,
 #   `1998` &lt;dbl&gt;, `1999` &lt;dbl&gt;, `2000` &lt;dbl&gt;, `2001` &lt;dbl&gt;, `2002` &lt;dbl&gt;, …</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>wpop_full <span class="ot">&lt;-</span> wpop_raw_dat <span class="sc">|&gt;</span> <span class="co"># Remove year 2023 so that 2022 is last column</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="st">`</span><span class="at">2023</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>wpop_full <span class="ot">&lt;-</span> wpop_raw_dat <span class="sc">|&gt;</span> <span class="co"># Remove year 2023 so that 2022 is last column</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="st">`</span><span class="at">2023</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="wpop_full-result" class="level2">
 <h2 class="anchored" data-anchor-id="wpop_full-result">wpop_full result</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(wpop_full)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>wpop_full</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 266
-Columns: 65
-$ Country &lt;chr&gt; "Aruba", "Africa Eastern and Southern", "Afghanistan", "Africa…
-$ Code    &lt;chr&gt; "ABW", "AFE", "AFG", "AFW", "AGO", "ALB", "AND", "ARB", "ARE",…
-$ `1960`  &lt;dbl&gt; 54608, 130692579, 8622466, 97256290, 5357195, 1608800, 9443, 9…
-$ `1961`  &lt;dbl&gt; 55811, 134169237, 8790140, 99314028, 5441333, 1659800, 10216, …
-$ `1962`  &lt;dbl&gt; 56682, 137835590, 8969047, 101445032, 5521400, 1711319, 11014,…
-$ `1963`  &lt;dbl&gt; 57475, 141630546, 9157465, 103667517, 5599827, 1762621, 11839,…
-$ `1964`  &lt;dbl&gt; 58178, 145605995, 9355514, 105959979, 5673199, 1814135, 12690,…
-$ `1965`  &lt;dbl&gt; 58782, 149742351, 9565147, 108336203, 5736582, 1864791, 13563,…
-$ `1966`  &lt;dbl&gt; 59291, 153955516, 9783147, 110798486, 5787044, 1914573, 14546,…
-$ `1967`  &lt;dbl&gt; 59522, 158313235, 10010030, 113319950, 5827503, 1965598, 15745…
-$ `1968`  &lt;dbl&gt; 59471, 162875171, 10247780, 115921723, 5868203, 2022272, 17079…
-$ `1969`  &lt;dbl&gt; 59330, 167596160, 10494489, 118615741, 5928386, 2081695, 18449…
-$ `1970`  &lt;dbl&gt; 59106, 172475766, 10752971, 121424797, 6029700, 2135479, 19860…
-$ `1971`  &lt;dbl&gt; 58816, 177503186, 11015857, 124336039, 6177049, 2187853, 21322…
-$ `1972`  &lt;dbl&gt; 58855, 182599092, 11286753, 127364044, 6364731, 2243126, 22832…
-$ `1973`  &lt;dbl&gt; 59365, 187901657, 11575305, 130563107, 6578230, 2296752, 24393…
-$ `1974`  &lt;dbl&gt; 60028, 193512956, 11869879, 133953892, 6802494, 2350124, 26003…
-$ `1975`  &lt;dbl&gt; 60715, 199284304, 12157386, 137548613, 7032713, 2404831, 27640…
-$ `1976`  &lt;dbl&gt; 61193, 205202669, 12425267, 141258400, 7266780, 2458526, 29294…
-$ `1977`  &lt;dbl&gt; 61465, 211120911, 12687301, 145122851, 7511895, 2513546, 30949…
-$ `1978`  &lt;dbl&gt; 61738, 217481420, 12938862, 149206663, 7771590, 2566266, 32574…
-$ `1979`  &lt;dbl&gt; 62006, 224315978, 12986369, 153459665, 8043218, 2617832, 34142…
-$ `1980`  &lt;dbl&gt; 62267, 230967858, 12486631, 157825609, 8330047, 2671997, 35611…
-$ `1981`  &lt;dbl&gt; 62614, 237937461, 11155195, 162323313, 8631457, 2726056, 36987…
-$ `1982`  &lt;dbl&gt; 63116, 245386717, 10088289, 167023385, 8947152, 2784278, 38598…
-$ `1983`  &lt;dbl&gt; 63683, 252779730, 9951449, 171566640, 9276707, 2843960, 40432,…
-$ `1984`  &lt;dbl&gt; 64174, 260209149, 10243686, 176054495, 9617702, 2904429, 42181…
-$ `1985`  &lt;dbl&gt; 64478, 267938123, 10512221, 180817312, 9970621, 2964762, 43809…
-$ `1986`  &lt;dbl&gt; 64553, 276035920, 10448442, 185720244, 10332574, 3022635, 4560…
-$ `1987`  &lt;dbl&gt; 64450, 284490394, 10322758, 190759952, 10694057, 3083605, 4763…
-$ `1988`  &lt;dbl&gt; 64332, 292795186, 10383460, 195969722, 11060261, 3142336, 4965…
-$ `1989`  &lt;dbl&gt; 64596, 301124880, 10673168, 201392200, 11439498, 3227943, 5163…
-$ `1990`  &lt;dbl&gt; 65712, 309890664, 10694796, 206739024, 11828638, 3286542, 5356…
-$ `1991`  &lt;dbl&gt; 67864, 318544083, 10745167, 212172888, 12228691, 3266790, 5543…
-$ `1992`  &lt;dbl&gt; 70192, 326933522, 12057433, 217966101, 12632507, 3247039, 5728…
-$ `1993`  &lt;dbl&gt; 72360, 335625136, 14003760, 223788766, 13038270, 3227287, 5915…
-$ `1994`  &lt;dbl&gt; 74710, 344418362, 15455555, 229675775, 13462031, 3207536, 6103…
-$ `1995`  &lt;dbl&gt; 77050, 353466601, 16418912, 235861484, 13912253, 3187784, 6292…
-$ `1996`  &lt;dbl&gt; 79417, 362985802, 17106595, 242200260, 14383350, 3168033, 6414…
-$ `1997`  &lt;dbl&gt; 81858, 372352230, 17788819, 248713095, 14871146, 3148281, 6468…
-$ `1998`  &lt;dbl&gt; 84355, 381715600, 18493132, 255482918, 15366864, 3128530, 6518…
-$ `1999`  &lt;dbl&gt; 86867, 391486231, 19262847, 262397030, 15870753, 3108778, 6565…
-$ `2000`  &lt;dbl&gt; 89101, 401600588, 19542982, 269611898, 16394062, 3089027, 6609…
-$ `2001`  &lt;dbl&gt; 90691, 412001885, 19688632, 277160097, 16941587, 3060173, 6782…
-$ `2002`  &lt;dbl&gt; 91781, 422741118, 21000256, 284952322, 17516139, 3051010, 7084…
-$ `2003`  &lt;dbl&gt; 92701, 433807484, 22645130, 292977949, 18124342, 3039616, 7390…
-$ `2004`  &lt;dbl&gt; 93540, 445281555, 23553551, 301265247, 18771125, 3026939, 7693…
-$ `2005`  &lt;dbl&gt; 94483, 457153837, 24411191, 309824829, 19450959, 3011487, 7982…
-$ `2006`  &lt;dbl&gt; 95606, 469508516, 25442944, 318601484, 20162340, 2992547, 8022…
-$ `2007`  &lt;dbl&gt; 96787, 482406426, 25903301, 327612838, 20909684, 2970017, 7816…
-$ `2008`  &lt;dbl&gt; 97996, 495748900, 26427199, 336893835, 21691522, 2947314, 7605…
-$ `2009`  &lt;dbl&gt; 99212, 509410477, 27385307, 346475221, 22507674, 2927519, 7385…
-$ `2010`  &lt;dbl&gt; 100341, 523459657, 28189672, 356337762, 23364185, 2913021, 715…
-$ `2011`  &lt;dbl&gt; 101288, 537792950, 29249157, 366489204, 24259111, 2905195, 705…
-$ `2012`  &lt;dbl&gt; 102112, 552530654, 30466479, 376797999, 25188292, 2900401, 710…
-$ `2013`  &lt;dbl&gt; 102880, 567892149, 31541209, 387204553, 26147002, 2895092, 713…
-$ `2014`  &lt;dbl&gt; 103594, 583651101, 32716210, 397855507, 27128337, 2889104, 716…
-$ `2015`  &lt;dbl&gt; 104257, 600008424, 33753499, 408690375, 28127721, 2880703, 717…
-$ `2016`  &lt;dbl&gt; 104874, 616377605, 34636207, 419778384, 29154746, 2876101, 725…
-$ `2017`  &lt;dbl&gt; 105439, 632746570, 35643418, 431138704, 30208628, 2873457, 738…
-$ `2018`  &lt;dbl&gt; 105962, 649757148, 36686784, 442646825, 31273533, 2866376, 750…
-$ `2019`  &lt;dbl&gt; 106442, 667242986, 37769499, 454306063, 32353588, 2854191, 763…
-$ `2020`  &lt;dbl&gt; 106585, 685112979, 38972230, 466189102, 33428486, 2837849, 777…
-$ `2021`  &lt;dbl&gt; 106537, 702977106, 40099462, 478185907, 34503774, 2811666, 790…
-$ `2022`  &lt;dbl&gt; 106445, 720859132, 41128771, 490330870, 35588987, 2777689, 798…</code></pre>
+<pre><code># A tibble: 266 × 65
+   Country  Code  `1960` `1961` `1962` `1963` `1964` `1965` `1966` `1967` `1968`
+   &lt;chr&gt;    &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Aruba    ABW   5.46e4 5.58e4 5.67e4 5.75e4 5.82e4 5.88e4 5.93e4 5.95e4 5.95e4
+ 2 Africa … AFE   1.31e8 1.34e8 1.38e8 1.42e8 1.46e8 1.50e8 1.54e8 1.58e8 1.63e8
+ 3 Afghani… AFG   8.62e6 8.79e6 8.97e6 9.16e6 9.36e6 9.57e6 9.78e6 1.00e7 1.02e7
+ 4 Africa … AFW   9.73e7 9.93e7 1.01e8 1.04e8 1.06e8 1.08e8 1.11e8 1.13e8 1.16e8
+ 5 Angola   AGO   5.36e6 5.44e6 5.52e6 5.60e6 5.67e6 5.74e6 5.79e6 5.83e6 5.87e6
+ 6 Albania  ALB   1.61e6 1.66e6 1.71e6 1.76e6 1.81e6 1.86e6 1.91e6 1.97e6 2.02e6
+ 7 Andorra  AND   9.44e3 1.02e4 1.10e4 1.18e4 1.27e4 1.36e4 1.45e4 1.57e4 1.71e4
+ 8 Arab Wo… ARB   9.34e7 9.58e7 9.83e7 1.01e8 1.04e8 1.06e8 1.09e8 1.12e8 1.16e8
+ 9 United … ARE   1.33e5 1.41e5 1.49e5 1.57e5 1.65e5 1.74e5 1.83e5 1.91e5 2.14e5
+10 Argenti… ARG   2.03e7 2.07e7 2.10e7 2.14e7 2.17e7 2.21e7 2.24e7 2.28e7 2.31e7
+# ℹ 256 more rows
+# ℹ 54 more variables: `1969` &lt;dbl&gt;, `1970` &lt;dbl&gt;, `1971` &lt;dbl&gt;, `1972` &lt;dbl&gt;,
+#   `1973` &lt;dbl&gt;, `1974` &lt;dbl&gt;, `1975` &lt;dbl&gt;, `1976` &lt;dbl&gt;, `1977` &lt;dbl&gt;,
+#   `1978` &lt;dbl&gt;, `1979` &lt;dbl&gt;, `1980` &lt;dbl&gt;, `1981` &lt;dbl&gt;, `1982` &lt;dbl&gt;,
+#   `1983` &lt;dbl&gt;, `1984` &lt;dbl&gt;, `1985` &lt;dbl&gt;, `1986` &lt;dbl&gt;, `1987` &lt;dbl&gt;,
+#   `1988` &lt;dbl&gt;, `1989` &lt;dbl&gt;, `1990` &lt;dbl&gt;, `1991` &lt;dbl&gt;, `1992` &lt;dbl&gt;,
+#   `1993` &lt;dbl&gt;, `1994` &lt;dbl&gt;, `1995` &lt;dbl&gt;, `1996` &lt;dbl&gt;, `1997` &lt;dbl&gt;, …</code></pre>
 </div>
 </div>
 </section>
@@ -502,6 +470,94 @@ $ `2022`  &lt;dbl&gt; 106445, 720859132, 41128771, 490330870, 35588987, 2777689,
 <section id="exercise-2" class="level1">
 <h1>Exercise 2</h1>
 <p>Use the package rvest to read in the list of country codes from the main table at https://en.wikipedia.org/wiki/ISO_3166-1 and select/deselect and rename columns so you end up with a tibble (tbl) named iso_codes_all with 249 rows and 3 columns with names as shown in the output below.</p>
+<section id="web-scrape-data-from-wiki" class="level2">
+<h2 class="anchored" data-anchor-id="web-scrape-data-from-wiki">Web scrape data from wiki</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://en.wikipedia.org/wiki/ISO_3166-1"</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>webpage <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>tables <span class="ot">&lt;-</span> webpage <span class="sc">|&gt;</span> </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">"table"</span>)  <span class="co"># Specify the CSS selector for the table. "html_nodes" takes all tables. "html_node" takes only the first.</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tables) <span class="co"># we need table number 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{xml_nodeset (5)}
+[1] &lt;table class="wikitable sortable"&gt;&lt;tbody&gt;\n&lt;tr&gt;\n&lt;th&gt;Short name &lt;br&gt; uppe ...
+[2] &lt;table class="wikitable sortable sticky-header"&gt;\n&lt;caption&gt;ISO 3166-1 tab ...
+[3] &lt;table class="wikitable"&gt;&lt;tbody&gt;\n&lt;tr&gt;\n&lt;th scope="col"&gt;Edition/Newslette ...
+[4] &lt;table class="nowraplinks hlist mw-collapsible autocollapse navbox-inner" ...
+[5] &lt;table class="nowraplinks navbox-subgroup" style="border-spacing:0"&gt;&lt;tbod ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>raw_dat <span class="ot">&lt;-</span> tables[[<span class="dv">2</span>]] <span class="sc">|&gt;</span>    <span class="co"># number 2 table aka ISO 3166-1 table</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>()            <span class="co"># Convert the HTML table to a data frame</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(raw_dat) <span class="co"># OBS Afghanistan[c] the [C] means that the country is under that category "Naming and disputes" which is correct</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  English short name  (using titl…¹ `Alpha-2 code` `Alpha-3 code` `Numeric code`
+  &lt;chr&gt;                             &lt;chr&gt;          &lt;chr&gt;                   &lt;int&gt;
+1 Afghanistan[c]                    AF             AFG                         4
+2 Åland Islands                     AX             ALA                       248
+3 Albania                           AL             ALB                         8
+4 Algeria                           DZ             DZA                        12
+5 American Samoa                    AS             ASM                        16
+6 Andorra                           AD             AND                        20
+# ℹ abbreviated name: ¹​`English short name  (using title case)`
+# ℹ 2 more variables: `Link to ISO 3166-2` &lt;chr&gt;, `Independent[b]` &lt;chr&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="remove-and-rename-columns" class="level2">
+<h2 class="anchored" data-anchor-id="remove-and-rename-columns">remove and rename columns</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(raw_dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "English short name  (using title case)"
+[2] "Alpha-2 code"                          
+[3] "Alpha-3 code"                          
+[4] "Numeric code"                          
+[5] "Link to ISO 3166-2"                    
+[6] "Independent[b]"                        </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>raw_dat <span class="ot">&lt;-</span> raw_dat <span class="sc">|&gt;</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">`</span><span class="at">English short name  (using title case)</span><span class="st">`</span>,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">iso3 =</span> <span class="st">`</span><span class="at">Alpha-3 code</span><span class="st">`</span>,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">independent =</span> <span class="st">`</span><span class="at">Independent[b]</span><span class="st">`</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(raw_dat) <span class="co">#check rename was done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "name"               "Alpha-2 code"       "iso3"              
+[4] "Numeric code"       "Link to ISO 3166-2" "independent"       </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>iso_codes_all <span class="ot">&lt;-</span> raw_dat <span class="sc">|&gt;</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, iso3, independent)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="iso_codes_all-result" class="level2">
+<h2 class="anchored" data-anchor-id="iso_codes_all-result">iso_codes_all result</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>iso_codes_all</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 249 × 3
+   name                iso3  independent
+   &lt;chr&gt;               &lt;chr&gt; &lt;chr&gt;      
+ 1 Afghanistan[c]      AFG   Yes        
+ 2 Åland Islands       ALA   No         
+ 3 Albania             ALB   Yes        
+ 4 Algeria             DZA   Yes        
+ 5 American Samoa      ASM   No         
+ 6 Andorra             AND   Yes        
+ 7 Angola              AGO   Yes        
+ 8 Anguilla            AIA   No         
+ 9 Antarctica          ATA   No         
+10 Antigua and Barbuda ATG   Yes        
+# ℹ 239 more rows</code></pre>
+</div>
+</div>
+</section>
 </section>
 <section id="exercise-3" class="level1">
 <h1>Exercise 3</h1>
