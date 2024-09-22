@@ -207,6 +207,9 @@ continents
 
 
 # Exercise 7
+Make a new dataset wpop2 by extending wpop with the extra column continent from the continents data (possibly using relocate() to move the continent column to the left to see it more clearly).
+
+
 
 # Exercise 8
 
