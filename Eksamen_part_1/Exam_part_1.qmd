@@ -73,7 +73,7 @@ wpop_full <- wpop_raw_dat |> # Remove year 2023 so that 2022 is last column
 ```
 ## wpop_full result
 ```{r}
-glimpse(wpop_full)
+print(wpop_full)
 ```
 
 
