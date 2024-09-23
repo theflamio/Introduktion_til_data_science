@@ -12,7 +12,9 @@ format:
 ```{r}
 library(readr)
 library(rvest)
+library(tidyverse)
 library(dplyr)
+library(ggplot2)
 ```
 
 
@@ -220,14 +222,64 @@ wpop2
 
 
 # Exercise 8
+Use pivot_longer() to reshape wpop2 into “long format” with columns as shown below (in particular make sure year is a numeric variable) and call the resulting tibble pop_long.
+
+```{r}
+pop_long <- wpop2 |>
+  pivot_longer(cols = `1960`:`2022`,  # Columns to pivot (year columns)
+               names_to = "year",     # New column for years
+               values_to = "pop")     # New column for population values
+
+pop_long <- pop_long |>
+  mutate(year = as.numeric(year))  # Convert year to numeric
+
+pop_long
+```
 
 # Exercise 9
+Make a line plot showing the population over all the years in the data with one line per country with semi-transparent lines.
+
+```{r}
+ggplot(pop_long, aes(x = year, y = pop, group = country)) +
+  geom_line(alpha = 0.4) +
+  labs(title = "Population Growth Over Time by Country",
+       x = "Year",
+       y = "Population",) +
+  scale_x_continuous(breaks = seq(1960, 2022, by = 20))
+```
+
 
 # Exercise 10
+Use the code below to rescale each country’s population size to an population index which in 1 for every country in 1960. An index value of e.g. 2 would mean that the population size of that country has doubled since 1960.
+
+```{r}
+pop_index <- pop_long |> 
+  group_by(country,continent,code) |> 
+  mutate(pop_index = pop/pop[1])
+```
+
 
 # Exercise 11
+Make a line plot showing the indexed population numbers over all the years in the data with one line per country with semi-transparent lines.
+
+```{r}
+ggplot(pop_index, aes(x = year, y = pop_index, group = country)) +
+  geom_line(alpha = 0.4) +
+  labs(title = "Population Growth Over Time by Country",
+       subtitle = "Index 2 = double population size since 1960",
+       x = "Year",
+       y = "Population index for each country") +
+  scale_x_continuous(breaks = seq(1960, 2022, by = 20))
+```
+
 
 # Exercise 12
+Identify the two countries with extreme population indices and make a new line plot showing the indexed population numbers over all the years in the data with one line per country with semi-transparent lines without these two countries.
+
+```{r}
+
+```
+
 
 # Exercise 13
 
