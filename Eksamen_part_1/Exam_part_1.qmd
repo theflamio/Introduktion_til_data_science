@@ -209,6 +209,14 @@ continents
 # Exercise 7
 Make a new dataset wpop2 by extending wpop with the extra column continent from the continents data (possibly using relocate() to move the continent column to the left to see it more clearly).
 
+```{r}
+join_data <- full_join(wpop, continents, by = c("code" = "iso3")) #join wpop and continent table.
+
+wpop2 <- join_data |>
+  relocate(continent, .before = country) # set continent to left of country
+
+wpop2
+```
 
 
 # Exercise 8
