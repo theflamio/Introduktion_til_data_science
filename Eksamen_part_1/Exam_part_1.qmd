@@ -15,6 +15,7 @@ library(rvest)
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
+library(plotly)
 ```
 
 
@@ -253,7 +254,7 @@ ggplot(pop_long, aes(x = year, y = pop, group = country)) +
 Use the code below to rescale each country’s population size to an population index which in 1 for every country in 1960. An index value of e.g. 2 would mean that the population size of that country has doubled since 1960.
 
 ```{r}
-pop_index <- pop_long |> 
+pop_index_data <- pop_long |> 
   group_by(country,continent,code) |> 
   mutate(pop_index = pop/pop[1])
 ```
@@ -263,21 +264,51 @@ pop_index <- pop_long |>
 Make a line plot showing the indexed population numbers over all the years in the data with one line per country with semi-transparent lines.
 
 ```{r}
-ggplot(pop_index, aes(x = year, y = pop_index, group = country)) +
+plt <- ggplot(pop_index_data, aes(x = year, y = pop_index, group = country)) +
   geom_line(alpha = 0.4) +
-  labs(title = "Population Growth Over Time by Country",
-       subtitle = "Index 2 = double population size since 1960",
+  labs(title = "Population Growth Over Time by Country\nIndex 2 = double population size since 1960",
        x = "Year",
        y = "Population index for each country") +
   scale_x_continuous(breaks = seq(1960, 2022, by = 20))
+
+interactive_plot <- ggplotly(plt) # Make the plot interactive
+
+interactive_plot # Display the interactive plot
 ```
 
 
 # Exercise 12
 Identify the two countries with extreme population indices and make a new line plot showing the indexed population numbers over all the years in the data with one line per country with semi-transparent lines without these two countries.
 
+## Identify two countries with extreme population indices
 ```{r}
+# method 1 use the interactive map above which show United Arab Emirates and Qatar are extreme.
 
+extreme_pop_index <- pop_index_data |>
+  filter(pop_index > 60) |> # 60 because only two countries in 2020 are above it and can be considered extreme.
+  select(country) |>
+  distinct()
+
+extreme_pop_index #United Arab Emirates and Qatar must be removed. This 
+
+pop_index_data <- pop_index_data |>
+  filter(!country %in% c("United Arab Emirates", "Qatar"))
+```
+
+
+## new plot without extreme popultation index
+
+```{r}
+plt <- ggplot(pop_index_data, aes(x = year, y = pop_index, group = country)) +
+  geom_line(alpha = 0.4) +
+  labs(title = "Without Qatar and UAE\nIndex 2 = double population size since 1960",
+       x = "Year",
+       y = "Population index for each country") +
+  scale_x_continuous(breaks = seq(1960, 2022, by = 20))
+
+interactive_plot <- ggplotly(plt) # Make the plot interactive
+
+interactive_plot # Display the interactive plot
 ```
 
 
