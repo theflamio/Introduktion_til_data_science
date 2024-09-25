@@ -317,15 +317,19 @@ Run the following command and describe in a few words what the result growth_lon
 
 ```{r}
 growth_long <- pop_long |> 
-  group_by(country,continent,code) |> 
-  reframe(pop_start = pop[1:(length(pop)-1)], 
-          pop_end = pop[2:length(pop)], 
-          growth = 100*(pop_end-pop_start)/pop_start, 
-          end_year = year[2:length(year)])
+  group_by(country,continent,code) |>                 # groups country first then continent and finally code. 
+  reframe(pop_start = pop[1:(length(pop)-1)],         # take all elements of "pop" except last.
+          pop_end = pop[2:length(pop)],               # take all elements of "pop" except first.
+          growth = 100*(pop_end-pop_start)/pop_start, # Calculate the growth rate between years "in %".
+          end_year = year[2:length(year)])            # End of year of each interval
 
 growth_long
 
-# explain
+# explain it wiht few words:
+
+# Population start year is 1960 which is the fist pop_start of each country.
+# pop_end is the population count by the end of the year. example 1960 - 1961 which is then the pop_stat in 1961.
+# growth is the percentage growth of the population each year.
 ```
 
 # Exercise 14
