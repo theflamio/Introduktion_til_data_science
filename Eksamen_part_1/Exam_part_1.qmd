@@ -167,7 +167,9 @@ result
 
 
 # Exercise 6
-Use the package rvest to read in the list of countries with corresponding continent codes from the main table at https://en.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_by_continent_(data_file) and select/deselect and rename columns so you end up with a tibble (tbl) named continents with 253 rows and 2 columns with names as shown in the output below.
+Use the package rvest to read in the list of countries with corresponding continent codes from the main table at https://en.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_by_continent_(data_file) 
+and select/deselect and rename columns so you end up with a tibble (tbl) named continents with 253 rows and 
+2 columns with names as shown in the output below.
 
 Important hint: you need convert = FALSE in html_table() to avoid the text string "NA" (North America) to be interpreted as missing data (Not Available).
 
@@ -321,7 +323,7 @@ growth_long <- pop_long |>
   reframe(pop_start = pop[1:(length(pop)-1)],         # take all elements of "pop" except last.
           pop_end = pop[2:length(pop)],               # take all elements of "pop" except first.
           growth = 100*(pop_end-pop_start)/pop_start, # Calculate the growth rate between years "in %".
-          end_year = year[2:length(year)])            # End of year of each interval
+          end_year = year[2:length(year)])            # End of year of each interval "remove 1960"
 
 growth_long
 
@@ -346,8 +348,26 @@ ggplot(growth_long, aes(end_year, growth, group = country))+
 
 
 # Exercise 15
+Make a similar graphic as above but with one panel/facet per continent.
+
+```{r}
+ggplot(growth_long, aes(end_year, growth, group = country))+
+  geom_line(alpha = 0.4) +
+    labs(title = "Population growth per year in percentage each county",
+         x = "Year",
+         y = "Year-to-year population growth in pct") +
+    scale_x_continuous(breaks = seq(1960, 2022, by = 20)) +
+  facet_wrap(~ continent)  # Create one panel per continent
+```
+
 
 # Exercise 16
+For each country find both the largest positive and the smallest (most negative) growth over the years in the data so you end up with a tibble (tbl) named growth_range with 193 rows and 3 columns with names as shown in the output below. hint: group_by() and summarise() are your friends.
+
+```{r}
+
+```
+
 
 # Exercise 17
 
