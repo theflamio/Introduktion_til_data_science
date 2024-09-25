@@ -333,6 +333,17 @@ growth_long
 ```
 
 # Exercise 14
+Make a line plot showing the population over all the years in the data with one line per country with semi-transparent lines.
+
+```{r}
+ggplot(growth_long, aes(end_year, growth, group = country))+
+  geom_line(alpha = 0.4) +
+    labs(title = "Population growth per year in percentage",
+         x = "Year",
+         y = "Year-to-year population growth in pct") +
+    scale_x_continuous(breaks = seq(1960, 2022, by = 20))
+```
+
 
 # Exercise 15
 
