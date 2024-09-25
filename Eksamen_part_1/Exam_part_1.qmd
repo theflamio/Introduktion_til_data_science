@@ -375,8 +375,18 @@ growth_range
 
 
 # Exercise 17
+Find the 10 countries which have experienced the largest growth percentage of all at some point over the years in the data.
+
+```{r}
+top10
+```
 
 # Exercise 18
+Find the 10 countries which have experienced the most negative growth percentage of all at some point over the years in the data.
+
+```{r}
+bottom10
+```
 
 # Exercise 19
 
