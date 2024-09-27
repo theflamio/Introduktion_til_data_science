@@ -378,6 +378,10 @@ growth_range
 Find the 10 countries which have experienced the largest growth percentage of all at some point over the years in the data.
 
 ```{r}
+top10 <- growth_range |>
+  arrange(desc(max_growth)) |> # Sort by max growth in descending order (largest to smallest)
+  head(10)
+
 top10
 ```
 
@@ -385,10 +389,20 @@ top10
 Find the 10 countries which have experienced the most negative growth percentage of all at some point over the years in the data.
 
 ```{r}
+bottom10 <- growth_range |>
+  arrange(min_growth) |> # Sort by min growth in with arranage() (smallest to largest)
+  head(10)
+
 bottom10
 ```
 
 # Exercise 19
+Make a line plot showing the population over all the years in the data with different colours for each country represented in top10.
+
+```{r}
+
+```
+
 
 # Exercise 20
 
