@@ -418,7 +418,7 @@ Use pivot_wider() to reshape growth_long to wide format with one column per year
 
 ```{r}
 growth <- growth_long |>
-  select(country, continent, code, end_year, growth) |> # select relevant columns
+  select(country, continent, code, end_year, growth) |> # select relevant columns otherwise pop_start and end will ruin it
   pivot_wider(
     names_from = end_year,
     values_from = growth
@@ -430,9 +430,80 @@ growth
 
 
 # Exercise 21
+Make a hierarchical clustering of the growth data in 9 groups. The following hints can be used to achieve this:
+
+clustering is unsupervised learning where our input data have no labels. Clustering can help us with this to group our data 
+and label them.
+
+## 1: Remove non-numerical columns from data
+```{r}
+# growth_Numerical <- growth |>  # Filter(is.numeric, df) could also have been used.
+#   select_if(is.numeric)
+
+growth_Numerical <- Filter(is.numeric, growth)
+
+growth_Numerical
+```
+
+
+## 2: Calculate distances
+First I want to make sure my data needs to be Standardize
+```{r}
+growth_Numerical2 <- scale(growth_Numerical)
+
+distances_non_scaled <- dist(growth_Numerical, method = "euclidean")
+
+distances_scaled <- dist(growth_Numerical2, method = "euclidean")
+
+summary(distances_non_scaled)
+summary(distances_scaled)
+
+
+# Conclusion the mean moves from not scaled 15.8 to 9 that is huge so scaling is diffently needed. Data must be Standardize
+
+distances_scaled
+
+```
+
+## 3: Use hclust() to run the clustering algorithm
+```{r}
+clustering <- hclust(distances_scaled)
+clustering
+```
+
+## 4: Use cutree() to make the cluster labels
+```{r}
+cutree(clustering,)
+```
+
+## 5: Use mutate to add the cluster label as a variable to growth
+```{r}
+
+```
 
 # Exercise 22
+Use group_split() and lapply() similarly to below to extract the countries of each cluster
+and display them nicely with pander::pander():
+
+```{r}
+growth_clust |> 
+  group_split(clust) |> 
+  lapply(function(x) x$country) |> 
+  pander::pander()
+```
+
 
 # Exercise 23
+Use pivot_longer() to convert growth_clust to long format and plot growth as a function of time with a panel/facet for each cluster.
 
 # Exercise 24
+The code below can be used to calculate average growth rates over several years.
+
+```{r}
+agg_year <- 5
+aggr_growth_long <- growth_long |>
+  mutate(period=((end_year - min(end_year)) %/% agg_year) * agg_year + min(end_year)) |> 
+  group_by(period, code, country, continent) |> summarise(pop = mean(growth))
+```
+
+Use the clustering technique of the previous exercise to divide the data into different clusters. Experiment with several period lengths (aggregation years) and number of clusters and show results for at least one combination of agg_year and number of clusters. An example is given below.
