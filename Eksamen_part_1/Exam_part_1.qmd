@@ -286,12 +286,12 @@ Identify the two countries with extreme population indices and make a new line p
 ```{r}
 # method 1 use the interactive map above which show United Arab Emirates and Qatar are extreme.
 
-extreme_pop_index <- pop_index_data |>
+extreme_pop_indices <- pop_index_data |>
   filter(pop_index > 60) |> # 60 because only two countries in 2020 are above it and can be considered extreme.
   select(country) |>
   distinct()
 
-extreme_pop_index #United Arab Emirates and Qatar must be removed. This 
+extreme_pop_indices #United Arab Emirates and Qatar must be removed. This 
 
 pop_index_data <- pop_index_data |>
   filter(!country %in% c("United Arab Emirates", "Qatar"))
@@ -402,7 +402,7 @@ Make a line plot showing the population over all the years in the data with diff
 ```{r}
 top10Years <- growth_long |>
   inner_join(top10, by = "country") |>
-  select(country, growth, end_year)
+  select(country, growth, end_year) # select relevant columns
 
 ggplot(top10Years, aes(end_year, growth, group = country, color = country))+
   geom_line(alpha = 0.6) +
@@ -414,6 +414,20 @@ ggplot(top10Years, aes(end_year, growth, group = country, color = country))+
 
 
 # Exercise 20
+Use pivot_wider() to reshape growth_long to wide format with one column per year and call the result growth.
+
+```{r}
+growth <- growth_long |>
+  select(country, continent, code, end_year, growth) |> # select relevant columns
+  pivot_wider(
+    names_from = end_year,
+    values_from = growth
+  ) |>
+    arrange(country)
+
+growth
+```
+
 
 # Exercise 21
 
