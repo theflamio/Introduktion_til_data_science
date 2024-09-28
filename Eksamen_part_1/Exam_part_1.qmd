@@ -400,7 +400,16 @@ bottom10
 Make a line plot showing the population over all the years in the data with different colours for each country represented in top10.
 
 ```{r}
+top10Years <- growth_long |>
+  inner_join(top10, by = "country") |>
+  select(country, growth, end_year)
 
+ggplot(top10Years, aes(end_year, growth, group = country, color = country))+
+  geom_line(alpha = 0.6) +
+    labs(title = "top 10 country growth per year in percentage",
+         x = "end_Year",
+         y = "Year-to-year population growth in pct") +
+    scale_x_continuous(breaks = seq(1960, 2022, by = 20))
 ```
 
 
