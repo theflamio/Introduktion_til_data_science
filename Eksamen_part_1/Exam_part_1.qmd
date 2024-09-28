@@ -437,12 +437,11 @@ and label them.
 
 ## 1: Remove non-numerical columns from data
 ```{r}
-# growth_Numerical <- growth |>  # Filter(is.numeric, df) could also have been used.
-#   select_if(is.numeric)
+growth_Numerical <- Filter(is.numeric, growth) #only return numeric columns. 
 
-growth_Numerical <- Filter(is.numeric, growth)
+# growth_Numerical <- growth |> select_if(is.numeric) could also be used.
 
-growth_Numerical
+growth_Numerical # check
 ```
 
 
@@ -467,18 +466,24 @@ distances_scaled
 
 ## 3: Use hclust() to run the clustering algorithm
 ```{r}
-clustering <- hclust(distances_scaled)
-clustering
+hc <- hclust(distances_scaled)
+hc
 ```
 
 ## 4: Use cutree() to make the cluster labels
 ```{r}
-cutree(clustering,)
+cluster <- cutree(hc, k = 9) # 9 groups
+cluster
 ```
 
 ## 5: Use mutate to add the cluster label as a variable to growth
 ```{r}
-
+growth_clust <- growth |>
+  mutate(clusters = cluster)
+```
+## Result
+```{r}
+growth_clust
 ```
 
 # Exercise 22
@@ -487,7 +492,7 @@ and display them nicely with pander::pander():
 
 ```{r}
 growth_clust |> 
-  group_split(clust) |> 
+  group_split(clusters) |> 
   lapply(function(x) x$country) |> 
   pander::pander()
 ```
