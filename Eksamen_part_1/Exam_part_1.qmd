@@ -448,38 +448,27 @@ growth_Numerical # check
 ## 2: Calculate distances
 First I want to make sure my data needs to be Standardize
 ```{r}
-growth_Numerical2 <- scale(growth_Numerical)
-
-distances_non_scaled <- dist(growth_Numerical, method = "euclidean")
-
-distances_scaled <- dist(growth_Numerical2, method = "euclidean")
-
-summary(distances_non_scaled)
-summary(distances_scaled)
-
-
-# Conclusion the mean moves from not scaled 15.8 to 9 that is huge so scaling is diffently needed. Data must be Standardize
-
-distances_scaled
+distances <- dist(growth_Numerical, method = "euclidean")
 
 ```
 
 ## 3: Use hclust() to run the clustering algorithm
 ```{r}
-hc <- hclust(distances_scaled)
+hc <- hclust(distances)
 hc
 ```
 
 ## 4: Use cutree() to make the cluster labels
 ```{r}
-cluster <- cutree(hc, k = 9) # 9 groups
-cluster
+clusters <- cutree(hc, k = 9) # 9 groups
+clusters
 ```
 
 ## 5: Use mutate to add the cluster label as a variable to growth
 ```{r}
 growth_clust <- growth |>
-  mutate(clusters = cluster)
+  mutate(cluster = clusters) |>
+  relocate(cluster, .after = code)
 ```
 ## Result
 ```{r}
@@ -492,7 +481,7 @@ and display them nicely with pander::pander():
 
 ```{r}
 growth_clust |> 
-  group_split(clusters) |> 
+  group_split(cluster) |> 
   lapply(function(x) x$country) |> 
   pander::pander()
 ```
@@ -500,6 +489,29 @@ growth_clust |>
 
 # Exercise 23
 Use pivot_longer() to convert growth_clust to long format and plot growth as a function of time with a panel/facet for each cluster.
+
+## Use pivot_longer() to convert growth_clust to long format
+```{r}
+growth_clust_long <- growth_clust |>
+  pivot_longer(cols = `1961`:`2022`,  # Columns to pivot (year columns)
+               names_to = "year",     
+               values_to = "growth")
+growth_clust_long
+```
+
+## plot growth as a function of time with a panel/facet for each cluster.
+
+```{r}
+# remember year is chr so it needs to be converted to numeric
+
+ggplot(growth_clust_long, aes(x = as.numeric(year), y = growth, group = country)) +
+  geom_line() +
+  facet_wrap(~cluster) + # Create a panel for each cluster
+  labs(title = "Growth over Time by Cluster",
+       x = "Year",
+       y = "Year-to-year population growth in pct")
+```
+
 
 # Exercise 24
 The code below can be used to calculate average growth rates over several years.
