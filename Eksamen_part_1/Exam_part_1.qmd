@@ -446,10 +446,9 @@ growth_Numerical # check
 
 
 ## 2: Calculate distances
-First I want to make sure my data needs to be Standardize
 ```{r}
+# Compute the distance matrix using Euclidean distance
 distances <- dist(growth_Numerical, method = "euclidean")
-
 ```
 
 ## 3: Use hclust() to run the clustering algorithm
@@ -502,7 +501,7 @@ growth_clust_long
 ## plot growth as a function of time with a panel/facet for each cluster.
 
 ```{r}
-# remember year is chr so it needs to be converted to numeric
+# remember year is <chr> so it needs to be converted to numeric
 
 ggplot(growth_clust_long, aes(x = as.numeric(year), y = growth, group = country)) +
   geom_line() +
@@ -517,10 +516,83 @@ ggplot(growth_clust_long, aes(x = as.numeric(year), y = growth, group = country)
 The code below can be used to calculate average growth rates over several years.
 
 ```{r}
-agg_year <- 5
+agg_year <- 5 # define numbers of years to aggregate the growth rates
+
 aggr_growth_long <- growth_long |>
   mutate(period=((end_year - min(end_year)) %/% agg_year) * agg_year + min(end_year)) |> 
-  group_by(period, code, country, continent) |> summarise(pop = mean(growth))
+  group_by(period, code, country, continent) |> 
+  summarise(avg_growth = mean(growth))
+
+aggr_growth_long
+
 ```
 
 Use the clustering technique of the previous exercise to divide the data into different clusters. Experiment with several period lengths (aggregation years) and number of clusters and show results for at least one combination of agg_year and number of clusters. An example is given below.
+
+## Prepare the data for clustering
+
+```{r}
+# Pivot the data to wide format
+aggr_growth_wide <- aggr_growth_long |>
+  select(code, country, period, avg_growth) |>
+  pivot_wider(
+    names_from = period,
+    values_from = avg_growth
+  )
+```
+
+
+## Plot avg_growth of each country as a function of year
+```{r}
+
+```
+
+
+## Scaling the Data and Compute distance matrix
+
+```{r}
+# Select features 
+aggr_growth_numerical <- Filter(is.numeric, aggr_growth_wide)  # Remove the country and code column before scaling
+
+# scale the growth features
+growth_scaled <- aggr_growth_numerical |>
+  scale()
+
+# Compute the distance matrix using Euclidean distance
+distance_matrix <- dist(growth_scaled, method = "euclidean")
+```
+
+## Performing Hierarchical Clustering and Plotting the Dendrogram
+
+```{r}
+# Perform hierarchical clustering using Ward's method
+hc <- hclust(distance_matrix)
+
+# Plot the dendrogram
+hc |>
+  plot(labels = aggr_growth_wide$country, main = "Dendrogram of Hierarchical Clustering", xlab = "", sub = "", cex = 0.5, hang = -1)
+```
+
+
+## Cutting the Dendrogram and Assigning Clusters
+
+```{r}
+k =20 # it looks like 5 cluster in the Dendrogram
+
+# Define the number of clusters and cut the dendrogram
+clusters <- cutree(hc, k) 
+
+# Plot the dendrogram
+plot(hc, labels = aggr_growth_wide$country, main = "Dendrogram of Hierarchical Clustering", xlab = "", sub = "", cex = 0.6, hang = -1)
+
+# Highlight the k clusters on the dendrogram
+rect.hclust(hc, k, border = "red")
+```
+
+## plot growth as a function of time with a panel/facet for each cluster
+
+```{r}
+
+```
+
+
