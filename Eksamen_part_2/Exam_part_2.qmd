@@ -1,0 +1,18 @@
+---
+title: "Data Science Exam: Part 2"
+author: "Flemming Christensen"
+date: "2024-09-21"
+format:
+  html:
+    toc: true  # Enable the table of contents
+    toc_depth: 2  # Specify the depth of headers to include in the TOC
+---
+
+
+
+
+## Project dependencies
+
+```{r}
+sessionInfo()
+```
