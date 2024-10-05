@@ -1,0 +1,93 @@
+---
+title: "Classification for CAD data"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(modelr)
+library(rpart)
+library(randomForest)
+```
+
+## CAD1 data
+
+We will use a dataset available in the development version of `doBy` on GitHub:
+<https://github.com/hojsgaard/doBy>
+
+Many R packages are developed on GitHub and then periodically released on CRAN
+which is where packages by default are installed from in R with `install.packages()`.
+
+If you first install the (CRAN) package `remotes` it is easy to install other 
+packages from GitHub with `remotes::install_github()`. E.g. 
+`remotes::install_github("hojsgaard/doBy")`.
+
+If you have installed `doBy` you should be able to access the `cad1` dataset:
+```{r}
+library(doBy)
+cad1 |> tibble()
+```
+
+### Exercise 1.1
+
+Read the help file `?cad1` to understand the basics of the data.
+
+### Exercise 1.2
+
+Run the following code to save every 4th patient for a test set and use the 
+remaining for training:
+```{r}
+i_start <- 1
+i_test <- seq(i_start, nrow(cad1), by = 4)
+cad_test <- cad1[i_test, ]
+cad_train <- cad1[-i_test, ]
+```
+
+## Fit a decision tree to the data
+
+### Exercise 2.1:
+
+Use `rpart` to fit a decision tree to the training data.
+
+Try different control parameters such as `cp`, `xval` (try `xval = nrow(cad_train)` for LOOCV),
+`minsplit`, `minbucket`... and look at both `plotcp()` and (mis)classifications 
+from predictions on the test data `cad_test` (turn chunck evaluation on). 
+Remember to prune the tree when making predictions.
+
+```{r eval=FALSE}
+model_rpart <- rpart(CAD ~ ., data = cad_train, SOMETHING_HERE)
+plotcp(model_rpart)
+MORE_COMMANDS_HERE
+cad_test |> 
+  add_predictions(model_rpart, type = "class") |> 
+  count(CAD, pred)
+```
+
+See if it makes a difference for the results where you start the index for the
+test data in the previous exercise.
+
+Plot the tree you find best with `rpart.plot()`.
+
+## Fit a random forest to the data
+
+### Exercise 3.1:
+
+Fit a random forest to the training data and check how it performs on test data.
+Try different tunings and check whether the starting index for the test data
+influences the results.
+
+```{r}
+model_RF <- randomForest(CAD ~ ., data = cad_train)
+cad_test |> 
+  add_predictions(model_RF, type = "class") |> 
+  count(CAD, pred)
+```
+
+## Test data with missing predictors
+
+### Exercise 3.1:
+
+Train the best `rpart`/`randomForest` model on (possibly all of) `cad1` and try 
+to predict the `CAD` variable of the dataset `cad2` where some predictors are 
+missing.
+

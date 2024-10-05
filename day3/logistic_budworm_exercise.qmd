@@ -1,0 +1,168 @@
+---
+title: "Logistic regression for budworms"
+format: 
+  html:
+    toc: true
+    number_sections: true
+  pdf:
+    toc: true
+    number_sections: true
+---
+
+# Budworm data
+
+```{r}
+library(tidyverse)
+```
+
+The following vectors contain the information about the outcome of 12 different
+experimental settings (log-dose of insecticide, sex of budworm) for 20 budworms 
+in each setting (240 budworms in total):
+
+```{r}
+ldose <- rep(0:5, 2)
+dead <- c(1, 4, 9, 13, 18, 20, 0, 2, 6, 10, 12, 16)
+sex <- factor(rep(c("M", "F"), c(6, 6)))
+```
+
+## Exercise 1.1:
+
+Make a `tibble` called `budworms` containing the data (possibly adding the
+number of alive budworms if needed) which can be used to fit a logistic regression:
+
+```{r}
+budworms <- tibble()
+## Insert your code
+```
+
+
+## Exercise 1.2:
+
+Make dataset called `budworms2` where the male and female budworms are aggregated for each dose:
+
+```{r}
+budworms2 <- budworms |> group_by() |> summarise()
+## Insert your code
+```
+
+
+## Exercise 1.3:
+
+Make a scatterplot for the empirical probability of death depending on `ldose` (hint: you need to calculate the probability before plotting):
+```{r, eval=FALSE}
+budworms2 |> ## possibly add a mutate here
+  ggplot(aes()) +
+  geom_point()
+```
+
+
+# Simple logistic regression
+
+## Exercise 2.1:
+
+Fit a simple logistic regression with `ldose` as explanatory variable ignoring 
+`sex` and summarise the resulting model with `broom::tidy()`. 
+
+* Is the effect of `ldose` statistically significant?
+
+* What is the interpretation of estimated coefficient for `ldose`?
+
+
+```{r}
+# Model fit and summary code here
+library(broom)
+```
+
+
+## Exercise 2.2
+
+Find an estimate of LD50 in this model and give an approximate 95% confidence interval for LD50.
+```{r, eval=FALSE}
+car::deltaMethod(model, "YOUR_CODE")
+```
+
+
+
+
+## Exercise 2.3
+
+Add predicted probabilities of death to the data and make a plot showing both 
+the predicted and empirical probabilities.
+
+```{r}
+library(modelr)
+## Your code
+```
+
+
+
+# Multiple logistic regression
+
+## Exercise 3.1
+
+Fit a multiple logistic regression with additive effects of `ldose` and `sex` on 
+the (logit) probability of death.
+
+```{r, eval=FALSE}
+model_add <- glm("YOUR_CODE")
+tidy(model_add)
+```
+
+
+## Exercise 3.2
+
+Fit a multiple logistic regression with interaction between effects of `ldose` 
+and `sex` on the (logit) probability of death. Is the interaction effect statistically significant?
+
+```{r, eval=FALSE}
+model_int <- glm("YOUR_CODE")
+tidy(model_int)
+```
+
+
+
+
+
+## Exercise 3.3
+
+Choose one of the models from 3.1 and 3.2 and find an estimate of LD50 in this 
+model and give an approximate 95% confidence interval for LD50.
+
+```{r, eval=FALSE}
+## *For male budworms in the interaction model:*
+car::deltaMethod(model_int, "YOUR_CODE")
+```
+
+
+
+## Exercise 3.4
+
+Use `pivot_longer()` to make a tidy dataset with 4 columns: `sex`, `ldose`, `status` (dead/alive), `n` (number of budworms).
+```{r}
+tidy_budworms <- budworms # More commands here
+```
+
+
+Use `uncount()` to expand the dataset to represent the 240 individual budworms 
+and then add a predicted status to each budworm according to the model using the 
+natural threshold of 50%.
+```{r}
+indiv_budworms <- tidy_budworms # More commands here
+```
+
+
+Summarise the (mis)classification.
+
+
+## Exercise 3.5 (optional)
+
+Is "expanding" / "unfolding" / "uncounting" the data as in the previous exercise 
+necessary to find the total (mis)classification? 
+
+How could you find the (mis)classification summary directly with the aggregated 
+data?
+
+<!-- This file has been generated automatically from logistic_budworm.qmd -->
+
+<!-- time: 2024-10-03 22:27:49.003551 do not edit manually -->
+
