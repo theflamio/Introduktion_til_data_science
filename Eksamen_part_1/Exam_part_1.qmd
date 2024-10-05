@@ -603,7 +603,7 @@ head(aggr_growth_clust_long)
 ggplot(aggr_growth_clust_long, aes(as.numeric(year), avg_growth, group_by =  country)) +
   geom_line(alpha = 0.2) +
   scale_x_continuous(breaks = seq(1960, 2022, by = 20)) +
-  labs(title = "Average Growth Over the aggregated years (5) by country", x = "Year", y = "Average Growth aggregated years (5) by country")
+  labs(title = "Average Growth Over the aggregated years (5) by country", x = "Year", y = "Average growth over aggregated years (5) foreach country")
 ```
 ## extract the countries of each cluster and display
 
@@ -622,7 +622,7 @@ ggplot(aggr_growth_clust_long, aes(as.numeric(year), avg_growth, group_by =  cou
   facet_wrap(~cluster) + # Create a panel for each cluster
   labs(title = "Growth over Time per 5 year by Cluster",
        x = "Year",
-       y = "Average Growth aggregated years (5) by country")
+       y = "Average growth over aggregated years (5) foreach country")
 ```
 
 ## Project dependencies
