@@ -504,7 +504,7 @@ growth_clust_long
 # remember year is <chr> so it needs to be converted to numeric
 
 ggplot(growth_clust_long, aes(x = as.numeric(year), y = growth, group = country)) +
-  geom_line() +
+  geom_line(alpha = 0.6) +
   facet_wrap(~cluster) + # Create a panel for each cluster
   labs(title = "Growth over Time by Cluster",
        x = "Year",
@@ -573,10 +573,8 @@ clusters
 ## add cluster labels to aggr_growth_wide
 
 ```{r}
-length(clusters)
-nrow(aggr_growth_wide)
-
-aggr_growth_wide <- aggr_growth_wide %>% ungroup()
+# to add cluster to aggr_growth_wide we need to ungroup the dataframe so it add a cluster number foreach country and not group.
+aggr_growth_wide <- aggr_growth_wide |> ungroup()  
 
 aggr_growth_clust <- aggr_growth_wide |>
   mutate(cluster = clusters) |>
@@ -584,12 +582,33 @@ aggr_growth_clust <- aggr_growth_wide |>
 
 head(aggr_growth_clust)
 ```
+## prepare for plot
+
+```{r}
+aggr_growth_clust
+
+aggr_growth_clust_long <- aggr_growth_clust |>
+  pivot_longer(cols = `1961`:`2021`,  # Columns to pivot (year columns)
+               names_to = "year",        # New column for years
+               values_to = "avg_growth") |> # New column for avg_growth values
+               group_by(country)
+
+head(aggr_growth_clust_long)
+```
+
 
 ## Plot growth avg of each country aggregatied year (5) 
 
 ```{r}
+ggplot(aggr_growth_clust_long, aes(as.numeric(year), avg_growth, group_by =  country)) +
+  geom_line(alpha = 0.2) +
+  scale_x_continuous(breaks = seq(1960, 2022, by = 20)) +
+  labs(title = "Average Growth Over the aggregated years (5) by country", x = "Year", y = "Average Growth")
+```
+## bob
 
-#plot
+```{r}
+
 ```
 
 ## facet plot
