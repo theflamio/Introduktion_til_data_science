@@ -520,8 +520,8 @@ agg_year <- 5 # define numbers of years to aggregate the growth rates
 
 aggr_growth_long <- growth_long |>
   mutate(period=((end_year - min(end_year)) %/% agg_year) * agg_year + min(end_year)) |> 
-  group_by(period, code, country, continent) |> 
-  summarise(avg_growth = mean(growth))
+  group_by(period, code, country, continent) |> #needed to subsequent summarization
+  summarise(avg_growth = mean(growth)) #calculate avg growth foreach group
 
 aggr_growth_long
 
@@ -539,60 +539,69 @@ aggr_growth_wide <- aggr_growth_long |>
     names_from = period,
     values_from = avg_growth
   )
+
+head(aggr_growth_wide)
+
+# Remove non-numerical columns.
+
+aggr_growth_Numerical <- Filter(is.numeric, aggr_growth_wide) #only return numeric columns. 
+
+head(aggr_growth_Numerical)
 ```
 
 
-## Plot avg_growth of each country as a function of year
+## Calculate distance
 ```{r}
-
-```
-
-
-## Scaling the Data and Compute distance matrix
-
-```{r}
-# Select features 
-aggr_growth_numerical <- Filter(is.numeric, aggr_growth_wide)  # Remove the country and code column before scaling
-
-# scale the growth features
-growth_scaled <- aggr_growth_numerical |>
-  scale()
-
 # Compute the distance matrix using Euclidean distance
-distance_matrix <- dist(growth_scaled, method = "euclidean")
+distances_aggr_growth <- dist(aggr_growth_Numerical, method = "euclidean")
 ```
 
-## Performing Hierarchical Clustering and Plotting the Dendrogram
+## Cluster algorithm
 
 ```{r}
-# Perform hierarchical clustering using Ward's method
-hc <- hclust(distance_matrix)
-
-# Plot the dendrogram
-hc |>
-  plot(labels = aggr_growth_wide$country, main = "Dendrogram of Hierarchical Clustering", xlab = "", sub = "", cex = 0.5, hang = -1)
+hc <- hclust(distances_aggr_growth)
+hc
 ```
-
-
-## Cutting the Dendrogram and Assigning Clusters
+## label the clusters
 
 ```{r}
-k =20 # it looks like 5 cluster in the Dendrogram
+clusters <- cutree(hc, k = 9) # 9 groups
 
-# Define the number of clusters and cut the dendrogram
-clusters <- cutree(hc, k) 
-
-# Plot the dendrogram
-plot(hc, labels = aggr_growth_wide$country, main = "Dendrogram of Hierarchical Clustering", xlab = "", sub = "", cex = 0.6, hang = -1)
-
-# Highlight the k clusters on the dendrogram
-rect.hclust(hc, k, border = "red")
+clusters
 ```
 
-## plot growth as a function of time with a panel/facet for each cluster
+## add cluster labels to aggr_growth_wide
+
+```{r}
+length(clusters)
+nrow(aggr_growth_wide)
+
+aggr_growth_wide <- aggr_growth_wide %>% ungroup()
+
+aggr_growth_clust <- aggr_growth_wide |>
+  mutate(cluster = clusters) |>
+  relocate(cluster, .after = country)
+
+head(aggr_growth_clust)
+```
+
+## Plot growth avg of each country aggregatied year (5) 
 
 ```{r}
 
+#plot
 ```
 
+## facet plot
+
+```{r}
+
+
+```
+
+## Project dependencies
+
+```{r}
+sessionInfo()
+```
 
