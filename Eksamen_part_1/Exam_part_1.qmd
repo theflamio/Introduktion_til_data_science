@@ -1,7 +1,7 @@
 ---
 title: "Data Science Exam: Part 1"
 author: "Flemming Christensen"
-date: "2024-09-21"
+date: "2024-10-6"
 format:
   html:
     toc: true  # Enable the table of contents
@@ -20,35 +20,31 @@ library(plotly)
 
 
 # Introduction
-This exam is constructed with 24 Exercises that need to be solved and argumented.
-Why this solution or method has been used.
+This exam project is constructed with 24 Exercises that need to be solved and argumented.
+
+# important info
+Some steps have set the output to hide so only end results is visible.
 
 # Exercise 1
-Read in the data in the file world_population.csv and select/deselect and rename 
-columns so you end up with a tibble (tbl) named wpop_full with 266 rows and 65 
-columns with names as shown in the output below (the last column being 2022). 
-Hint: Use skip in read_csv to avoid header lines not containing data or names of data.
+Read in the data in the file `world_population.csv` and select/deselect and rename 
+columns so you end up with a tibble (`tbl`) named `wpop_full` with 266 rows and 65 
+columns with names as shown in the output below (the last column being `2022`). 
+Hint: Use `skip` in `read_csv` to avoid header lines not containing data or names of data.
 
 ## import data from csv
 
-```{r}
-here::here()
-
+```{r, results="hide"}
 data_dir <- here::here("world_population.csv") #set the directory to were the project and dataset is used
 
-wpop_raw_dat = read_csv(data_dir, skip = 3) # Read csv file and skip the last update info and empty rows
-
-# lets take a look of the data
-glimpse(wpop_raw_dat) #looks like there is a lot of NA's in 2023 and the data dose not have column names
-
+wpop_raw_dat = suppressMessages(read_csv(data_dir, skip = 3)) # Read csv file and skip the last update info and empty rows
 ```
 
 ## Add column names and renaming
 
-```{r}
+```{r, results="hide"}
 colnames(wpop_raw_dat) <- as.character(unlist(wpop_raw_dat[1,])) # Make the first row the column names
 
-# next two steps are need to remove exstra column added when making column names
+# next two steps are needed to remove exsta column added when making column names
 
 wpop_raw_dat <- wpop_raw_dat[-1, ] # Remove the first row
 
@@ -62,14 +58,14 @@ wpop_raw_dat <- wpop_raw_dat |> # Rename of duplicated meaning in column names
     code = `Country Code`
   )
 
-head(wpop_raw_dat) # see data structure
+head(wpop_raw_dat) # Confirm tha data structure is correct
 ```
 ## Remove unwanted columns
-```{r}
+```{r, results="hide"}
 wpop_raw_dat <- wpop_raw_dat |> # remove column "indicator Name" and "Indicator Code".
   select(-`Indicator Name`, -`Indicator Code`)
 
-head(wpop_raw_dat) # confirm that columns have been removed.
+#head(wpop_raw_dat) # confirm that columns have been removed.
 
 wpop_full <- wpop_raw_dat |> # Remove year 2023 so that 2022 is last column
   select(-`2023`)
@@ -81,13 +77,13 @@ wpop_full
 
 
 # Exercise 2
-Use the package rvest to read in the list of country codes from the main table 
-at https://en.wikipedia.org/wiki/ISO_3166-1 and select/deselect and rename 
-columns so you end up with a tibble (tbl) named iso_codes_all with 249 rows and 
+Use the package `rvest` to read in the list of country codes from the main table 
+at [ISO 3166-1 on Wikipedia](https://en.wikipedia.org/wiki/ISO_3166-1) and select/deselect and rename 
+columns so you end up with a tibble (`tbl`) named `iso_codes_all` with 249 rows and 
 3 columns with names as shown in the output below.
 
 ## Web scraping data from Wikipedia
-```{r}
+```{r, results="hide"}
 url <- "https://en.wikipedia.org/wiki/ISO_3166-1"
 
 webpage <- read_html(url)
@@ -107,7 +103,7 @@ head(raw_dat) # OBS Afghanistan[c] the [C] means that the country is under that 
 
 ## remove and rename columns
 
-```{r}
+```{r, results="hide"}
 colnames(raw_dat)
 
 raw_dat <- raw_dat |>
@@ -124,12 +120,13 @@ iso_codes_all <- raw_dat |>
 
 ```
 ## iso_codes_all result
+OBS Afghanistan[c] the [C] means that the country is under that category "Naming and disputes" which is correct
 ```{r}
-iso_codes_all
+iso_codes_all 
 ```
 
 # Exercise 3
-Use filter() to extract the independent countries from iso_codes_all and save the result as iso_codes.
+Use `filter()` to extract the independent countries from `iso_codes_all` and save the result as `iso_codes`.
 
 ```{r}
 iso_codes <- iso_codes_all |>
@@ -140,18 +137,20 @@ iso_codes
 
 
 # Exercise 4
-Use a suitable join (and/or filter) command to make a dataset wpop only containing those rows of wpop_full which have a matching ISO country code in iso_codes:
+Use a suitable join (and/or filter) command to make a dataset `wpop` only containing those rows of `wpop_full` which have a matching ISO country code in `iso_codes`:
 
 ```{r}
-# return only rows that have a match in the iso_codes without columns therefore semi_join and not inner_join
-wpop <- semi_join(wpop_full, iso_codes, by = c("code" = "iso3")) 
+# returns all rows from wpop_full that have a match in iso_codes.
+# based on the condition (by = c("code" = "iso3")).
+# but doesn't include columns from iso_codes
+wpop <- semi_join(wpop_full, iso_codes, by = c("code" = "iso3"))
 
 wpop
 ```
 
 
 # Exercise 5
-Show the countries/areas which have the same ISO country code in both wpop and iso_codes but different (spellings of) country names.
+Show the countries/areas which have the same ISO country code in both `wpop` and `iso_codes` but different (spellings of) country names.
 
 ```{r}
 join_data <- inner_join(wpop, iso_codes, by = c("code" = "iso3"))
@@ -162,19 +161,19 @@ result <- different_spelling |>
   select(name, code, country)
 
 result
-
 ```
 
 
 # Exercise 6
-Use the package rvest to read in the list of countries with corresponding continent codes from the main table at https://en.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_by_continent_(data_file) 
+Use the package rvest to read in the list of countries with corresponding continent codes from the main table at 
+[List of sovereign states and dependent territories by continent](https://en.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_by_continent_(data_file))
 and select/deselect and rename columns so you end up with a tibble (tbl) named continents with 253 rows and 
 2 columns with names as shown in the output below.
 
-Important hint: you need convert = FALSE in html_table() to avoid the text string "NA" (North America) to be interpreted as missing data (Not Available).
+**Important hint:** you need `convert = FALSE` in `html_table()` to avoid the text string `"NA"` (North America) to be interpreted as missing data (Not Available).
 
 ## Web scraping data from Wikipedia
-```{r}
+```{r, results="hide"}
 url <- "https://en.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_by_continent_(data_file)"
 
 webpage <- read_html(url)
@@ -191,7 +190,7 @@ raw_continents
 ```
 
 ## remove and rename columns
-```{r}
+```{r, results="hide"}
 colnames(raw_continents)
 
 raw_continents <- raw_continents |>
@@ -212,7 +211,7 @@ continents
 
 
 # Exercise 7
-Make a new dataset wpop2 by extending wpop with the extra column continent from the continents data (possibly using relocate() to move the continent column to the left to see it more clearly).
+Make a new dataset `wpop2` by extending `wpop` with the extra column `continent` from the `continents` data (possibly using `relocate()` to move the `continent` column to the left to see it more clearly).
 
 ```{r}
 join_data <- inner_join(wpop, continents, by = c("code" = "iso3")) #join wpop and continent table.
@@ -225,7 +224,7 @@ wpop2
 
 
 # Exercise 8
-Use pivot_longer() to reshape wpop2 into “long format” with columns as shown below (in particular make sure year is a numeric variable) and call the resulting tibble pop_long.
+Use `pivot_longer()` to reshape `wpop2` into “long format” with columns as shown below (in particular make sure `year` is a numeric variable) and call the resulting tibble `pop_long`.
 
 ```{r}
 pop_long <- wpop2 |>
@@ -267,8 +266,8 @@ Make a line plot showing the indexed population numbers over all the years in th
 
 ```{r}
 plt <- ggplot(pop_index_data, aes(x = year, y = pop_index, group = country)) +
-  geom_line(alpha = 0.4) +
-  labs(title = "Population Growth Over Time by Country\nIndex 2 = double population size since 1960",
+  geom_line(alpha = 0.2) +
+  labs(title = "Index 2 = double pop size since 1960\nIndex 6 = 6 times the pop size since 1960",
        x = "Year",
        y = "Population index for each country") +
   scale_x_continuous(breaks = seq(1960, 2022, by = 20))
@@ -280,15 +279,15 @@ interactive_plot # Display the interactive plot
 
 
 # Exercise 12
-Identify the two countries with extreme population indices and make a new line plot showing the indexed population numbers over all the years in the data with one line per country with semi-transparent lines without these two countries.
+Identify the two countries with extreme population indices and make a new line plot showing the indexed population numbers over all the years in the data with one line per country with semi-transparent lines **without these two countries.**
 
 ## Identify two countries with extreme population indices
 ```{r}
-# method 1 use the interactive map above which show United Arab Emirates and Qatar are extreme.
+# method 1 use the interactive map above which showed that United Arab Emirates and Qatar are the extreme population indices.
 
 extreme_pop_indices <- pop_index_data |>
   filter(pop_index > 60) |> # 60 because only two countries in 2020 are above it and can be considered extreme.
-  select(country) |>
+  select(country, continent, code) |>
   distinct()
 
 extreme_pop_indices #United Arab Emirates and Qatar must be removed. This 
@@ -339,7 +338,7 @@ Make a line plot showing the population over all the years in the data with one 
 
 ```{r}
 ggplot(growth_long, aes(end_year, growth, group = country))+
-  geom_line(alpha = 0.4) +
+  geom_line(alpha = 0.2) +
     labs(title = "Population growth per year in percentage",
          x = "Year",
          y = "Year-to-year population growth in pct") +
@@ -352,7 +351,7 @@ Make a similar graphic as above but with one panel/facet per continent.
 
 ```{r}
 ggplot(growth_long, aes(end_year, growth, group = country))+
-  geom_line(alpha = 0.4) +
+  geom_line(alpha = 0.2) +
     labs(title = "Population growth per year in percentage each county",
          x = "Year",
          y = "Year-to-year population growth in pct") +
@@ -362,7 +361,7 @@ ggplot(growth_long, aes(end_year, growth, group = country))+
 
 
 # Exercise 16
-For each country find both the largest positive and the smallest (most negative) growth over the years in the data so you end up with a tibble (tbl) named growth_range with 193 rows and 3 columns with names as shown in the output below. hint: group_by() and summarise() are your friends.
+For each country find both the largest positive and the smallest (most negative) growth over the years in the data so you end up with a tibble (`tbl`) named `growth_range` with 193 rows and 3 columns with names as shown in the output below. hint: `group_by()` and `summarise()` are your friends.
 
 ```{r}
 growth_range <- growth_long |>
@@ -397,7 +396,7 @@ bottom10
 ```
 
 # Exercise 19
-Make a line plot showing the population over all the years in the data with different colours for each country represented in top10.
+Make a line plot showing the population over all the years in the data with different colours for each country represented in `top10`.
 
 ```{r}
 top10Years <- growth_long |>
@@ -414,7 +413,7 @@ ggplot(top10Years, aes(end_year, growth, group = country, color = country))+
 
 
 # Exercise 20
-Use pivot_wider() to reshape growth_long to wide format with one column per year and call the result growth.
+Use `pivot_wider()` to reshape `growth_long` to wide format with one column per year and call the result `growth`.
 
 ```{r}
 growth <- growth_long |>
@@ -436,7 +435,7 @@ clustering is unsupervised learning where our input data have no labels. Cluster
 and label them.
 
 ## 1: Remove non-numerical columns from data
-```{r}
+```{r, results="hide"}
 growth_Numerical <- Filter(is.numeric, growth) #only return numeric columns. 
 
 # growth_Numerical <- growth |> select_if(is.numeric) could also be used.
@@ -446,28 +445,28 @@ growth_Numerical # check
 
 
 ## 2: Calculate distances
-```{r}
+```{r, results="hide"}
 # Compute the distance matrix using Euclidean distance
 distances <- dist(growth_Numerical, method = "euclidean")
 ```
 
 ## 3: Use hclust() to run the clustering algorithm
-```{r}
+```{r, results="hide"}
 hc <- hclust(distances)
 hc
 ```
 
 ## 4: Use cutree() to make the cluster labels
-```{r}
+```{r, results="hide"}
 clusters <- cutree(hc, k = 9) # 9 groups
 clusters
 ```
 
-## 5: Use mutate to add the cluster label as a variable to growth
-```{r}
+## 5: Use mutate to add the cluster label as a variable to the dataset growth
+```{r, results="hide"}
 growth_clust <- growth |>
   mutate(cluster = clusters) |>
-  relocate(cluster, .after = code)
+  relocate(cluster, .before = country)
 ```
 ## Result
 ```{r}
@@ -475,8 +474,8 @@ growth_clust
 ```
 
 # Exercise 22
-Use group_split() and lapply() similarly to below to extract the countries of each cluster
-and display them nicely with pander::pander():
+Use `group_split()` and `lapply()` similarly to below to extract the countries of each cluster
+and display them nicely with `pander::pander()`:
 
 ```{r}
 growth_clust |> 
@@ -487,10 +486,10 @@ growth_clust |>
 
 
 # Exercise 23
-Use pivot_longer() to convert growth_clust to long format and plot growth as a function of time with a panel/facet for each cluster.
+Use `pivot_longer()` to convert `growth_clust` to long format and plot growth as a function of time with a panel/facet for each cluster.
 
 ## Use pivot_longer() to convert growth_clust to long format
-```{r}
+```{r, results="hide"}
 growth_clust_long <- growth_clust |>
   pivot_longer(cols = `1961`:`2022`,  # Columns to pivot (year columns)
                names_to = "year",     
@@ -515,7 +514,7 @@ ggplot(growth_clust_long, aes(x = as.numeric(year), y = growth, group = country)
 # Exercise 24
 The code below can be used to calculate average growth rates over several years.
 
-```{r}
+```{r, results="hide"}
 agg_year <- 5 # define numbers of years to aggregate the growth rates
 
 aggr_growth_long <- growth_long |>
@@ -527,11 +526,11 @@ aggr_growth_long
 
 ```
 
-Use the clustering technique of the previous exercise to divide the data into different clusters. Experiment with several period lengths (aggregation years) and number of clusters and show results for at least one combination of agg_year and number of clusters. An example is given below.
+Use the clustering technique of the previous exercise to divide the data into different clusters. Experiment with several period lengths (aggregation years) and number of clusters and show results for at least one combination of `agg_year` and number of clusters. An example is given below.
 
 ## Prepare the data for clustering
 
-```{r}
+```{r, results="hide"}
 # Pivot the data to wide format
 aggr_growth_wide <- aggr_growth_long |>
   select(code, country, period, avg_growth) |>
@@ -551,20 +550,20 @@ head(aggr_growth_Numerical)
 
 
 ## Calculate distance
-```{r}
+```{r, results="hide"}
 # Compute the distance matrix using Euclidean distance
 distances_aggr_growth <- dist(aggr_growth_Numerical, method = "euclidean")
 ```
 
 ## Cluster algorithm
 
-```{r}
+```{r, results="hide"}
 hc <- hclust(distances_aggr_growth)
 hc
 ```
 ## label the clusters
 
-```{r}
+```{r, results="hide"}
 clusters <- cutree(hc, k = 9) # 9 groups
 
 clusters
@@ -572,7 +571,7 @@ clusters
 
 ## add cluster labels to aggr_growth_wide
 
-```{r}
+```{r, results="hide"}
 # to add cluster to aggr_growth_wide we need to ungroup the dataframe so it add a cluster number foreach country and not group.
 aggr_growth_wide <- aggr_growth_wide |> ungroup()  
 
@@ -584,7 +583,7 @@ head(aggr_growth_clust)
 ```
 ## prepare for plot
 
-```{r}
+```{r, results="hide"}
 aggr_growth_clust
 
 aggr_growth_clust_long <- aggr_growth_clust |>
@@ -608,7 +607,7 @@ ggplot(aggr_growth_clust_long, aes(as.numeric(year), avg_growth, group_by =  cou
 ## extract the countries of each cluster and display
 
 ```{r}
-growth_clust |> 
+aggr_growth_clust |> 
   group_split(cluster) |> 
   lapply(function(x) x$country) |> 
   pander::pander()
@@ -625,7 +624,7 @@ ggplot(aggr_growth_clust_long, aes(as.numeric(year), avg_growth, group_by =  cou
        y = "Average growth over aggregated years (5) foreach cluster")
 ```
 
-## Project dependencies
+# Project dependencies
 
 ```{r}
 sessionInfo()
