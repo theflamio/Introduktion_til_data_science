@@ -243,7 +243,7 @@ Make a line plot showing the population over all the years in the data with one 
 
 ```{r}
 ggplot(pop_long, aes(x = year, y = pop, group = country)) +
-  geom_line(alpha = 0.4) +
+  geom_line(alpha = 0.2) +
   labs(title = "Population Growth Over Time by Country",
        x = "Year",
        y = "Population",) +
@@ -302,7 +302,7 @@ pop_index_data <- pop_index_data |>
 ```{r}
 plt <- ggplot(pop_index_data, aes(x = year, y = pop_index, group = country)) +
   geom_line(alpha = 0.4) +
-  labs(title = "Without Qatar and UAE\nIndex 2 = double population size since 1960",
+  labs(title = "Without Qatar and UAE",
        x = "Year",
        y = "Population index for each country") +
   scale_x_continuous(breaks = seq(1960, 2022, by = 20))
@@ -339,7 +339,7 @@ Make a line plot showing the population over all the years in the data with one 
 ```{r}
 ggplot(growth_long, aes(end_year, growth, group = country))+
   geom_line(alpha = 0.2) +
-    labs(title = "Population growth per year in percentage",
+    labs(title = "Population growth per year in percentage all countries",
          x = "Year",
          y = "Year-to-year population growth in pct") +
     scale_x_continuous(breaks = seq(1960, 2022, by = 20))
@@ -352,7 +352,7 @@ Make a similar graphic as above but with one panel/facet per continent.
 ```{r}
 ggplot(growth_long, aes(end_year, growth, group = country))+
   geom_line(alpha = 0.2) +
-    labs(title = "Population growth per year in percentage each county",
+    labs(title = "Population growth per year in percentage foreach country per continent",
          x = "Year",
          y = "Year-to-year population growth in pct") +
     scale_x_continuous(breaks = seq(1960, 2022, by = 20)) +
