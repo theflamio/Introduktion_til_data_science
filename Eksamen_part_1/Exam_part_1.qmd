@@ -505,7 +505,7 @@ growth_clust_long
 ggplot(growth_clust_long, aes(x = as.numeric(year), y = growth, group = country)) +
   geom_line(alpha = 0.6) +
   facet_wrap(~cluster) + # Create a panel for each cluster
-  labs(title = "Growth over Time by Cluster",
+  labs(title = "Growth over time for each Cluster",
        x = "Year",
        y = "Year-to-year population growth in pct")
 ```
