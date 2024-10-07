@@ -301,7 +301,7 @@ pop_index_data <- pop_index_data |>
 
 ```{r}
 plt <- ggplot(pop_index_data, aes(x = year, y = pop_index, group = country)) +
-  geom_line(alpha = 0.4) +
+  geom_line(alpha = 0.2) +
   labs(title = "Without Qatar and UAE",
        x = "Year",
        y = "Population index for each country") +
