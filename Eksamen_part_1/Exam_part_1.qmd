@@ -102,7 +102,7 @@ head(raw_dat) # OBS Afghanistan[c] the [C] means that the country is under that 
 
 ```
 
-## remove and rename columns
+## rename columns
 
 ```{r, results="hide"}
 colnames(raw_dat)
