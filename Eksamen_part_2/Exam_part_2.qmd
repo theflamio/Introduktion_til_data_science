@@ -1,15 +1,97 @@
 ---
 title: "Data Science Exam: Part 2"
 author: "Flemming Christensen"
-date: "2024-09-21"
+date: "2024-10-6"
 format:
   html:
     toc: true  # Enable the table of contents
     toc_depth: 2  # Specify the depth of headers to include in the TOC
+    embed-resources: true
 ---
 
+# Libraries
+```{r}
+library(doBy)
+```
 
 
+# Part 1: Regression
+
+# Data
+This part uses the `personality` dataset from the R package `doBy` with recordings of 32 variables describing personality characteristics for 240 people. (see help file for `?personality`)
+
+We focus on the variable `easygon` as the response variable. We split the data in training and test data as follows:
+
+```{r}
+dat <- doBy::personality
+set.seed(101) # for reproducibility
+i_train <- sample(nrow(dat), .5*nrow(dat))
+train <- dat[i_train,]
+test <- dat[-i_train,]
+```
+
+
+# Exercise 1
+Use `response_plot()` from the *development version of* `doBy` to visualize the relation between the response and the other variables in the data.
+
+```{r}
+response_plot(dat, easygon)
+```
+
+
+# Exercise 2
+Specify a number of prediction models – at least one of each of the following:
+
+1. linear with stepwise selection (`lm`/ `step`)
+2. regression tree (`rpart`)
+3. random forest (`randomForest`)
+
+## 1. linear with stepwise selection (`lm`/ `step`)
+
+## 2. regression tree (`rpart`)
+
+## 3. random forest (`randomForest`)
+
+# Exercise 3
+For *one of* the linear models show the estimated coefficients and comment *briefly* on the output (for example, comment on the sign of the estimates).
+
+
+# Exercise 4
+Compare the performance of the fitted models by predicting the values of `easygon` for the test data and show a plot comparing the predictions to the observations from the test data. Also make a table of the RMSE for each model.
+
+# Part 2: Classification
+The dataset `diabetes.csv` is about risk factors for diabetes and contains 768 observations of 9 variables. The response variable is `Outcome` which is binary. The goal is to predict `Outcome` using the other variables. A description of the dataset can be found at https://www.kaggle.com/datasets/mathchi/diabetes-data-set/data
+
+# Exercise 1
+Read in and clean the data by detecting unexpected values of some variables, replace the values with `NA` and finally make a data set with only the complete cases.
+
+# Exercise 2
+Plot the response against each of the explanatory variables/features and add a smooth line as a very rough indication of how the probability of diabetes depends on the individual feature (note the response has to be numeric for the smooth line to work).
+
+# Exercise 3
+Ensure Outcome is a factor and split the data in a training and test set as follows:
+
+```{r}
+set.seed(202) # for reproducibility
+i_train <- sample(nrow(dat), .5*nrow(dat))
+train <- dat[i_train,]
+test <- dat[-i_train,]
+```
+
+Specify a number of classification models and report the corresponding confusion matrix for the test data. You must include at least one of each of the following:
+
+1. logistic regression with stepwise selection (`glm` / `step`)
+2. regression tree (`rpart`)
+3. random forest (`randomForest`)
+4. linear/quadratic discriminant analysis
+
+## 1. logistic regression with stepwise selection (`glm` / `step`)
+
+## 2. regression tree (`rpart`)
+
+## 3. random forest (`randomForest`)
+
+## 4. linear/quadratic discriminant analysis
 
 ## Project dependencies
 
