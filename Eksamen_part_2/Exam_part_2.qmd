@@ -4,14 +4,13 @@ author: "Flemming Christensen"
 date: "2024-10-6"
 format:
   html:
-    toc: true  # Enable the table of contents
-    toc_depth: 2  # Specify the depth of headers to include in the TOC
     embed-resources: true
 ---
 
 # Libraries
 ```{r}
 library(doBy)
+library(ggplot2)
 ```
 
 
@@ -32,10 +31,10 @@ test <- dat[-i_train,]
 
 
 # Exercise 1
-Use `response_plot()` from the *development version of* `doBy` to visualize the relation between the response and the other variables in the data.
+Use `response_plot()` from the **development version of** `doBy` to visualize the relation between the response and the other variables in the data.
 
-```{r}
-response_plot(dat, easygon)
+```{r, fig.width=10, fig.height=20}
+response_plot(dat, easygon ~ ., geoms = c(geom_jitter(alpha = .6, w=.1, h=.1)), ncol = 5)
 ```
 
 
@@ -53,7 +52,7 @@ Specify a number of prediction models – at least one of each of the following:
 ## 3. random forest (`randomForest`)
 
 # Exercise 3
-For *one of* the linear models show the estimated coefficients and comment *briefly* on the output (for example, comment on the sign of the estimates).
+For **one of** the linear models show the estimated coefficients and comment **briefly** on the output (for example, comment on the sign of the estimates).
 
 
 # Exercise 4
