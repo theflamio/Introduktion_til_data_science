@@ -3141,11 +3141,7 @@ vertical-align: -.125em;
 <h1>Exercise 1</h1>
 <p>Use <code>response_plot()</code> from the <strong>development version of</strong> <code>doBy</code> to visualize the relation between the response and the other variables in the data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">response_plot</span>(dat, easygon <span class="sc">~</span> ., <span class="at">geoms =</span> <span class="fu">c</span>(<span class="fu">geom_jitter</span>(<span class="at">alpha =</span> .<span class="dv">6</span>, <span class="at">w=</span>.<span class="dv">1</span>, <span class="at">h=</span>.<span class="dv">1</span>)), <span class="at">ncol =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in geom_jitter(alpha = 0.6, w = 0.1, h = 0.1): Ignoring unknown
-parameters: `w` and `h`</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">response_plot</span>(dat, easygon <span class="sc">~</span> ., <span class="at">geoms =</span> <span class="fu">c</span>(<span class="fu">geom_jitter</span>(<span class="at">alpha =</span> .<span class="dv">6</span>, <span class="at">width =</span> .<span class="dv">4</span>, <span class="at">height =</span> .<span class="dv">4</span>)), <span class="at">ncol =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -3197,10 +3193,10 @@ parameters: `w` and `h`</code></pre>
 <h1>Exercise 3</h1>
 <p>Ensure Outcome is a factor and split the data in a training and test set as follows:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>) <span class="co"># for reproducibility</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>i_train <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(dat), .<span class="dv">5</span><span class="sc">*</span><span class="fu">nrow</span>(dat))</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> dat[i_train,]</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> dat[<span class="sc">-</span>i_train,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>) <span class="co"># for reproducibility</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>i_train <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(dat), .<span class="dv">5</span><span class="sc">*</span><span class="fu">nrow</span>(dat))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> dat[i_train,]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> dat[<span class="sc">-</span>i_train,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Specify a number of classification models and report the corresponding confusion matrix for the test data. You must include at least one of each of the following:</p>
 <ol type="1">
@@ -3224,7 +3220,7 @@ parameters: `w` and `h`</code></pre>
 <section id="project-dependencies" class="level2">
 <h2 class="anchored" data-anchor-id="project-dependencies">Project dependencies</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.4.1 (2024-06-14 ucrt)
 Platform: x86_64-w64-mingw32/x64

@@ -34,7 +34,7 @@ test <- dat[-i_train,]
 Use `response_plot()` from the **development version of** `doBy` to visualize the relation between the response and the other variables in the data.
 
 ```{r, fig.width=10, fig.height=20}
-response_plot(dat, easygon ~ ., geoms = c(geom_jitter(alpha = .6, w=.1, h=.1)), ncol = 5)
+response_plot(dat, easygon ~ ., geoms = c(geom_jitter(alpha = .6, width = .4, height = .4)), ncol = 5)
 ```
 
 
