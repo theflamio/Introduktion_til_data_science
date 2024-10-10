@@ -11,6 +11,9 @@ format:
 ```{r}
 library(doBy)
 library(ggplot2)
+library(reshape2)
+library(rpart)
+library(randomForest)
 ```
 
 
@@ -45,18 +48,115 @@ Specify a number of prediction models – at least one of each of the following:
 2. regression tree (`rpart`)
 3. random forest (`randomForest`)
 
+## General observations
+predictors that seems to be significant predictors from the response plot are following.
+
+Very strong: relaxed - laidbck.
+strong: coopera - approvn.
+
+Lets see if that holds up when we run the stepwise selection
+
 ## 1. linear with stepwise selection (`lm`/ `step`)
+
+```{r, results="hide"}
+# Fit a linear model
+model <- lm(easygon ~ ., data = train)
+
+# Perform stepwise selection based on AIC
+stepwise_model <- step(model, direction = "both")
+
+summary(stepwise_model)
+```
 
 ## 2. regression tree (`rpart`)
 
+```{r, fig.width=7, fig.height=7}
+# Fit a regression tree model
+tree_model <- rpart(easygon ~ ., data = train, method = "anova")
+
+# Visualize the tree
+plot(tree_model)
+text(tree_model)
+```
+
 ## 3. random forest (`randomForest`)
+
+```{r, fig.width=7, fig.height=7}
+# Fit a random forest model
+rf_model <- randomForest(easygon ~ ., data = train, ntree = 500)
+
+# Print model details
+print(rf_model)
+
+# Visualizes how the model's error rate changes with the number of trees.
+plot(rf_model, main = "Random Forest Error Rates")
+
+# Plots the importance of each variable, helping identify which predictors are most influential. "Only for random forrest"
+varImpPlot(rf_model, main = "Variable Importance in Random Forest")
+```
 
 # Exercise 3
 For **one of** the linear models show the estimated coefficients and comment **briefly** on the output (for example, comment on the sign of the estimates).
 
+```{r}
+summary(stepwise_model)
+```
+
 
 # Exercise 4
 Compare the performance of the fitted models by predicting the values of `easygon` for the test data and show a plot comparing the predictions to the observations from the test data. Also make a table of the RMSE for each model.
+
+```{r}
+# Predict on test data
+pred_step <- predict(model, newdata = test)
+pred_rpart <- predict(tree_model, newdata = test)
+pred_rf <- predict(rf_model, newdata = test)
+
+# Extract actual values from the test set
+actual <- test$easygon
+
+# Function to calculate RMSE
+rmse <- function(actual, predicted) {
+  sqrt(mean((actual - predicted)^2))
+}
+
+# Calculate RMSE for each model
+rmse_step <- rmse(actual, pred_step)
+rmse_rpart <- rmse(actual, pred_rpart)
+rmse_rf <- rmse(actual, pred_rf)
+
+# Create a table to compare RMSE
+rmse_table <- data.frame(
+  Model = c("Stepwise Linear", "Regression Tree", "Random Forest"),
+  RMSE = c(rmse_step, rmse_rpart, rmse_rf)
+)
+
+# Print RMSE table
+print(rmse_table)
+```
+
+```{r}
+# Combine the actual and predicted values into a single data frame for plotting
+plot_data <- data.frame(
+  Observed = actual,
+  Stepwise = pred_step,
+  RegressionTree = pred_rpart,
+  RandomForest = pred_rf
+)
+
+# Melt the data frame to long format for ggplot
+plot_data_melt <- melt(plot_data, id.vars = "Observed", 
+                       variable.name = "Model", value.name = "Predicted")
+
+# Create the plot
+ggplot(plot_data_melt, aes(x = Observed, y = Predicted, color = Model)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "black") +
+  labs(title = "Observed vs Predicted Values of easygon",
+       x = "Observed easygon", y = "Predicted easygon") +
+  facet_wrap(~Model)
+```
+
 
 # Part 2: Classification
 The dataset `diabetes.csv` is about risk factors for diabetes and contains 768 observations of 9 variables. The response variable is `Outcome` which is binary. The goal is to predict `Outcome` using the other variables. A description of the dataset can be found at https://www.kaggle.com/datasets/mathchi/diabetes-data-set/data
