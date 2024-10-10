@@ -54,7 +54,7 @@ predictors that seems to be significant predictors from the response plot are fo
 Very strong: relaxed - laidbck.
 strong: coopera - approvn.
 
-Lets see if that holds up when we run the stepwise selection
+Lets see if that holds up later on.
 
 ## 1. linear with stepwise selection (`lm`/ `step`)
 
