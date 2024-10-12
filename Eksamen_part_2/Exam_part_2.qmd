@@ -14,6 +14,8 @@ library(ggplot2)
 library(reshape2)
 library(rpart)
 library(randomForest)
+library(readr)
+library(dplyr)
 ```
 
 
@@ -164,8 +166,42 @@ The dataset `diabetes.csv` is about risk factors for diabetes and contains 768 o
 # Exercise 1
 Read in and clean the data by detecting unexpected values of some variables, replace the values with `NA` and finally make a data set with only the complete cases.
 
+```{r, results="hide"}
+data_dir <- here::here("diabetes.csv") #set the directory to were the project and dataset is used
+
+dia_raw_dat = suppressMessages(read_csv(data_dir)) # Read csv file
+
+head(dia_raw_dat) #check for correct data type
+
+summary(dia_raw_dat) #quick and dirty look at the raw data
+```
+zero skinThickness is not reallistic same goes for Glucose, BloodPressure, Insulin, BMI and DiabetesPedigreeFunction.
+
+Seems like the data set have used 0 and 0.0 to describe missing values.
+
+OBS Pregnancies and outcome can ofc be zero.
+
+```{r}
+dia_clean_dat <- dia_raw_dat |>
+  mutate(
+    Glucose = ifelse(Glucose == 0, NA, Glucose),
+    BloodPressure = ifelse(BloodPressure == 0, NA, BloodPressure),
+    SkinThickness = ifelse(SkinThickness == 0, NA, SkinThickness),
+    Insulin = ifelse(Insulin == 0, NA, Insulin),
+    BMI = ifelse(BMI == 0, NA, BMI)
+  )
+
+summary(dia_clean_dat) #quick and dirty look at the clean data
+```
+
+
 # Exercise 2
 Plot the response against each of the explanatory variables/features and add a smooth line as a very rough indication of how the probability of diabetes depends on the individual feature (note the response has to be numeric for the smooth line to work).
+
+```{r, fig.width=10, fig.height=20}
+#response_plot(dat, easygon ~ ., geoms = c(geom_jitter(alpha = .6, width = .4, height = .4)), ncol = 5)
+```
+
 
 # Exercise 3
 Ensure Outcome is a factor and split the data in a training and test set as follows:
@@ -186,11 +222,27 @@ Specify a number of classification models and report the corresponding confusion
 
 ## 1. logistic regression with stepwise selection (`glm` / `step`)
 
+```{r}
+
+```
+
 ## 2. regression tree (`rpart`)
+
+```{r}
+
+```
 
 ## 3. random forest (`randomForest`)
 
+```{r}
+
+```
+
 ## 4. linear/quadratic discriminant analysis
+
+```{r}
+
+```
 
 ## Project dependencies
 
