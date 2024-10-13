@@ -13,6 +13,7 @@ library(doBy)
 library(ggplot2)
 library(reshape2)
 library(rpart)
+library(rpart.plot)
 library(randomForest)
 library(readr)
 library(dplyr)
@@ -64,23 +65,93 @@ Lets see if that holds up later on.
 
 ```{r, results="hide"}
 # Fit a linear model
-model <- lm(easygon ~ ., data = train)
-
-# Perform stepwise selection based on AIC
-stepwise_model <- step(model, direction = "both")
-
-summary(stepwise_model)
+full_model <- lm(easygon ~ ., data = train)
 ```
+
+```{r}
+null_model <- lm(easygon ~ 1, data = train)
+
+forward_model <- step(null_model, direction = "forward", scope = formula(full_model))
+forward_aic <- AIC(forward_model)
+```
+
+```{r}
+backward_model <- step(full_model, direction = "backward")
+backward_aic <- AIC(backward_model)
+```
+
+```{r}
+both_model <- step(full_model, direction = "both")
+both_aic <- AIC(both_model)
+```
+
+```{r}
+# Compare AIC values
+aic_values <- data.frame(
+  Method = c("Forward", "Backward", "Both"),
+  AIC = c(forward_aic, backward_aic, both_aic)
+)
+
+# Print AIC values
+print(aic_values)
+
+# Identify the best model based on AIC
+best_aic_index <- which.min(aic_values$AIC)
+best_method <- aic_values[best_aic_index, ]
+best_model <- switch(best_method$Method,
+                     "Forward" = forward_model,
+                     "Backward" = backward_model,
+                     "Both" = both_model)
+
+# Print the best model details
+print(best_method)
+print(summary(best_model))
+```
+
 
 ## 2. regression tree (`rpart`)
 
-```{r, fig.width=7, fig.height=7}
+### 2.1 regression tree.
+
+```{r}
+set.seed(42)
 # Fit a regression tree model
 tree_model <- rpart(easygon ~ ., data = train, method = "anova")
+```
 
-# Visualize the tree
-plot(tree_model)
-text(tree_model)
+### 2.2 complexity parameter table.
+
+```{r}
+printcp(tree_model)
+# CP:       "Complexity parameter" penalty for adding split. lower values more complex trees
+# nsplit:   "Number of splits in the tree"
+# rel error "relative error of the model compare to the root node. lower values are better"
+# xerror:   "Cross-validated error"
+# xstd:     "The standard error of the cross-validated error, providing a measure of variability"
+
+# best CP seems to be 0.070189 because of the xerror is 0.81113 "lowest" 
+```
+
+### 2.3 Plot the complexity parameter vs. cross-validated error.
+
+```{r, fig.width=7, fig.height=7}
+plotcp(tree_model)
+```
+
+### 2.4 pick the optimal cp from previous plot and prune the tree.
+
+```{r}
+optimal_cp <- 0.070189
+pruned_tree_model <- prune(tree_model, cp = optimal_cp)
+```
+
+### 2.5 plot of tree model and pruned tree model.
+
+```{r, fig.width=7, fig.height=7}
+par(mfrow = c(2,1))
+rpart.plot(tree_model, main = "Full tree")
+rpart.plot(pruned_tree_model, main = paste("Pruned tree, cp = ", optimal_cp))
+
 ```
 
 ## 3. random forest (`randomForest`)
@@ -105,7 +176,7 @@ varImpPlot(rf_model)
 For **one of** the linear models show the estimated coefficients and comment **briefly** on the output (for example, comment on the sign of the estimates).
 
 ```{r}
-summary(stepwise_model)
+summary(stepwise_full_lm_model)
 ```
 
 
@@ -114,7 +185,7 @@ Compare the performance of the fitted models by predicting the values of `easygo
 
 ```{r}
 # Predict on test data
-pred_step <- predict(model, newdata = test)
+pred_lm <- predict(best_model, newdata = test)
 pred_rpart <- predict(tree_model, newdata = test)
 pred_rf <- predict(rf_model, newdata = test)
 
@@ -127,14 +198,14 @@ rmse <- function(actual, predicted) {
 }
 
 # Calculate RMSE for each model
-rmse_step <- rmse(actual, pred_step)
+rmse_lm <- rmse(actual, pred_lm)
 rmse_rpart <- rmse(actual, pred_rpart)
 rmse_rf <- rmse(actual, pred_rf)
 
 # Create a table to compare RMSE
 rmse_table <- data.frame(
-  Model = c("Stepwise Linear", "Regression Tree", "Random Forest"),
-  RMSE = c(rmse_step, rmse_rpart, rmse_rf)
+  Model = c("best Linear", "Regression Tree", "Random Forest"),
+  RMSE = c(rmse_lm, rmse_rpart, rmse_rf)
 )
 
 # Print RMSE table
@@ -145,7 +216,7 @@ print(rmse_table)
 # Combine the actual and predicted values into a single data frame for plotting
 plot_data <- data.frame(
   Observed = actual,
-  Stepwise = pred_step,
+  linear = pred_lm,
   RegressionTree = pred_rpart,
   RandomForest = pred_rf
 )
