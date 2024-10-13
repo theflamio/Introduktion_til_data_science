@@ -17,6 +17,7 @@ library(randomForest)
 library(readr)
 library(dplyr)
 library(tidyr)
+library(MASS)
 ```
 
 
@@ -241,7 +242,7 @@ ggplot(dia_long, aes(x = Value, y = Outcome)) +
   labs(
     title = "Outcome vs Features",
     x = "Feature Value",
-    y = "Probability of Diabetes aka Outcome"
+    y = "Outcome aka Probability of Diabetes"
   )
 ```
 
@@ -251,9 +252,9 @@ Ensure Outcome is a factor and split the data in a training and test set as foll
 
 ```{r}
 set.seed(202) # for reproducibility
-i_train <- sample(nrow(dat), .5*nrow(dat))
-train <- dat[i_train,]
-test <- dat[-i_train,]
+i_train <- sample(nrow(dia_clean_dat), .5*nrow(dia_clean_dat))
+train <- dia_clean_dat[i_train,]
+test <- dia_clean_dat[-i_train,]
 ```
 
 Specify a number of classification models and report the corresponding confusion matrix for the test data. You must include at least one of each of the following:
@@ -266,25 +267,58 @@ Specify a number of classification models and report the corresponding confusion
 ## 1. logistic regression with stepwise selection (`glm` / `step`)
 
 ```{r}
+log_model <- glm(Outcome ~., data = train, family = "binomial")
 
+summary(log_model)
+
+log_model_stepwise <- step(log_model, direction = "both", trace = 1)
+
+summary(log_model_stepwise)
 ```
 
 ## 2. regression tree (`rpart`)
 
-```{r}
+```{r, fig.width=15, fig.height=7}
+# Fit a regression tree model
+tree_model <- rpart(Outcome ~ ., data = train, method = "anova")
 
+# Visualize the tree
+plot(tree_model)
+text(tree_model)
 ```
 
 ## 3. random forest (`randomForest`)
 
 ```{r}
+set.seed(1024)
 
+# Fit a random forest model
+rf_model <- randomForest(Outcome ~ ., data = train, importance = TRUE)
+
+# Print model details
+print(rf_model)
+
+# Visualizes how the model's error rate changes with the number of trees.
+plot(rf_model, main = "Random Forest Error Rates")
+
+# Plots the importance of each variable, helping identify which predictors are most influential. "Only for random forrest"
+varImpPlot(rf_model)
 ```
 
 ## 4. linear/quadratic discriminant analysis
 
 ```{r}
+lda_model <- lda(Outcome ~ ., data = train)
 
+lda_predictions <- predict(lda_model)
+
+head(lda_predictions$class)
+
+qda_model <- qda(Outcome ~ ., data = train)
+
+qda_predictions <- predict(qda_model)
+
+head(qda_predictions$class)
 ```
 
 ## Project dependencies
