@@ -189,20 +189,19 @@ varImpPlot(rf_model)
 # Exercise 3
 For **one of** the linear models show the estimated coefficients and comment **briefly** on the output (for example, comment on the sign of the estimates).
 
-# term:       Predictor variable in the model.
-
-# estimate:   if the estimate of x is 2 the dependent variable "y" will increase by 2 for every x.
-
-# std.error:  Small standard error indicates that the estimate is precise.
-
-# statistic:  Also known as T statistic.
-
-# p.value:    A small p-value (typically < 0.05) suggests that there is strong evidence against the null hypothesis
-
 ```{r}
 tidy(lm_forward)
 ```
+term:       Predictor variable in the model.
 
+estimate:   if the estimate of x is 2 the dependent variable "y" will increase by 2 for every x.
+
+std.error:  Small standard error indicates that the estimate is precise.
+
+statistic:  Also known as T statistic.
+
+p.value:    A small p-value (typically < 0.05) suggests that there is strong evidence against the null hypothesis,
+            leading to its rejection, which implies that the term is statistically significant in predicting the                  dependent variable.
 
 # Exercise 4
 Compare the performance of the fitted models by predicting the values of `easygon` for the test data and show a plot comparing the predictions to the observations from the test data. Also make a table of the RMSE for each model.
@@ -231,12 +230,13 @@ rmse_lm_forward <- rmse(actual, pred_lm_forward)
 rmse_lm_backward <- rmse(actual, pred_lm_backward)
 rmse_lm_both <- rmse(actual, pred_lm_both)
 rmse_rpart <- rmse(actual, pred_rpart)
+rmse_rpart_prune <- rmse(actual, pred_rpart_prune)
 rmse_rf <- rmse(actual, pred_rf)
 
 # Create a table to compare RMSE
 rmse_table <- data.frame(
   Model = c("lm_full", "lm_forward", "lm_backward", "lm_both", "Tree full", "Tree_pruned", "Random Forest"),
-  RMSE = c(rmse_lm_full, rmse_lm_forward, rmse_lm_backward, rmse_lm_both, rmse_rpart, pred_rpart_prune, rmse_rf)
+  RMSE = c(rmse_lm_full, rmse_lm_forward, rmse_lm_backward, rmse_lm_both, rmse_rpart, rmse_rpart_prune, rmse_rf)
 )
 
 # Print RMSE table
