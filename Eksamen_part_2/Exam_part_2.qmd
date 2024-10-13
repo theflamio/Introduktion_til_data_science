@@ -106,7 +106,6 @@ aic_values <- data.frame(
   AIC = c(lm_forward_aic, lm_backward_aic, lm_both_aic)
 )
 
-# Print AIC values
 print(aic_values)
 ```
 
@@ -289,7 +288,7 @@ The dataset `diabetes.csv` is about risk factors for diabetes and contains 768 o
 # Exercise 1
 Read in and clean the data by detecting unexpected values of some variables, replace the values with `NA` and finally make a data set with only the complete cases.
 
-```{r, results="hide"}
+```{r}
 data_dir <- here::here("diabetes.csv") #set the directory to were the project and dataset is used
 
 dia_raw_dat = suppressMessages(read_csv(data_dir)) # Read csv file
@@ -332,10 +331,13 @@ dia_dat_with_NA <- dia_raw_dat |>
     BloodPressure = ifelse(BloodPressure == 0, NA, BloodPressure),
     SkinThickness = ifelse(SkinThickness == 0, NA, SkinThickness),
     Insulin = ifelse(Insulin == 0, NA, Insulin),
+    BMI = ifelse(BMI == 0, NA, BMI),
     DiabetesPedigreeFunction = ifelse(DiabetesPedigreeFunction == 0, NA, DiabetesPedigreeFunction)
   )
 
-dia_clean_dat <- na.omit(dia_dat_with_NA)
+dia_clean_dat <- na.omit(dia_dat_with_NA) # only the complete cases
+
+head(dia_clean_dat)
 
 summary(dia_clean_dat) #quick and dirty look at the clean data
 ```
@@ -385,7 +387,7 @@ Specify a number of classification models and report the corresponding confusion
 
 ## 1. logistic regression with stepwise selection (`glm` / `step`)
 
-```{r}
+```{r, results="hide"}
 log_model <- glm(Outcome ~., data = train, family = "binomial")
 
 summary(log_model)
@@ -398,18 +400,18 @@ summary(log_model_stepwise)
 ## 2. regression tree (`rpart`)
 
 ```{r, fig.width=15, fig.height=7}
-# Fit a regression tree model
+set.seed(202)
+
 tree_model <- rpart(Outcome ~ ., data = train, method = "anova")
 
 # Visualize the tree
-plot(tree_model)
-text(tree_model)
+rpart.plot(tree_model, main = "Full tree")
 ```
 
 ## 3. random forest (`randomForest`)
 
-```{r}
-set.seed(1024)
+```{r, results="hide"}
+set.seed(202)
 
 # Fit a random forest model
 rf_model <- randomForest(Outcome ~ ., data = train, importance = TRUE)
@@ -426,19 +428,26 @@ varImpPlot(rf_model)
 
 ## 4. linear/quadratic discriminant analysis
 
-```{r}
+### 4.1 linear discriminant analysis
+```{r, results="hide"}
+set.seed(202)
 lda_model <- lda(Outcome ~ ., data = train)
 
 lda_predictions <- predict(lda_model)
 
 head(lda_predictions$class)
+```
 
+### 4.2 quadratic discriminant analysis
+
+```{r}
 qda_model <- qda(Outcome ~ ., data = train)
 
 qda_predictions <- predict(qda_model)
 
 head(qda_predictions$class)
 ```
+
 
 ## Project dependencies
 
