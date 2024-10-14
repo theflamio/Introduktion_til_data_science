@@ -288,8 +288,6 @@ data_dir <- here::here("diabetes.csv") #set the directory to were the project an
 
 dia_raw_dat = suppressMessages(read_csv(data_dir)) # Read csv file
 
-head(dia_raw_dat) #check for correct data type "obs outcome is not a factor"
-
 summary(dia_raw_dat) #quick and dirty look at the raw data alot of zeroes !
 ```
 
@@ -315,7 +313,7 @@ summary(dia_raw_dat) #quick and dirty look at the raw data alot of zeroes !
 
 zero value in any of the variable beside Pregnancy and Outcome is unrealistic
 
-Seems like the data set have used 0 and 0.0 to describe missing values. Needs to be changed to NA
+Seems like the data set have used `0` and `0.0` to describe `missing values`. Needs to be changed to `NA`
 
 ## 1.2 Clean the data set
 
@@ -332,9 +330,9 @@ dia_dat_with_NA <- dia_raw_dat |>
 
 dia_clean_dat <- na.omit(dia_dat_with_NA) # only the complete cases
 
-head(dia_clean_dat)
-
 summary(dia_clean_dat) #quick and dirty look at the clean data
+
+dim(dia_clean_dat) # dimension of the dataset 392 observation 9 variables
 ```
 
 

@@ -3605,20 +3605,7 @@ rf_tuned    1.392208</code></pre>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>dia_raw_dat <span class="ot">=</span> <span class="fu">suppressMessages</span>(<span class="fu">read_csv</span>(data_dir)) <span class="co"># Read csv file</span></span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dia_raw_dat) <span class="co">#check for correct data type &quot;obs outcome is not a factor&quot;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 9
-  Pregnancies Glucose BloodPressure SkinThickness Insulin   BMI
-        &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
-1           6     148            72            35       0  33.6
-2           1      85            66            29       0  26.6
-3           8     183            64             0       0  23.3
-4           1      89            66            23      94  28.1
-5           0     137            40            35     168  43.1
-6           5     116            74             0       0  25.6
-# ℹ 3 more variables: DiabetesPedigreeFunction &lt;dbl&gt;, Age &lt;dbl&gt;, Outcome &lt;dbl&gt;</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dia_raw_dat) <span class="co">#quick and dirty look at the raw data alot of zeroes !</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dia_raw_dat) <span class="co">#quick and dirty look at the raw data alot of zeroes !</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Pregnancies        Glucose      BloodPressure    SkinThickness  
  Min.   : 0.000   Min.   :  0.0   Min.   :  0.00   Min.   : 0.00  
@@ -3658,37 +3645,24 @@ rf_tuned    1.392208</code></pre>
 <li><p>Outcome: Class variable (0 or 1)</p></li>
 </ol>
 <p>zero value in any of the variable beside Pregnancy and Outcome is unrealistic</p>
-<p>Seems like the data set have used 0 and 0.0 to describe missing values. Needs to be changed to NA</p>
+<p>Seems like the data set have used <code>0</code> and <code>0.0</code> to describe <code>missing values</code>. Needs to be changed to <code>NA</code></p>
 </section>
 <section id="clean-the-data-set" class="level2">
 <h2 class="anchored" data-anchor-id="clean-the-data-set">1.2 Clean the data set</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>dia_dat_with_NA <span class="ot">&lt;-</span> dia_raw_dat <span class="sc">|&gt;</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(   </span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">Glucose =</span> <span class="fu">ifelse</span>(Glucose <span class="sc">==</span> <span class="dv">0</span>, <span class="cn">NA</span>, Glucose),</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">BloodPressure =</span> <span class="fu">ifelse</span>(BloodPressure <span class="sc">==</span> <span class="dv">0</span>, <span class="cn">NA</span>, BloodPressure),</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">SkinThickness =</span> <span class="fu">ifelse</span>(SkinThickness <span class="sc">==</span> <span class="dv">0</span>, <span class="cn">NA</span>, SkinThickness),</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Insulin =</span> <span class="fu">ifelse</span>(Insulin <span class="sc">==</span> <span class="dv">0</span>, <span class="cn">NA</span>, Insulin),</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">BMI =</span> <span class="fu">ifelse</span>(BMI <span class="sc">==</span> <span class="dv">0</span>, <span class="cn">NA</span>, BMI),</span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">DiabetesPedigreeFunction =</span> <span class="fu">ifelse</span>(DiabetesPedigreeFunction <span class="sc">==</span> <span class="dv">0</span>, <span class="cn">NA</span>, DiabetesPedigreeFunction)</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>dia_clean_dat <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(dia_dat_with_NA) <span class="co"># only the complete cases</span></span>
-<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dia_clean_dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 9
-  Pregnancies Glucose BloodPressure SkinThickness Insulin   BMI
-        &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
-1           1      89            66            23      94  28.1
-2           0     137            40            35     168  43.1
-3           3      78            50            32      88  31  
-4           2     197            70            45     543  30.5
-5           1     189            60            23     846  30.1
-6           5     166            72            19     175  25.8
-# ℹ 3 more variables: DiabetesPedigreeFunction &lt;dbl&gt;, Age &lt;dbl&gt;, Outcome &lt;dbl&gt;</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dia_clean_dat) <span class="co">#quick and dirty look at the clean data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>dia_dat_with_NA <span class="ot">&lt;-</span> dia_raw_dat <span class="sc">|&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(   </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">Glucose =</span> <span class="fu">ifelse</span>(Glucose <span class="sc">==</span> <span class="dv">0</span>, <span class="cn">NA</span>, Glucose),</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">BloodPressure =</span> <span class="fu">ifelse</span>(BloodPressure <span class="sc">==</span> <span class="dv">0</span>, <span class="cn">NA</span>, BloodPressure),</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">SkinThickness =</span> <span class="fu">ifelse</span>(SkinThickness <span class="sc">==</span> <span class="dv">0</span>, <span class="cn">NA</span>, SkinThickness),</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Insulin =</span> <span class="fu">ifelse</span>(Insulin <span class="sc">==</span> <span class="dv">0</span>, <span class="cn">NA</span>, Insulin),</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">BMI =</span> <span class="fu">ifelse</span>(BMI <span class="sc">==</span> <span class="dv">0</span>, <span class="cn">NA</span>, BMI),</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">DiabetesPedigreeFunction =</span> <span class="fu">ifelse</span>(DiabetesPedigreeFunction <span class="sc">==</span> <span class="dv">0</span>, <span class="cn">NA</span>, DiabetesPedigreeFunction)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>dia_clean_dat <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(dia_dat_with_NA) <span class="co"># only the complete cases</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dia_clean_dat) <span class="co">#quick and dirty look at the clean data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Pregnancies        Glucose      BloodPressure    SkinThickness  
  Min.   : 0.000   Min.   : 56.0   Min.   : 24.00   Min.   : 7.00  
@@ -3712,6 +3686,10 @@ rf_tuned    1.392208</code></pre>
  3rd Qu.:1.0000  
  Max.   :1.0000  </code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(dia_clean_dat) <span class="co"># dimension of the dataset 392 observation 9 variables</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 392   9</code></pre>
+</div>
 </div>
 </section>
 </section>
@@ -3721,21 +3699,21 @@ rf_tuned    1.392208</code></pre>
 <section id="response-plot" class="level2">
 <h2 class="anchored" data-anchor-id="response-plot">2.1 Response plot</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert data to long format to use facetting</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>dia_long <span class="ot">&lt;-</span> dia_clean_dat <span class="sc">|&gt;</span></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">&quot;Pregnancies&quot;</span>, <span class="st">&quot;Glucose&quot;</span>, <span class="st">&quot;BloodPressure&quot;</span>, <span class="st">&quot;SkinThickness&quot;</span>, <span class="st">&quot;Insulin&quot;</span>, <span class="st">&quot;BMI&quot;</span>, <span class="st">&quot;DiabetesPedigreeFunction&quot;</span>, <span class="st">&quot;Age&quot;</span>),</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;Feature&quot;</span>,</span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;Value&quot;</span>)</span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dia_long, <span class="fu">aes</span>(<span class="at">x =</span> Value, <span class="at">y =</span> Outcome)) <span class="sc">+</span></span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="dv">0</span>, <span class="at">height =</span> <span class="fl">0.1</span>),<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span>  <span class="co"># Scatterplot</span></span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;loess&quot;</span>, <span class="at">color =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span>  <span class="co"># Smooth line with confidence interval</span></span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Feature, <span class="at">scales =</span> <span class="st">&quot;free_x&quot;</span>) <span class="sc">+</span>  <span class="co"># Facet by Feature, adjust scales</span></span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Outcome vs Features&quot;</span>,</span>
-<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Feature Value&quot;</span>,</span>
-<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Outcome aka Probability of Diabetes&quot;</span></span>
-<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert data to long format to use facetting</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>dia_long <span class="ot">&lt;-</span> dia_clean_dat <span class="sc">|&gt;</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">&quot;Pregnancies&quot;</span>, <span class="st">&quot;Glucose&quot;</span>, <span class="st">&quot;BloodPressure&quot;</span>, <span class="st">&quot;SkinThickness&quot;</span>, <span class="st">&quot;Insulin&quot;</span>, <span class="st">&quot;BMI&quot;</span>, <span class="st">&quot;DiabetesPedigreeFunction&quot;</span>, <span class="st">&quot;Age&quot;</span>),</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;Feature&quot;</span>,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;Value&quot;</span>)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dia_long, <span class="fu">aes</span>(<span class="at">x =</span> Value, <span class="at">y =</span> Outcome)) <span class="sc">+</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="dv">0</span>, <span class="at">height =</span> <span class="fl">0.1</span>),<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span>  <span class="co"># Scatterplot</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;loess&quot;</span>, <span class="at">color =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span>  <span class="co"># Smooth line with confidence interval</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Feature, <span class="at">scales =</span> <span class="st">&quot;free_x&quot;</span>) <span class="sc">+</span>  <span class="co"># Facet by Feature, adjust scales</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Outcome vs Features&quot;</span>,</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Feature Value&quot;</span>,</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Outcome aka Probability of Diabetes&quot;</span></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
 </div>
@@ -3751,14 +3729,14 @@ rf_tuned    1.392208</code></pre>
 <section id="correlation-plot-bonus" class="level2">
 <h2 class="anchored" data-anchor-id="correlation-plot-bonus">2.2 Correlation plot (bonus)</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>corr_matrix <span class="ot">&lt;-</span> <span class="fu">cor</span>(dia_clean_dat)</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(corr_matrix, </span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">lab =</span> <span class="cn">TRUE</span>,                          <span class="co"># Annotate the correlation coefficients</span></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">colors =</span> <span class="fu">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;red&quot;</span>),  <span class="co"># Color scheme similar to &#39;coolwarm&#39;</span></span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">title =</span> <span class="st">&quot;Correlation Graph&quot;</span>) <span class="sc">+</span></span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">11</span>)) <span class="sc">+</span> <span class="co"># Set title font size</span></span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">6</span><span class="sc">/</span><span class="dv">8</span>)                     <span class="co"># Set figure size (8x6)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>corr_matrix <span class="ot">&lt;-</span> <span class="fu">cor</span>(dia_clean_dat)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(corr_matrix, </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">lab =</span> <span class="cn">TRUE</span>,                          <span class="co"># Annotate the correlation coefficients</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">colors =</span> <span class="fu">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;red&quot;</span>),  <span class="co"># Color scheme similar to &#39;coolwarm&#39;</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">title =</span> <span class="st">&quot;Correlation Graph&quot;</span>) <span class="sc">+</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">11</span>)) <span class="sc">+</span> <span class="co"># Set title font size</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">6</span><span class="sc">/</span><span class="dv">8</span>)                     <span class="co"># Set figure size (8x6)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -3775,9 +3753,9 @@ rf_tuned    1.392208</code></pre>
 <section id="convert-outcome-to-factor-and-split-data-in-traintest-set" class="level2">
 <h2 class="anchored" data-anchor-id="convert-outcome-to-factor-and-split-data-in-traintest-set">3.1 Convert Outcome to factor and split data in train/test set</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>dia_clean_dat<span class="sc">$</span>Outcome <span class="ot">&lt;-</span> <span class="fu">factor</span>(dia_clean_dat<span class="sc">$</span>Outcome, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;No&quot;</span>, <span class="st">&quot;Yes&quot;</span>))</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dia_clean_dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>dia_clean_dat<span class="sc">$</span>Outcome <span class="ot">&lt;-</span> <span class="fu">factor</span>(dia_clean_dat<span class="sc">$</span>Outcome, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;No&quot;</span>, <span class="st">&quot;Yes&quot;</span>))</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dia_clean_dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 9
   Pregnancies Glucose BloodPressure SkinThickness Insulin   BMI
@@ -3790,10 +3768,10 @@ rf_tuned    1.392208</code></pre>
 6           5     166            72            19     175  25.8
 # ℹ 3 more variables: DiabetesPedigreeFunction &lt;dbl&gt;, Age &lt;dbl&gt;, Outcome &lt;fct&gt;</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>) <span class="co"># for reproducibility</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>i_train <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(dia_clean_dat), .<span class="dv">5</span><span class="sc">*</span><span class="fu">nrow</span>(dia_clean_dat))</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> dia_clean_dat[i_train,]</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> dia_clean_dat[<span class="sc">-</span>i_train,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>) <span class="co"># for reproducibility</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>i_train <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(dia_clean_dat), .<span class="dv">5</span><span class="sc">*</span><span class="fu">nrow</span>(dia_clean_dat))</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> dia_clean_dat[i_train,]</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> dia_clean_dat[<span class="sc">-</span>i_train,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Specify a number of classification models and report the corresponding confusion matrix for the test data. You must include at least one of each of the following:</p>
 <ol type="1">
@@ -3808,41 +3786,41 @@ rf_tuned    1.392208</code></pre>
 <section id="fit-log-model-with-stepwise-forward-selection" class="level3">
 <h3 class="anchored" data-anchor-id="fit-log-model-with-stepwise-forward-selection">3.2.1 Fit log model with stepwise forward selection</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>log_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(Outcome <span class="sc">~</span>., <span class="at">data =</span> train, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>)</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co"># from the response and correlation plot it suggest that Glucose, DiabetesPedigreeFunction, BMI, Pregnancies and Age are important.</span></span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>log_model_refined <span class="ot">&lt;-</span> <span class="fu">glm</span>(Outcome <span class="sc">~</span> Glucose <span class="sc">+</span> DiabetesPedigreeFunction <span class="sc">+</span> Pregnancies <span class="sc">+</span> BMI <span class="sc">+</span> Age, <span class="at">data =</span> train, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>)</span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>null_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(Outcome <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> train, <span class="at">family =</span> binomial)</span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Stepwise forward selection</span></span>
-<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>log_model_stepwise <span class="ot">&lt;-</span> <span class="fu">step</span>(null_model, </span>
-<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>                           <span class="at">direction =</span> <span class="st">&quot;both&quot;</span>, </span>
-<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>                           <span class="at">scope =</span> <span class="fu">formula</span>(log_model),</span>
-<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>                           <span class="at">trace =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>log_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(Outcome <span class="sc">~</span>., <span class="at">data =</span> train, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co"># from the response and correlation plot it suggest that Glucose, DiabetesPedigreeFunction, BMI, Pregnancies and Age are important.</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>log_model_refined <span class="ot">&lt;-</span> <span class="fu">glm</span>(Outcome <span class="sc">~</span> Glucose <span class="sc">+</span> DiabetesPedigreeFunction <span class="sc">+</span> Pregnancies <span class="sc">+</span> BMI <span class="sc">+</span> Age, <span class="at">data =</span> train, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>null_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(Outcome <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> train, <span class="at">family =</span> binomial)</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Stepwise forward selection</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>log_model_stepwise <span class="ot">&lt;-</span> <span class="fu">step</span>(null_model, </span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>                           <span class="at">direction =</span> <span class="st">&quot;both&quot;</span>, </span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>                           <span class="at">scope =</span> <span class="fu">formula</span>(log_model),</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>                           <span class="at">trace =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="predict-log-model-log-stepwise-selected-model-and-log-model-and-setup-confusion-matrix." class="level3">
 <h3 class="anchored" data-anchor-id="predict-log-model-log-stepwise-selected-model-and-log-model-and-setup-confusion-matrix.">3.2.2 Predict log model, log stepwise selected model and log model and setup confusion Matrix.</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>predicted_prob_log <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_model, <span class="at">newdata =</span> test, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>predicted_class_log <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(predicted_prob_log <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="st">&quot;Yes&quot;</span>, <span class="st">&quot;No&quot;</span>)</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>predicted_class_log <span class="ot">&lt;-</span> <span class="fu">factor</span>(predicted_class_log, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;No&quot;</span>, <span class="st">&quot;Yes&quot;</span>))</span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>confMat_log <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(predicted_class_log, test<span class="sc">$</span>Outcome, <span class="at">positive =</span> <span class="st">&quot;Yes&quot;</span>)</span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>predicted_prob_refine <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_model_refined, <span class="at">newdata =</span> test, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>predicted_class_refine <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(predicted_prob_refine <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="st">&quot;Yes&quot;</span>, <span class="st">&quot;No&quot;</span>)</span>
-<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>predicted_class_refine <span class="ot">&lt;-</span> <span class="fu">factor</span>(predicted_class_refine, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;No&quot;</span>, <span class="st">&quot;Yes&quot;</span>))</span>
-<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>confMat_log_refine <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(predicted_class_refine, test<span class="sc">$</span>Outcome, <span class="at">positive =</span> <span class="st">&quot;Yes&quot;</span>)</span>
-<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>predicted_prob_stepwise <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_model_stepwise, <span class="at">newdata =</span> test, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>predicted_class_stepwise <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(predicted_prob_stepwise <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="st">&quot;Yes&quot;</span>, <span class="st">&quot;No&quot;</span>)</span>
-<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>predicted_class_stepwise <span class="ot">&lt;-</span> <span class="fu">factor</span>(predicted_class_stepwise, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;No&quot;</span>, <span class="st">&quot;Yes&quot;</span>))</span>
-<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>confMat_log_step <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(predicted_class_stepwise, test<span class="sc">$</span>Outcome, <span class="at">positive =</span> <span class="st">&quot;Yes&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>predicted_prob_log <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_model, <span class="at">newdata =</span> test, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>predicted_class_log <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(predicted_prob_log <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="st">&quot;Yes&quot;</span>, <span class="st">&quot;No&quot;</span>)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>predicted_class_log <span class="ot">&lt;-</span> <span class="fu">factor</span>(predicted_class_log, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;No&quot;</span>, <span class="st">&quot;Yes&quot;</span>))</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>confMat_log <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(predicted_class_log, test<span class="sc">$</span>Outcome, <span class="at">positive =</span> <span class="st">&quot;Yes&quot;</span>)</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>predicted_prob_refine <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_model_refined, <span class="at">newdata =</span> test, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>predicted_class_refine <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(predicted_prob_refine <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="st">&quot;Yes&quot;</span>, <span class="st">&quot;No&quot;</span>)</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>predicted_class_refine <span class="ot">&lt;-</span> <span class="fu">factor</span>(predicted_class_refine, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;No&quot;</span>, <span class="st">&quot;Yes&quot;</span>))</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>confMat_log_refine <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(predicted_class_refine, test<span class="sc">$</span>Outcome, <span class="at">positive =</span> <span class="st">&quot;Yes&quot;</span>)</span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>predicted_prob_stepwise <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_model_stepwise, <span class="at">newdata =</span> test, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>predicted_class_stepwise <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(predicted_prob_stepwise <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="st">&quot;Yes&quot;</span>, <span class="st">&quot;No&quot;</span>)</span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>predicted_class_stepwise <span class="ot">&lt;-</span> <span class="fu">factor</span>(predicted_class_stepwise, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;No&quot;</span>, <span class="st">&quot;Yes&quot;</span>))</span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>confMat_log_step <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(predicted_class_stepwise, test<span class="sc">$</span>Outcome, <span class="at">positive =</span> <span class="st">&quot;Yes&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -3851,15 +3829,15 @@ rf_tuned    1.392208</code></pre>
 <section id="fit-the-classification-tree" class="level3">
 <h3 class="anchored" data-anchor-id="fit-the-classification-tree">3.3.1 Fit the Classification tree</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>Classification_tree <span class="ot">&lt;-</span> <span class="fu">rpart</span>(Outcome <span class="sc">~</span> ., <span class="at">data =</span> train, <span class="at">method =</span> <span class="st">&quot;class&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>Classification_tree <span class="ot">&lt;-</span> <span class="fu">rpart</span>(Outcome <span class="sc">~</span> ., <span class="at">data =</span> train, <span class="at">method =</span> <span class="st">&quot;class&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="prune-the-tree-select-cp-value" class="level3">
 <h3 class="anchored" data-anchor-id="prune-the-tree-select-cp-value">3.3.2 Prune the tree “select cp value”</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotcp</span>(Classification_tree)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotcp</span>(Classification_tree)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -3872,17 +3850,17 @@ rf_tuned    1.392208</code></pre>
 <section id="prune-the-tree" class="level3">
 <h3 class="anchored" data-anchor-id="prune-the-tree">3.3.3 Prune the tree</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>optimal_cp <span class="ot">=</span> <span class="fl">0.048</span> <span class="co">#lets try it because we want to see how it dose hold up</span></span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>prunedTree <span class="ot">&lt;-</span> <span class="fu">prune</span>(Classification_tree, <span class="at">cp =</span> optimal_cp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>optimal_cp <span class="ot">=</span> <span class="fl">0.048</span> <span class="co">#lets try it because we want to see how it dose hold up</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>prunedTree <span class="ot">&lt;-</span> <span class="fu">prune</span>(Classification_tree, <span class="at">cp =</span> optimal_cp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="visualize-the-tree-and-pruned-tree" class="level3">
 <h3 class="anchored" data-anchor-id="visualize-the-tree-and-pruned-tree">3.3.4 Visualize the tree and pruned tree</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>))</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(Classification_tree, <span class="at">fallen.leaves =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(prunedTree, <span class="at">fallen.leaves =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>))</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(Classification_tree, <span class="at">fallen.leaves =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(prunedTree, <span class="at">fallen.leaves =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -3895,13 +3873,13 @@ rf_tuned    1.392208</code></pre>
 <section id="predict-tree-model-and-pruned-tree-model-and-setup-confusion-matrix." class="level3">
 <h3 class="anchored" data-anchor-id="predict-tree-model-and-pruned-tree-model-and-setup-confusion-matrix.">3.3.5 Predict tree model and Pruned tree model and setup confusion Matrix.</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(Classification_tree, test, <span class="at">type =</span> <span class="st">&quot;class&quot;</span>)</span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>confMat_tree <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(predictions, test<span class="sc">$</span>Outcome)</span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>pruned_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(prunedTree, test, <span class="at">type =</span> <span class="st">&quot;class&quot;</span>)</span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>confMat_prune <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(pruned_predictions, test<span class="sc">$</span>Outcome)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(Classification_tree, test, <span class="at">type =</span> <span class="st">&quot;class&quot;</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>confMat_tree <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(predictions, test<span class="sc">$</span>Outcome)</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>pruned_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(prunedTree, test, <span class="at">type =</span> <span class="st">&quot;class&quot;</span>)</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>confMat_prune <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(pruned_predictions, test<span class="sc">$</span>Outcome)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -3910,21 +3888,21 @@ rf_tuned    1.392208</code></pre>
 <section id="train-random-forest.-plot-important-variables" class="level3">
 <h3 class="anchored" data-anchor-id="train-random-forest.-plot-important-variables">3.4.1 Train random forest. plot important variables</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Outcome <span class="sc">~</span> ., <span class="at">data =</span> train, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>num_vars <span class="ot">&lt;-</span> <span class="fu">ncol</span>(train) <span class="sc">-</span> <span class="dv">1</span>  <span class="co">#last column is the outcome</span></span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>rf_tune_model <span class="ot">&lt;-</span> <span class="fu">tuneRF</span>(</span>
-<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> train[, <span class="sc">-</span><span class="fu">which</span>(<span class="fu">names</span>(train) <span class="sc">==</span> <span class="st">&quot;Outcome&quot;</span>)],    <span class="co"># Predictor variables</span></span>
-<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> train<span class="sc">$</span>Outcome,                                 <span class="co"># Response variable</span></span>
-<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">mtryStart =</span> <span class="fu">sqrt</span>(num_vars),                        <span class="co"># Starting mtry</span></span>
-<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">ntreeTry =</span> <span class="dv">500</span>,                                    <span class="co"># Number of trees same as defualt</span></span>
-<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">stepFactor =</span> <span class="dv">1</span>,                                    <span class="co"># Factor to increase mtry</span></span>
-<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">improve =</span> <span class="fl">0.1</span>,                                     <span class="co"># Minimum improvement for tuning</span></span>
-<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">trace =</span> <span class="cn">FALSE</span>                                      <span class="co"># Print progress</span></span>
-<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Outcome <span class="sc">~</span> ., <span class="at">data =</span> train, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>num_vars <span class="ot">&lt;-</span> <span class="fu">ncol</span>(train) <span class="sc">-</span> <span class="dv">1</span>  <span class="co">#last column is the outcome</span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>rf_tune_model <span class="ot">&lt;-</span> <span class="fu">tuneRF</span>(</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> train[, <span class="sc">-</span><span class="fu">which</span>(<span class="fu">names</span>(train) <span class="sc">==</span> <span class="st">&quot;Outcome&quot;</span>)],    <span class="co"># Predictor variables</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> train<span class="sc">$</span>Outcome,                                 <span class="co"># Response variable</span></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">mtryStart =</span> <span class="fu">sqrt</span>(num_vars),                        <span class="co"># Starting mtry</span></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">ntreeTry =</span> <span class="dv">500</span>,                                    <span class="co"># Number of trees same as defualt</span></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">stepFactor =</span> <span class="dv">1</span>,                                    <span class="co"># Factor to increase mtry</span></span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">improve =</span> <span class="fl">0.1</span>,                                     <span class="co"># Minimum improvement for tuning</span></span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">trace =</span> <span class="cn">FALSE</span>                                      <span class="co"># Print progress</span></span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -3932,19 +3910,19 @@ rf_tuned    1.392208</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>best_mtry <span class="ot">&lt;-</span> rf_tune_model[<span class="fu">which.min</span>(rf_tune_model[, <span class="st">&quot;OOBError&quot;</span>]), <span class="st">&quot;mtry&quot;</span>]</span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>final_rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Outcome <span class="sc">~</span> ., <span class="at">data =</span> train, <span class="at">mtry =</span> best_mtry, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>best_mtry <span class="ot">&lt;-</span> rf_tune_model[<span class="fu">which.min</span>(rf_tune_model[, <span class="st">&quot;OOBError&quot;</span>]), <span class="st">&quot;mtry&quot;</span>]</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>final_rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Outcome <span class="sc">~</span> ., <span class="at">data =</span> train, <span class="at">mtry =</span> best_mtry, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="predict-random-forrest-and-random-forrest-tuned-and-setup-confusion-matrix." class="level3">
 <h3 class="anchored" data-anchor-id="predict-random-forrest-and-random-forrest-tuned-and-setup-confusion-matrix.">3.4.2 Predict Random forrest and Random forrest Tuned and setup confusion Matrix.</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_model, <span class="at">newdata =</span> test)</span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>confMat_RF <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(predictions, test<span class="sc">$</span>Outcome)</span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>predictions_tuned <span class="ot">&lt;-</span> <span class="fu">predict</span>(final_rf_model, <span class="at">newdata =</span> test)</span>
-<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>confMat_RF_tuned <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(predictions_tuned, test<span class="sc">$</span>Outcome)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_model, <span class="at">newdata =</span> test)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>confMat_RF <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(predictions, test<span class="sc">$</span>Outcome)</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>predictions_tuned <span class="ot">&lt;-</span> <span class="fu">predict</span>(final_rf_model, <span class="at">newdata =</span> test)</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>confMat_RF_tuned <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(predictions_tuned, test<span class="sc">$</span>Outcome)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -3955,27 +3933,27 @@ rf_tuned    1.392208</code></pre>
 <section id="linear-discriminant-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="linear-discriminant-analysis">3.5.1 Linear discriminant analysis</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>lda_model <span class="ot">&lt;-</span> <span class="fu">lda</span>(Outcome <span class="sc">~</span> ., <span class="at">data =</span> train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>lda_model <span class="ot">&lt;-</span> <span class="fu">lda</span>(Outcome <span class="sc">~</span> ., <span class="at">data =</span> train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="quadratic-discriminant-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="quadratic-discriminant-analysis">3.5.2 Quadratic discriminant analysis</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>qda_model <span class="ot">&lt;-</span> <span class="fu">qda</span>(Outcome <span class="sc">~</span> ., <span class="at">data =</span> train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>qda_model <span class="ot">&lt;-</span> <span class="fu">qda</span>(Outcome <span class="sc">~</span> ., <span class="at">data =</span> train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="predict-lda-and-qda-and-setup-confusion-matrix." class="level3">
 <h3 class="anchored" data-anchor-id="predict-lda-and-qda-and-setup-confusion-matrix.">3.5.3 Predict LDA and QDA and setup confusion Matrix.</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>lda_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(lda_model, test)</span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>lda_classes <span class="ot">&lt;-</span> lda_pred<span class="sc">$</span>class</span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>confMat_lda <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(lda_classes, test<span class="sc">$</span>Outcome)</span>
-<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>qda_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(qda_model, test)</span>
-<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>qda_classes <span class="ot">&lt;-</span> qda_pred<span class="sc">$</span>class</span>
-<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>confMat_qda <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(qda_classes, test<span class="sc">$</span>Outcome)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>lda_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(lda_model, test)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>lda_classes <span class="ot">&lt;-</span> lda_pred<span class="sc">$</span>class</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>confMat_lda <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(lda_classes, test<span class="sc">$</span>Outcome)</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>qda_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(qda_model, test)</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>qda_classes <span class="ot">&lt;-</span> qda_pred<span class="sc">$</span>class</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>confMat_qda <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(qda_classes, test<span class="sc">$</span>Outcome)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -3983,36 +3961,36 @@ rf_tuned    1.392208</code></pre>
 <section id="evaluation-of-all-classifications-models-by-using-confusion-matrices" class="level1">
 <h1>Evaluation of all classifications models by using confusion matrices</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a list of model names and their respective confusion matrices</span></span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Log&quot;</span> <span class="ot">=</span> confMat_log,</span>
-<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Log Refined&quot;</span> <span class="ot">=</span> confMat_log_refine,</span>
-<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Log Stepwise&quot;</span> <span class="ot">=</span> confMat_log_step,</span>
-<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Tree&quot;</span> <span class="ot">=</span> confMat_tree,</span>
-<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Tree Pruned&quot;</span> <span class="ot">=</span> confMat_prune,</span>
-<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Random Forest&quot;</span> <span class="ot">=</span> confMat_RF,</span>
-<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Random Forest Tuned&quot;</span> <span class="ot">=</span> confMat_RF_tuned,</span>
-<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;LDA&quot;</span> <span class="ot">=</span> confMat_lda,</span>
-<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;QDA&quot;</span> <span class="ot">=</span> confMat_qda</span>
-<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through each model and print the transposed confusion matrix and accuracy</span></span>
-<span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (model_name <span class="cf">in</span> <span class="fu">names</span>(models)) {</span>
-<span id="cb59-16"><a href="#cb59-16" aria-hidden="true" tabindex="-1"></a>  conf_matrix <span class="ot">&lt;-</span> models[[model_name]]</span>
-<span id="cb59-17"><a href="#cb59-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb59-18"><a href="#cb59-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, model_name, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)  <span class="co"># Print model name</span></span>
-<span id="cb59-19"><a href="#cb59-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb59-20"><a href="#cb59-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Transpose the confusion matrix</span></span>
-<span id="cb59-21"><a href="#cb59-21" aria-hidden="true" tabindex="-1"></a>  transposed_conf_matrix <span class="ot">&lt;-</span> <span class="fu">t</span>(conf_matrix<span class="sc">$</span>table)</span>
-<span id="cb59-22"><a href="#cb59-22" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb59-23"><a href="#cb59-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print transposed confusion matrix with labels for Prediction and Reference</span></span>
-<span id="cb59-24"><a href="#cb59-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(transposed_conf_matrix)  <span class="co"># Print the transposed confusion matrix</span></span>
-<span id="cb59-25"><a href="#cb59-25" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb59-26"><a href="#cb59-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print accuracy</span></span>
-<span id="cb59-27"><a href="#cb59-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;Accuracy:&quot;</span>, conf_matrix<span class="sc">$</span>overall[<span class="st">&#39;Accuracy&#39;</span>], <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb59-28"><a href="#cb59-28" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb59-29"><a href="#cb59-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">-------------------------------------------------</span><span class="sc">\n</span><span class="st">&quot;</span>)  <span class="co"># Separate models</span></span>
-<span id="cb59-30"><a href="#cb59-30" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a list of model names and their respective confusion matrices</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Log&quot;</span> <span class="ot">=</span> confMat_log,</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Log Refined&quot;</span> <span class="ot">=</span> confMat_log_refine,</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Log Stepwise&quot;</span> <span class="ot">=</span> confMat_log_step,</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Tree&quot;</span> <span class="ot">=</span> confMat_tree,</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Tree Pruned&quot;</span> <span class="ot">=</span> confMat_prune,</span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Random Forest&quot;</span> <span class="ot">=</span> confMat_RF,</span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Random Forest Tuned&quot;</span> <span class="ot">=</span> confMat_RF_tuned,</span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;LDA&quot;</span> <span class="ot">=</span> confMat_lda,</span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;QDA&quot;</span> <span class="ot">=</span> confMat_qda</span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through each model and print the transposed confusion matrix and accuracy</span></span>
+<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (model_name <span class="cf">in</span> <span class="fu">names</span>(models)) {</span>
+<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a>  conf_matrix <span class="ot">&lt;-</span> models[[model_name]]</span>
+<span id="cb57-17"><a href="#cb57-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb57-18"><a href="#cb57-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, model_name, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)  <span class="co"># Print model name</span></span>
+<span id="cb57-19"><a href="#cb57-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb57-20"><a href="#cb57-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Transpose the confusion matrix</span></span>
+<span id="cb57-21"><a href="#cb57-21" aria-hidden="true" tabindex="-1"></a>  transposed_conf_matrix <span class="ot">&lt;-</span> <span class="fu">t</span>(conf_matrix<span class="sc">$</span>table)</span>
+<span id="cb57-22"><a href="#cb57-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb57-23"><a href="#cb57-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print transposed confusion matrix with labels for Prediction and Reference</span></span>
+<span id="cb57-24"><a href="#cb57-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(transposed_conf_matrix)  <span class="co"># Print the transposed confusion matrix</span></span>
+<span id="cb57-25"><a href="#cb57-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb57-26"><a href="#cb57-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print accuracy</span></span>
+<span id="cb57-27"><a href="#cb57-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;Accuracy:&quot;</span>, conf_matrix<span class="sc">$</span>overall[<span class="st">&#39;Accuracy&#39;</span>], <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb57-28"><a href="#cb57-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb57-29"><a href="#cb57-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">-------------------------------------------------</span><span class="sc">\n</span><span class="st">&quot;</span>)  <span class="co"># Separate models</span></span>
+<span id="cb57-30"><a href="#cb57-30" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
  Log 
@@ -4101,7 +4079,7 @@ Accuracy: 0.7397959
 <section id="project-dependencies" class="level1">
 <h1>Project dependencies</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.4.1 (2024-06-14 ucrt)
 Platform: x86_64-w64-mingw32/x64
