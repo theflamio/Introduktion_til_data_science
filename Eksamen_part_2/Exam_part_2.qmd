@@ -341,7 +341,7 @@ Plot the response against each of the explanatory variables/features and add a s
 
 ## 2.1 Response plot
 
-```{r, fig.width=7, fig.height=15}
+```{r, fig.width=10, fig.height=15}
 
 # Convert data to long format to use facetting
 dia_long <- dia_clean_dat |>
