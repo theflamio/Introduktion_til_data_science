@@ -132,13 +132,11 @@ tree_model <- rpart(easygon ~ ., data = train)
 
 ```{r}
 cp_table = printcp(tree_model)
-# CP:       "Complexity parameter" penalty for adding split. lower values more complex trees
-# nsplit:   "Number of splits in the tree"
-# rel error "relative error of the model compare to the root node. lower values are better"
-# xerror:   "Cross-validated error" 
-# xstd:     "The standard error of the cross-validated error, providing a measure of variability"
-
-# best trade-off between complexity (number of splits) and performance
+# CP: The complexity parameter value.
+# nsplit: The number of splits in the tree corresponding to each CP.
+# rel error: The relative error of the model compared to the root node.
+# xerror: Cross-validated error, a key metric for assessing model performance.
+# xstd: Standard error of the cross-validated error.
 ```
 
 ### 2.3 Plot the complexity parameter vs. cross-validated error.
@@ -152,17 +150,20 @@ plotcp(tree_model)
 # Y-axis: This typically shows the cross-validated error (xerror). Lower values indicate better predictive performance.
 ```
 
-### 2.4 Pick the optimal cp from previous plot and prune the tree.
+### 2.4 Pick the optimal cp from printcp and previous plot. Then prune the tree.
+from printcp cp =  0.070189 as the optimal cp because it has the lowest cross-validation error. more accurate model and simple model 1 split.
+Offers a balance of simplicity and predictive performance.
+
+from printcp cp = 0.046342, as it is within one standard error of the minimum xerror "0.86815" "1-SE Rule". more complex model.
+Provides improved flexibility and model fit.
+
+from plotcp output cp = 0.12 is the best performing but also the most complex.
+
+from printcp()
+1-SE Rule Threshold = Minimum xerror + Standard error = 0.86815 + 0.13437 = 1.00252
+(cp = 0.046342 xerror = 0.89836) -> 0.89836 < 1.00252 = True.
 
 ```{r, results="hide"}
-## from printcp cp =  0.0702 as the optimal cp because it has the lowest cross-validation error. more accurate model. 
-## from printcp cp = 0.046342, as it is within one standard error of the minimum xerror "0.86815" "1-SE Rule". more simpler model.
-## from plotcp output cp = 0.12 is the best performing but also the most complex.
-
-# from printcp()
-# 1-SE Rule Threshold = Minimum xerror + Standard error = 0.86815 + 0.13437 = 1.00252
-# (cp = 0.046342 xerror = 0.89836) -> 0.89836 < 1.00252 = True.
-
 optimal_cp <- 0.046342 
 
 pruned_tree_model <- prune(tree_model, cp = optimal_cp)

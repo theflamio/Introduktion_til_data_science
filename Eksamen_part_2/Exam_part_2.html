@@ -3109,7 +3109,7 @@ vertical-align: -.125em;
   <li><a href="#regression-tree." id="toc-regression-tree." class="nav-link" data-scroll-target="#regression-tree.">2.1 Regression tree.</a></li>
   <li><a href="#complexity-parameter-table." id="toc-complexity-parameter-table." class="nav-link" data-scroll-target="#complexity-parameter-table.">2.2 Complexity parameter table.</a></li>
   <li><a href="#plot-the-complexity-parameter-vs.-cross-validated-error." id="toc-plot-the-complexity-parameter-vs.-cross-validated-error." class="nav-link" data-scroll-target="#plot-the-complexity-parameter-vs.-cross-validated-error.">2.3 Plot the complexity parameter vs. cross-validated error.</a></li>
-  <li><a href="#pick-the-optimal-cp-from-previous-plot-and-prune-the-tree." id="toc-pick-the-optimal-cp-from-previous-plot-and-prune-the-tree." class="nav-link" data-scroll-target="#pick-the-optimal-cp-from-previous-plot-and-prune-the-tree.">2.4 Pick the optimal cp from previous plot and prune the tree.</a></li>
+  <li><a href="#pick-the-optimal-cp-from-printcp-and-previous-plot.-then-prune-the-tree." id="toc-pick-the-optimal-cp-from-printcp-and-previous-plot.-then-prune-the-tree." class="nav-link" data-scroll-target="#pick-the-optimal-cp-from-printcp-and-previous-plot.-then-prune-the-tree.">2.4 Pick the optimal cp from printcp and previous plot. Then prune the tree.</a></li>
   </ul></li>
   <li><a href="#random-forest-randomforest" id="toc-random-forest-randomforest" class="nav-link" data-scroll-target="#random-forest-randomforest">3. Random forest (<code>randomForest</code>)</a>
   <ul class="collapse">
@@ -3410,13 +3410,11 @@ n= 120
 8 0.011609      7   0.56283 1.30837 0.18397
 9 0.010000      8   0.55122 1.31989 0.18379</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CP:       &quot;Complexity parameter&quot; penalty for adding split. lower values more complex trees</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># nsplit:   &quot;Number of splits in the tree&quot;</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># rel error &quot;relative error of the model compare to the root node. lower values are better&quot;</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># xerror:   &quot;Cross-validated error&quot; </span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># xstd:     &quot;The standard error of the cross-validated error, providing a measure of variability&quot;</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># best trade-off between complexity (number of splits) and performance</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CP: The complexity parameter value.</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># nsplit: The number of splits in the tree corresponding to each CP.</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># rel error: The relative error of the model compared to the root node.</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># xerror: Cross-validated error, a key metric for assessing model performance.</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># xstd: Standard error of the cross-validated error.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="plot-the-complexity-parameter-vs.-cross-validated-error." class="level3">
@@ -3436,20 +3434,16 @@ n= 120
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Y-axis: This typically shows the cross-validated error (xerror). Lower values indicate better predictive performance.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="pick-the-optimal-cp-from-previous-plot-and-prune-the-tree." class="level3">
-<h3 class="anchored" data-anchor-id="pick-the-optimal-cp-from-previous-plot-and-prune-the-tree.">2.4 Pick the optimal cp from previous plot and prune the tree.</h3>
+<section id="pick-the-optimal-cp-from-printcp-and-previous-plot.-then-prune-the-tree." class="level3">
+<h3 class="anchored" data-anchor-id="pick-the-optimal-cp-from-printcp-and-previous-plot.-then-prune-the-tree.">2.4 Pick the optimal cp from printcp and previous plot. Then prune the tree.</h3>
+<p>from printcp cp = 0.070189 as the optimal cp because it has the lowest cross-validation error. more accurate model and simple model 1 split. Offers a balance of simplicity and predictive performance.</p>
+<p>from printcp cp = 0.046342, as it is within one standard error of the minimum xerror “0.86815” “1-SE Rule”. more complex model. Provides improved flexibility and model fit.</p>
+<p>from plotcp output cp = 0.12 is the best performing but also the most complex.</p>
+<p>from printcp() 1-SE Rule Threshold = Minimum xerror + Standard error = 0.86815 + 0.13437 = 1.00252 (cp = 0.046342 xerror = 0.89836) -&gt; 0.89836 &lt; 1.00252 = True.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="do">## from printcp cp =  0.0702 as the optimal cp because it has the lowest cross-validation error. more accurate model. </span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="do">## from printcp cp = 0.046342, as it is within one standard error of the minimum xerror &quot;0.86815&quot; &quot;1-SE Rule&quot;. more simpler model.</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="do">## from plotcp output cp = 0.12 is the best performing but also the most complex.</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co"># from printcp()</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1-SE Rule Threshold = Minimum xerror + Standard error = 0.86815 + 0.13437 = 1.00252</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># (cp = 0.046342 xerror = 0.89836) -&gt; 0.89836 &lt; 1.00252 = True.</span></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>optimal_cp <span class="ot">&lt;-</span> <span class="fl">0.046342</span> </span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>pruned_tree_model <span class="ot">&lt;-</span> <span class="fu">prune</span>(tree_model, <span class="at">cp =</span> optimal_cp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>optimal_cp <span class="ot">&lt;-</span> <span class="fl">0.046342</span> </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>pruned_tree_model <span class="ot">&lt;-</span> <span class="fu">prune</span>(tree_model, <span class="at">cp =</span> optimal_cp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
