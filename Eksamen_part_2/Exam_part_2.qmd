@@ -131,12 +131,14 @@ tree_model <- rpart(easygon ~ ., data = train)
 ### 2.2 Complexity parameter table.
 
 ```{r}
-printcp(tree_model)
+cp_table = printcp(tree_model)
 # CP:       "Complexity parameter" penalty for adding split. lower values more complex trees
 # nsplit:   "Number of splits in the tree"
 # rel error "relative error of the model compare to the root node. lower values are better"
-# xerror:   "Cross-validated error"
+# xerror:   "Cross-validated error" 
 # xstd:     "The standard error of the cross-validated error, providing a measure of variability"
+
+# best trade-off between complexity (number of splits) and performance
 ```
 
 ### 2.3 Plot the complexity parameter vs. cross-validated error.
@@ -144,19 +146,31 @@ X-cal Relative Error = cross-validated relative error
 
 ```{r, fig.width=7, fig.height=7}
 plotcp(tree_model)
+
+# X-axis: This represents the complexity parameter (CP), which controls the size of the tree.Lower CP values lead to more complex trees
+
+# Y-axis: This typically shows the cross-validated error (xerror). Lower values indicate better predictive performance.
 ```
 
 ### 2.4 Pick the optimal cp from previous plot and prune the tree.
 
 ```{r, results="hide"}
-optimal_cp <- 0.057 ## from printcp/plotcp output.
+## from printcp cp =  0.0702 as the optimal cp because it has the lowest cross-validation error. more accurate model. 
+## from printcp cp = 0.046342, as it is within one standard error of the minimum xerror "0.86815" "1-SE Rule". more simpler model.
+## from plotcp output cp = 0.12 is the best performing but also the most complex.
+
+# from printcp()
+# 1-SE Rule Threshold = Minimum xerror + Standard error = 0.86815 + 0.13437 = 1.00252
+# (cp = 0.046342 xerror = 0.89836) -> 0.89836 < 1.00252 = True.
+
+optimal_cp <- 0.046342 
 
 pruned_tree_model <- prune(tree_model, cp = optimal_cp)
 ```
 
-## 3. random forest (`randomForest`)
+## 3. Random forest (`randomForest`)
 
-### 3.1 random forest
+### 3.1 Random forest
 
 ```{r, fig.width=7, fig.height=7}
 set.seed(101) # for reproducibility
