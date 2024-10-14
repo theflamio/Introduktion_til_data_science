@@ -163,19 +163,19 @@ set.seed(101) # for reproducibility
 
 # Fit a random forest model
 rf_default <- randomForest(easygon ~ ., data = train, importance = TRUE)
-
-plot(rf_default)
 ```
+
 ### 3.2 Tuning random forest
-By fixing mtry with ntree we tune the random forest
+By changing mtry with fixed ntree we tune the random forest
 
 ```{r}
 set.seed(101) 
 rf_tuned <- tuneRF(train[, -which(names(train) == "easygon")],  # Exclude target variable
                     train$easygon,                              # Target variable
                     ntreeTry = 500,                             # Number of trees to try "default 500"
+                    stepFactor = 1,                             # Factor to increase mtry
                     improve = 0.01,                             # Minimum improvement in OOB error
-                    trace = FALSE,                               # Print progress
+                    trace = FALSE,                              # Print progress
                     plot = FALSE)
 
 best_mtry_value <- rf_tuned[which.min(rf_tuned[, "OOBError"]), "mtry"] # select best model
@@ -210,15 +210,20 @@ Compare the performance of the fitted models by predicting the values of `easygo
 ## 4.1 Table of the RMSE for each model
 
 ```{r}
-# Predict on test data
-pred_lm_full <- predict(lm_full, newdata = test)
-pred_lm_forward <- predict(lm_forward, newdata = test)
-pred_lm_backward <- predict(lm_backward, newdata = test)
-pred_lm_both <- predict(lm_both, newdata = test)
-pred_rpart <- predict(tree_model, newdata = test)
-pred_rpart_prune <- predict(pruned_tree_model, newdata = test)
-pred_rf <- predict(rf_default, newdata = test)
-pred_rf_tuned <- predict(rf_final, newdata = test)
+# List of models to predict
+models <- list(
+  lm_full = lm_full,
+  lm_forward = lm_forward,
+  lm_backward = lm_backward,
+  lm_both = lm_both,
+  tree_full = tree_model,
+  tree_prune = pruned_tree_model,
+  rf = rf_default,
+  rf_tuned = rf_final
+)
+
+# Predict on test data for each model and store predictions in a list
+predictions <- lapply(models, predict, newdata = test)
 
 # Extract actual values from the test set
 actual <- test$easygon
@@ -228,20 +233,12 @@ rmse <- function(actual, predicted) {
   sqrt(mean((actual - predicted)^2))
 }
 
-# Calculate RMSE for each model
-rmse_lm_full <- rmse(actual, pred_lm_full)
-rmse_lm_forward <- rmse(actual, pred_lm_forward)
-rmse_lm_backward <- rmse(actual, pred_lm_backward)
-rmse_lm_both <- rmse(actual, pred_lm_both)
-rmse_rpart <- rmse(actual, pred_rpart)
-rmse_rpart_prune <- rmse(actual, pred_rpart_prune)
-rmse_rf <- rmse(actual, pred_rf)
-rmse_rf_tuned <- rmse(actual, pred_rf_tuned)
+# Calculate RMSE for each model and store results in a vector
+rmse_values <- sapply(predictions, rmse, actual = actual)
 
 # Create a table to compare RMSE
 rmse_table <- data.frame(
-  Model = c("lm_full", "lm_forward", "lm_backward", "lm_both", "Tree full", "Tree_pruned", "RF", "RF_tuned"),
-  RMSE = c(rmse_lm_full, rmse_lm_forward, rmse_lm_backward, rmse_lm_both, rmse_rpart, rmse_rpart_prune, rmse_rf, rmse_rf_tuned)
+  RMSE = rmse_values
 )
 
 # Print RMSE table
@@ -254,17 +251,17 @@ print(rmse_table)
 # Combine the actual and predicted values into a single data frame for plotting
 plot_data <- data.frame(
   Observed = actual,
-  lm_full = pred_lm_full,
-  lm_forward = pred_lm_forward,
-  lm_backward = pred_lm_backward,
-  lm_both = pred_lm_both,
-  Tree = pred_rpart,
-  Tree_pruned = pred_rpart_prune,
-  RF = pred_rf,
-  RF_tuned = pred_rf_tuned
+  lm_full = predictions$lm_full,
+  lm_forward = predictions$lm_forward,
+  lm_backward = predictions$lm_backward,
+  lm_both = predictions$lm_both,
+  tree_full = predictions$tree_full,
+  tree_pruned = predictions$tree_prune,
+  rf = predictions$rf,
+  rf_tuned = predictions$rf_tuned
 )
 
-# Melt the data frame to long format for ggplot
+# pivot the data frame to long format for ggplot
 plot_data_longer <- plot_data |> 
   pivot_longer(cols = -Observed, 
                names_to = "Model", 
@@ -517,6 +514,9 @@ confMat_RF_tuned <- confusionMatrix(predictions_tuned, test$Outcome)
 ```
 
 ## 3.5. Linear/quadratic discriminant analysis
+LDA is preferable for simpler models with equal variances; QDA is better for more complex models with varying variances.
+
+If LDA and QDA yield the same confusion matrices, consider choosing LDA for its interpretability and efficiency.
 
 ### 3.5.1 Linear discriminant analysis
 ```{r, results="hide"}
@@ -526,7 +526,7 @@ lda_model <- lda(Outcome ~ ., data = train)
 
 ### 3.5.2 Quadratic discriminant analysis
 
-```{r}
+```{r, results="hide"}
 set.seed(202)
 qda_model <- qda(Outcome ~ ., data = train)
 ```
@@ -541,7 +541,7 @@ qda_pred <- predict(qda_model, test)
 qda_classes <- qda_pred$class
 confMat_qda <- confusionMatrix(qda_classes, test$Outcome)
 ```
-### 3.5.4 Evaluation of all classifications models by using confusion Matrix.
+# Evaluation of all classifications models by using confusion matrices
 
 ```{r}
 # Define a list of model names and their respective confusion matrices
@@ -553,8 +553,8 @@ models <- list(
   "Tree Pruned" = confMat_prune,
   "Random Forest" = confMat_RF,
   "Random Forest Tuned" = confMat_RF_tuned,
-  "LDA" = conf_matrix_lda,
-  "QDA" = conf_matrix_qda
+  "LDA" = confMat_lda,
+  "QDA" = confMat_qda
 )
 
 # Loop through each model and print the transposed confusion matrix and accuracy
@@ -577,7 +577,7 @@ for (model_name in names(models)) {
 ```
 
 
-## Project dependencies
+# Project dependencies
 
 ```{r}
 sessionInfo()
