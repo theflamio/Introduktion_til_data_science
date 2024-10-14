@@ -109,7 +109,7 @@ aic_values <- data.frame(
   AIC = c(lm_forward_aic, lm_backward_aic, lm_both_aic)
 )
 
-print(aic_values)
+print(aic_values) # smallest best
 ```
 
 
@@ -145,7 +145,7 @@ plotcp(tree_model)
 ### 2.4 pick the optimal cp from previous plot and prune the tree.
 
 ```{r, results="hide"}
-optimal_cp <- 0.057 ## from printcp/plotcp output. Closset to the mean
+optimal_cp <- 0.057 ## from printcp/plotcp output.
 
 pruned_tree_model <- prune(tree_model, cp = optimal_cp)
 ```
@@ -170,10 +170,9 @@ set.seed(101)
 rf_tuned <- tuneRF(train[, -which(names(train) == "easygon")],  # Exclude target variable
                     train$easygon,                              # Target variable
                     ntreeTry = 500,                             # Number of trees to try "default 500"
-                    stepFactor = 1.5,                           # Factor by which to increase mtry
                     improve = 0.01,                             # Minimum improvement in OOB error
-                    trace = TRUE,                               # Print progress
-                    plot = TRUE)
+                    trace = FALSE,                               # Print progress
+                    plot = FALSE)
 
 best_mtry_value <- rf_tuned[which.min(rf_tuned[, "OOBError"]), "mtry"] # select best model
 
@@ -264,7 +263,7 @@ plot_data_melt <- melt(plot_data, id.vars = "Observed",
 # Create the plot
 ggplot(plot_data_melt, aes(x = Observed, y = Predicted, color = Model)) +
   geom_point() +
-  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "black") +
+  geom_abline(intercept = 0, slope = 1, linetype = "solid", color = "black") +
   labs(title = "Observed vs Predicted Values of easygon",
        x = "Observed easygon", y = "Predicted easygon") +
   facet_wrap(~Model)
@@ -467,21 +466,21 @@ Classification_tree <- rpart(Outcome ~ ., data = train, method = "class")
 plotcp(Classification_tree)
 ```
 
-### 3.3.6 Prune the tree
+### 3.3.3 Prune the tree
 
 ```{r}
 optimal_cp = 0.048
   
 prunedTree <- prune(Classification_tree, cp = optimal_cp)
 ```
-### 3.3.2 Visualize the tree and pruned tree
+### 3.3.4 Visualize the tree and pruned tree
 
 ```{r, fig.width=15, fig.height=7}
 par(mfrow = c(2,1))
 rpart.plot(Classification_tree, fallen.leaves = TRUE)
 rpart.plot(prunedTree, fallen.leaves = TRUE)
 ```
-### 3.3.4 Make predictions and evaluated the tree model and Pruned tree model
+### 3.3.5 Make predictions and evaluated the tree model and Pruned tree model
 
 ```{r}
 predictions <- predict(Classification_tree, test, type = "class")
@@ -543,9 +542,9 @@ print("Random forrest Tuned")
 print(confMat_tuned$table)
 print(confMat_tuned$overall['Accuracy'])
 ```
-## 4. linear/quadratic discriminant analysis
+## 3.5. linear/quadratic discriminant analysis
 
-### 4.1 linear discriminant analysis
+### 3.5.1 linear discriminant analysis
 ```{r, results="hide"}
 set.seed(202)
 lda_model <- lda(Outcome ~ ., data = train)
@@ -553,7 +552,7 @@ lda_model <- lda(Outcome ~ ., data = train)
 lda_predictions <- predict(lda_model)
 ```
 
-### 4.2 quadratic discriminant analysis
+### 3.5.2 quadratic discriminant analysis
 
 ```{r}
 set.seed(202)
@@ -561,7 +560,7 @@ qda_model <- qda(Outcome ~ ., data = train)
 
 qda_predictions <- predict(qda_model)
 ```
-### 4.3 Predict and evaluated LDA and QDA
+### 3.5.3 Predict and evaluated LDA and QDA
 
 ```{r}
 lda_pred <- predict(lda_model, test)
