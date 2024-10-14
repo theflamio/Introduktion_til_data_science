@@ -516,6 +516,10 @@ LDA is preferable for simpler models with equal variances; QDA is better for mor
 
 If LDA and QDA yield the same confusion matrices, consider choosing LDA for its interpretability and efficiency.
 
+From 2.1 Response plot it suggest that we deal with two classes with equal variances hence a LDA is preferable.
+
+But for the sake of it lets do both.
+
 ### 3.5.1 Linear discriminant analysis
 ```{r, results="hide"}
 set.seed(202)
