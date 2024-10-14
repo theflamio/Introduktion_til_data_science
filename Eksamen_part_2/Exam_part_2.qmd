@@ -12,6 +12,7 @@ format:
 library(doBy)
 library(tidyverse)
 library(ggplot2)
+library(ggcorrplot)
 library(reshape2)
 library(rpart)
 library(rpart.plot)
@@ -153,9 +154,8 @@ pruned_tree_model <- prune(tree_model, cp = optimal_cp)
 
 ```{r, fig.width=7, fig.height=7}
 par(mfrow = c(2,1))
-rpart.plot(tree_model, main = "Full tree")
-rpart.plot(pruned_tree_model, main = paste("Pruned tree, cp = ", optimal_cp))
-
+rpart.plot(tree_model, main = "Full tree", fallen.leaves = TRUE)
+rpart.plot(pruned_tree_model, main = paste("Pruned tree, cp = ", optimal_cp), fallen.leaves = TRUE)
 ```
 
 ## 3. random forest (`randomForest`)
@@ -360,8 +360,6 @@ dia_long <- dia_clean_dat |>
                names_to = "Feature",
                values_to = "Value")
 
-dia_long
-
 ggplot(dia_long, aes(x = Value, y = Outcome)) +
   geom_point(position = position_jitter(width = 0, height = 0.1),alpha = 0.5) +  # Scatterplot
   geom_smooth(method = "loess", color = "blue", se = TRUE) +  # Smooth line with confidence interval
@@ -371,6 +369,20 @@ ggplot(dia_long, aes(x = Value, y = Outcome)) +
     x = "Feature Value",
     y = "Outcome aka Probability of Diabetes"
   )
+```
+
+## 2.2 Correlation plot
+
+```{r}
+corr_matrix <- cor(dia_clean_dat)
+
+# Plot
+ggcorrplot(corr_matrix, 
+           lab = TRUE,           # Annotate the correlation coefficients
+           colors = c("blue", "white", "red"), # Color scheme similar to 'coolwarm'
+           title = "Correlation Graph") +
+  theme(plot.title = element_text(size = 11)) + # Set title font size
+  theme(aspect.ratio = 6/8) # Set figure size (8x6)
 ```
 
 
@@ -405,19 +417,17 @@ Specify a number of classification models and report the corresponding confusion
 set.seed(202)
 log_model <- glm(Outcome ~., data = train, family = "binomial")
 
-summary(log_model)
-
-# from the plot it suggest that Glucose, DiabetesPedigreeFunction, BMI and Blood pressure are important.
-log_model_refined <- glm(Outcome ~ Glucose + DiabetesPedigreeFunction + BMI +BloodPressure, data = train, family = "binomial")
-
-summary(log_model_refined)
+# from the response and correlation plot it suggest that Glucose, DiabetesPedigreeFunction, BMI, Pregnancies and Age are important.
+log_model_refined <- glm(Outcome ~ Glucose + DiabetesPedigreeFunction + Pregnancies + BMI + Age, data = train, family = "binomial")
 
 # Stepwise forward selection
 log_model_stepwise <- step(null_model, 
-                           direction = "forward", 
+                           direction = "both", 
                            scope = formula(log_model),
                            trace = FALSE)
 
+summary(log_model)
+summary(log_model_refined)
 summary(log_model_stepwise)
 ```
 
@@ -460,15 +470,49 @@ print(confusion_matrix$overall['Accuracy'])
 
 ## 3.3 regression tree (`rpart`)
 
+### 3.3.1 fit the Classification tree
 ```{r, fig.width=15, fig.height=7}
 set.seed(202)
 
-tree_model <- rpart(Outcome ~ ., data = train, method = "anova")
-
-# Visualize the tree
-rpart.plot(tree_model, main = "Full tree")
+Classification_tree <- rpart(Outcome ~ ., data = train, method = "class")
 ```
 
+### 3.3.2 Prune the tree "select cp value"
+```{r}
+plotcp(Classification_tree)
+```
+
+### 3.3.6 Prune the tree
+
+```{r}
+optimal_cp = 0.048
+  
+prunedTree <- prune(Classification_tree, cp = optimal_cp)
+```
+### 3.3.2 Visualize the tree and pruned tree
+
+```{r}
+par(mfrow = c(2,1))
+rpart.plot(Classification_tree, fallen.leaves = TRUE)
+rpart.plot(prunedTree, fallen.leaves = TRUE)
+```
+### 3.3.4 Make predictions and evaluated the tree model and Pruned tree model
+
+```{r}
+predictions <- predict(Classification_tree, test, type = "class")
+
+confMat <- confusionMatrix(predictions, test$Outcome)
+print("Classification tree")
+print(confMat$table)
+print(confMat$overall['Accuracy'])
+
+pruned_predictions <- predict(prunedTree, test, type = "class")
+
+confMat <- confusionMatrix(pruned_predictions, test$Outcome)
+print("Classification tree Pruned")
+print(confMat$table)
+print(confMat$overall['Accuracy'])
+```
 ## 3.4 random forest (`randomForest`)
 
 ```{r, results="hide"}
@@ -496,7 +540,7 @@ lda_model <- lda(Outcome ~ ., data = train)
 
 lda_predictions <- predict(lda_model)
 
-head(lda_predictions$class)
+lda_predictions$class
 ```
 
 ### 4.2 quadratic discriminant analysis
@@ -506,7 +550,7 @@ qda_model <- qda(Outcome ~ ., data = train)
 
 qda_predictions <- predict(qda_model)
 
-head(qda_predictions$class)
+qda_predictions$class
 ```
 
 
