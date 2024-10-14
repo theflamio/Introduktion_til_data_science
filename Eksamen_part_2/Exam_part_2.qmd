@@ -146,7 +146,7 @@ X-cal Relative Error = cross-validated relative error
 plotcp(tree_model)
 ```
 
-### 2.4 pick the optimal cp from previous plot and prune the tree.
+### 2.4 Pick the optimal cp from previous plot and prune the tree.
 
 ```{r, results="hide"}
 optimal_cp <- 0.057 ## from printcp/plotcp output.
@@ -421,7 +421,7 @@ log_model_stepwise <- step(null_model,
                            trace = FALSE)
 ```
 
-### 3.2.2 Make prediction using test set with the stepwise selected model and log model
+### 3.2.2 Predict log model, log stepwise selected model and log model and setup confusion Matrix.
 
 ```{r}
 predicted_prob_log <- predict(log_model, newdata = test, type = "response")
@@ -460,7 +460,7 @@ plotcp(Classification_tree)
 ### 3.3.3 Prune the tree
 
 ```{r}
-optimal_cp = 0.048 #lets try it beacuse we want to see how it dose hold up
+optimal_cp = 0.048 #lets try it because we want to see how it dose hold up
   
 prunedTree <- prune(Classification_tree, cp = optimal_cp)
 ```
@@ -471,7 +471,7 @@ par(mfrow = c(2,1))
 rpart.plot(Classification_tree, fallen.leaves = TRUE)
 rpart.plot(prunedTree, fallen.leaves = TRUE)
 ```
-### 3.3.5 Predict tree model and Pruned tree model. setup confusion Matrix.
+### 3.3.5 Predict tree model and Pruned tree model and setup confusion Matrix.
 
 ```{r}
 predictions <- predict(Classification_tree, test, type = "class")
@@ -482,9 +482,9 @@ pruned_predictions <- predict(prunedTree, test, type = "class")
 
 confMat_prune <- confusionMatrix(pruned_predictions, test$Outcome)
 ```
-## 3.4 random forest (`randomForest`)
+## 3.4 Random forest (`randomForest`)
 
-### 3.4.1 train random forest. plot important variables
+### 3.4.1 Train random forest. plot important variables
 ```{r, results="hide"}
 set.seed(202)
 
@@ -506,7 +506,7 @@ best_mtry <- rf_tune_model[which.min(rf_tune_model[, "OOBError"]), "mtry"]
 
 final_rf_model <- randomForest(Outcome ~ ., data = train, mtry = best_mtry, importance = TRUE)
 ```
-### 3.4.2 Predict Random forrest and Random forrest Tuned setup confusion Matrix.
+### 3.4.2 Predict Random forrest and Random forrest Tuned and setup confusion Matrix.
 
 ```{r}
 predictions <- predict(rf_model, newdata = test)
@@ -516,21 +516,21 @@ predictions_tuned <- predict(final_rf_model, newdata = test)
 confMat_RF_tuned <- confusionMatrix(predictions_tuned, test$Outcome)
 ```
 
-## 3.5. linear/quadratic discriminant analysis
+## 3.5. Linear/quadratic discriminant analysis
 
-### 3.5.1 linear discriminant analysis
+### 3.5.1 Linear discriminant analysis
 ```{r, results="hide"}
 set.seed(202)
 lda_model <- lda(Outcome ~ ., data = train)
 ```
 
-### 3.5.2 quadratic discriminant analysis
+### 3.5.2 Quadratic discriminant analysis
 
 ```{r}
 set.seed(202)
 qda_model <- qda(Outcome ~ ., data = train)
 ```
-### 3.5.3 Predict LDA and QDA setup confusion Matrix 
+### 3.5.3 Predict LDA and QDA and setup confusion Matrix. 
 
 ```{r}
 lda_pred <- predict(lda_model, test)
@@ -541,7 +541,7 @@ qda_pred <- predict(qda_model, test)
 qda_classes <- qda_pred$class
 confMat_qda <- confusionMatrix(qda_classes, test$Outcome)
 ```
-### 3.5.4 Evaluation of all classifications models
+### 3.5.4 Evaluation of all classifications models by using confusion Matrix.
 
 ```{r}
 # Define a list of model names and their respective confusion matrices
