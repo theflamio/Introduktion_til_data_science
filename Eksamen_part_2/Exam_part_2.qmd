@@ -414,10 +414,6 @@ log_model_stepwise <- step(null_model,
                            direction = "both", 
                            scope = formula(log_model),
                            trace = FALSE)
-
-summary(log_model)
-summary(log_model_refined)
-summary(log_model_stepwise)
 ```
 
 ### 3.2.2 Make prediction using test set with the stepwise selected model and log model
@@ -525,9 +521,6 @@ rf_tune_model <- tuneRF(
 best_mtry <- rf_tune_model[which.min(rf_tune_model[, "OOBError"]), "mtry"]
 
 final_rf_model <- randomForest(Outcome ~ ., data = train, mtry = best_mtry, importance = TRUE)
-
-plot(final_rf_model)
-
 ```
 ### 3.4.2 Make predictions.
 
