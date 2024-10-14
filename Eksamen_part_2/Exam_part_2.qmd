@@ -219,7 +219,7 @@ statistic:  (close to zero) indicating weak evidence of a relationship between t
 p.value:    A small p-value (typically < 0.05) suggests that there is strong evidence against the null hypothesis,
             leading to its rejection, which implies that the term is statistically significant in predicting the dependent variable.
 
-## Exercise 3.2 **briefly**
+## 3.1 briefly
 
 laidback, cooperative, talkative, and giving up have significant positive relationships with the dependent variable, while perseverance and harshness appear to have negative associations. look at estimate and p value.        
 
