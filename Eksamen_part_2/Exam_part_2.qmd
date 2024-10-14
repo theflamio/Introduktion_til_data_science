@@ -219,6 +219,9 @@ statistic:  (close to zero) indicating weak evidence of a relationship between t
 p.value:    A small p-value (typically < 0.05) suggests that there is strong evidence against the null hypothesis,
             leading to its rejection, which implies that the term is statistically significant in predicting the dependent variable.
 
+laidback, cooperative, talkative, and giving up have significant positive relationships with the dependent variable, while perseverance and harshness appear to have negative associations. look at estimate and p value.        
+
+
 # Exercise 4
 Compare the performance of the fitted models by predicting the values of `easygon` for the test data and show a plot comparing the predictions to the observations from the test data. Also make a table of the RMSE for each model.
 
