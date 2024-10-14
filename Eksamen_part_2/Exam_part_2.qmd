@@ -46,6 +46,8 @@ test <- dat[-i_train,]
 # Exercise 1
 Use `response_plot()` from the **development version of** `doBy` to visualize the relation between the response and the other variables in the data.
 
+## Plot the relation between the repsone and the other variables.
+
 ```{r, fig.width=10, fig.height=20}
 response_plot(dat, easygon ~ ., geoms = c(geom_jitter(alpha = .6, width = .4, height = .4)), ncol = 5)
 ```
@@ -66,7 +68,7 @@ strong: coopera - approvn.
 
 Lets see if that holds up later on.
 
-## 1. linear with stepwise selection (`lm`/ `step`)
+## 1. Linear with stepwise selection (`lm`/ `step`)
 
 ### 1.1 Fit a linear model with all variabels
 ```{r, results="hide"}
@@ -74,7 +76,7 @@ Lets see if that holds up later on.
 lm_full <- lm(easygon ~ ., data = train)
 ```
 
-### 1.2 stepwise selection forward_model
+### 1.2 Stepwise selection forward_model
 `Null_model` purpose in `forward stepwise selection` is to give a starting point with no predictors.
 allows the algorithm to add variables incrementally.
 
@@ -85,7 +87,7 @@ lm_forward <- step(null_model, direction = "forward", scope = formula(lm_full), 
 lm_forward_aic <- AIC(lm_forward)
 ```
 
-### 1.3 stepwise selection backward_model
+### 1.3 Stepwise selection backward_model
 Starts with a full model then eliminate least significant predictor
 
 ```{r, results="hide"}
@@ -93,7 +95,7 @@ lm_backward <- step(lm_full, direction = "backward", trace = FALSE)
 lm_backward_aic <- AIC(lm_backward)
 ```
 
-### 1.4 stepwise selection both_model
+### 1.4 Stepwise selection both_model
 Starts with a full model that allow for both additions and removals.
 Since it goes back and forward we will use the null model.
 ```{r, results="hide"}
@@ -115,9 +117,9 @@ print(aic_values) # smallest best
 ```
 
 
-## 2. regression tree (`rpart`)
+## 2. Regression tree (`rpart`)
 
-### 2.1 regression tree.
+### 2.1 Regression tree.
 
 ```{r, results="hide"}
 set.seed(101) # for reproducibility
@@ -126,7 +128,7 @@ set.seed(101) # for reproducibility
 tree_model <- rpart(easygon ~ ., data = train)
 ```
 
-### 2.2 complexity parameter table.
+### 2.2 Complexity parameter table.
 
 ```{r}
 printcp(tree_model)
@@ -197,10 +199,10 @@ estimate:   if the estimate of x is 2 the dependent variable "y" will increase b
 
 std.error:  Small standard error indicates that the estimate is precise.
 
-statistic:  Also known as T statistic.
+statistic:  (close to zero) indicating weak evidence of a relationship between the predictor and the dependent variable. 
 
 p.value:    A small p-value (typically < 0.05) suggests that there is strong evidence against the null hypothesis,
-            leading to its rejection, which implies that the term is statistically significant in predicting the                  dependent variable.
+            leading to its rejection, which implies that the term is statistically significant in predicting the dependent variable.
 
 # Exercise 4
 Compare the performance of the fitted models by predicting the values of `easygon` for the test data and show a plot comparing the predictions to the observations from the test data. Also make a table of the RMSE for each model.
@@ -368,13 +370,12 @@ ggplot(dia_long, aes(x = Value, y = Outcome)) +
 ```{r}
 corr_matrix <- cor(dia_clean_dat)
 
-# Plot
 ggcorrplot(corr_matrix, 
-           lab = TRUE,           # Annotate the correlation coefficients
-           colors = c("blue", "white", "red"), # Color scheme similar to 'coolwarm'
+           lab = TRUE,                          # Annotate the correlation coefficients
+           colors = c("blue", "white", "red"),  # Color scheme similar to 'coolwarm'
            title = "Correlation Graph") +
   theme(plot.title = element_text(size = 11)) + # Set title font size
-  theme(aspect.ratio = 6/8) # Set figure size (8x6)
+  theme(aspect.ratio = 6/8)                     # Set figure size (8x6)
 ```
 
 
@@ -427,35 +428,20 @@ predicted_prob_log <- predict(log_model, newdata = test, type = "response")
 predicted_class_log <- ifelse(predicted_prob_log > 0.5, "Yes", "No")
 predicted_class_log <- factor(predicted_class_log, levels = c("No", "Yes"))
 
+confMat_log <- confusionMatrix(predicted_class_log, test$Outcome, positive = "Yes")
+
 predicted_prob_refine <- predict(log_model_refined, newdata = test, type = "response")
 predicted_class_refine <- ifelse(predicted_prob_refine > 0.5, "Yes", "No")
 predicted_class_refine <- factor(predicted_class_refine, levels = c("No", "Yes"))
+
+confMat_log_refine <- confusionMatrix(predicted_class_refine, test$Outcome, positive = "Yes")
 
 predicted_prob_stepwise <- predict(log_model_stepwise, newdata = test, type = "response")
 predicted_class_stepwise <- ifelse(predicted_prob_stepwise > 0.5, "Yes", "No")
 predicted_class_stepwise <- factor(predicted_class_stepwise, levels = c("No", "Yes"))
 
+confMat_log_step <- confusionMatrix(predicted_class_stepwise, test$Outcome, positive = "Yes")
 ```
-
-### 3.2.3 Evaluate the log model and stepwise selected model
-
-```{r}
-confusion_matrix <- confusionMatrix(predicted_class_log, test$Outcome, positive = "Yes")
-print("Confusion Matrix table log:")
-print(confusion_matrix$table)
-print(confusion_matrix$overall['Accuracy'])
-
-confusion_matrix <- confusionMatrix(predicted_class_refine, test$Outcome, positive = "Yes")
-print("Confusion Matrix table log refine:")
-print(confusion_matrix$table)
-print(confusion_matrix$overall['Accuracy'])
-
-confusion_matrix <- confusionMatrix(predicted_class_stepwise, test$Outcome, positive = "Yes")
-print("Confusion Matrix table log stepwise:")
-print(confusion_matrix$table)
-print(confusion_matrix$overall['Accuracy'])
-```
-
 
 ## 3.3 Regression tree (`rpart`)
 
@@ -474,7 +460,7 @@ plotcp(Classification_tree)
 ### 3.3.3 Prune the tree
 
 ```{r}
-optimal_cp = 0.048
+optimal_cp = 0.048 #lets try it beacuse we want to see how it dose hold up
   
 prunedTree <- prune(Classification_tree, cp = optimal_cp)
 ```
@@ -485,22 +471,16 @@ par(mfrow = c(2,1))
 rpart.plot(Classification_tree, fallen.leaves = TRUE)
 rpart.plot(prunedTree, fallen.leaves = TRUE)
 ```
-### 3.3.5 Make predictions and evaluated the tree model and Pruned tree model
+### 3.3.5 Predict tree model and Pruned tree model. setup confusion Matrix.
 
 ```{r}
 predictions <- predict(Classification_tree, test, type = "class")
 
-confMat <- confusionMatrix(predictions, test$Outcome)
-print("Classification tree")
-print(confMat$table)
-print(confMat$overall['Accuracy'])
+confMat_tree <- confusionMatrix(predictions, test$Outcome)
 
 pruned_predictions <- predict(prunedTree, test, type = "class")
 
-confMat <- confusionMatrix(pruned_predictions, test$Outcome)
-print("Classification tree Pruned")
-print(confMat$table)
-print(confMat$overall['Accuracy'])
+confMat_prune <- confusionMatrix(pruned_predictions, test$Outcome)
 ```
 ## 3.4 random forest (`randomForest`)
 
@@ -526,35 +506,22 @@ best_mtry <- rf_tune_model[which.min(rf_tune_model[, "OOBError"]), "mtry"]
 
 final_rf_model <- randomForest(Outcome ~ ., data = train, mtry = best_mtry, importance = TRUE)
 ```
-### 3.4.2 Make predictions.
+### 3.4.2 Predict Random forrest and Random forrest Tuned setup confusion Matrix.
 
 ```{r}
 predictions <- predict(rf_model, newdata = test)
+confMat_RF <- confusionMatrix(predictions, test$Outcome)
 
 predictions_tuned <- predict(final_rf_model, newdata = test)
+confMat_RF_tuned <- confusionMatrix(predictions_tuned, test$Outcome)
 ```
 
-### 3.4.3 Confusion Matrix and Accuracy.
-
-```{r}
-confMat <- confusionMatrix(predictions, test$Outcome)
-print("Random forrest")
-print(confMat$table)
-print(confMat$overall['Accuracy'])
-
-confMat_tuned <- confusionMatrix(predictions_tuned, test$Outcome)
-print("Random forrest Tuned")
-print(confMat_tuned$table)
-print(confMat_tuned$overall['Accuracy'])
-```
 ## 3.5. linear/quadratic discriminant analysis
 
 ### 3.5.1 linear discriminant analysis
 ```{r, results="hide"}
 set.seed(202)
 lda_model <- lda(Outcome ~ ., data = train)
-
-lda_predictions <- predict(lda_model)
 ```
 
 ### 3.5.2 quadratic discriminant analysis
@@ -562,27 +529,51 @@ lda_predictions <- predict(lda_model)
 ```{r}
 set.seed(202)
 qda_model <- qda(Outcome ~ ., data = train)
-
-qda_predictions <- predict(qda_model)
 ```
-### 3.5.3 Predict and evaluated LDA and QDA
+### 3.5.3 Predict LDA and QDA setup confusion Matrix 
 
 ```{r}
 lda_pred <- predict(lda_model, test)
 lda_classes <- lda_pred$class
-conf_matrix_lda <- confusionMatrix(lda_classes, test$Outcome)
-
-print("conf_matrix_lda")
-print(conf_matrix_lda$table)
-print(conf_matrix_lda$overall['Accuracy'])
+confMat_lda <- confusionMatrix(lda_classes, test$Outcome)
 
 qda_pred <- predict(qda_model, test)
 qda_classes <- qda_pred$class
-conf_matrix_qda <- confusionMatrix(qda_classes, test$Outcome)
+confMat_qda <- confusionMatrix(qda_classes, test$Outcome)
+```
+### 3.5.4 Evaluation of all classifications models
 
-print("conf_matrix_qda")
-print(conf_matrix_qda$table)
-print(conf_matrix_lda$overall['Accuracy'])
+```{r}
+# Define a list of model names and their respective confusion matrices
+models <- list(
+  "Log" = confMat_log,
+  "Log Refined" = confMat_log_refine,
+  "Log Stepwise" = confMat_log_step,
+  "Tree" = confMat_tree,
+  "Tree Pruned" = confMat_prune,
+  "Random Forest" = confMat_RF,
+  "Random Forest Tuned" = confMat_RF_tuned,
+  "LDA" = conf_matrix_lda,
+  "QDA" = conf_matrix_qda
+)
+
+# Loop through each model and print the transposed confusion matrix and accuracy
+for (model_name in names(models)) {
+  conf_matrix <- models[[model_name]]
+  
+  cat("\n", model_name, "\n")  # Print model name
+  
+  # Transpose the confusion matrix
+  transposed_conf_matrix <- t(conf_matrix$table)
+  
+  # Print transposed confusion matrix with labels for Prediction and Reference
+  print(transposed_conf_matrix)  # Print the transposed confusion matrix
+  
+  # Print accuracy
+  cat("Accuracy:", conf_matrix$overall['Accuracy'], "\n")
+  
+  cat("\n-------------------------------------------------\n")  # Separate models
+}
 ```
 
 
