@@ -420,6 +420,8 @@ log_model <- glm(Outcome ~., data = train, family = "binomial")
 # from the response and correlation plot it suggest that Glucose, DiabetesPedigreeFunction, BMI, Pregnancies and Age are important.
 log_model_refined <- glm(Outcome ~ Glucose + DiabetesPedigreeFunction + Pregnancies + BMI + Age, data = train, family = "binomial")
 
+null_model <- glm(Outcome ~ 1, data = train, family = binomial)
+
 # Stepwise forward selection
 log_model_stepwise <- step(null_model, 
                            direction = "both", 
@@ -515,21 +517,63 @@ print(confMat$overall['Accuracy'])
 ```
 ## 3.4 random forest (`randomForest`)
 
+
+### 3.4.1 train random forest. plot important variables
 ```{r, results="hide"}
 set.seed(202)
 
-# Fit a random forest model
 rf_model <- randomForest(Outcome ~ ., data = train, importance = TRUE)
 
-# Print model details
-print(rf_model)
+num_vars <- ncol(train) - 1  #last column is the outcome
 
+rf_tune_model <- tuneRF(
+  x = train[, -which(names(train) == "Outcome")],  # Predictor variables
+  y = train$Outcome,                                  # Response variable
+  mtryStart = sqrt(num_vars),                        # Starting mtry
+  ntreeTry = 100,                                    # Number of trees
+  stepFactor = 2,                                    # Factor to increase mtry
+  improve = 0.01,                                    # Minimum improvement for tuning
+  trace = TRUE                                        # Print progress
+)
+
+best_mtry <- rf_tune_model[which.min(rf_tune_model[, "OOBError"]), "mtry"]
+
+best_mtry
+
+final_rf_model <- randomForest(Outcome ~ ., data = train, mtry = best_mtry, importance = TRUE)
+
+```
+### 3.4.2 Make predictions.
+
+```{r}
+predictions <- predict(rf_model, newdata = test)
+
+predictions_tuned <- predict(final_rf_model, newdata = test)
+```
+
+### 3.4.3 Confusion Matrix and Accuracy.
+
+```{r}
+confMat <- confusionMatrix(predictions, test$Outcome)
+print("Random forrest")
+print(confMat$table)
+print(confMat$overall['Accuracy'])
+
+confMat_tuned <- confusionMatrix(predictions_tuned, test$Outcome)
+print("Random forrest Tuned")
+print(confMat_tuned$table)
+print(confMat_tuned$overall['Accuracy'])
+```
+### 3.4.2 plots
+
+```{r}
 # Visualizes how the model's error rate changes with the number of trees.
 plot(rf_model, main = "Random Forest Error Rates")
 
 # Plots the importance of each variable, helping identify which predictors are most influential. "Only for random forrest"
 varImpPlot(rf_model)
 ```
+
 
 ## 4. linear/quadratic discriminant analysis
 
@@ -539,8 +583,6 @@ set.seed(202)
 lda_model <- lda(Outcome ~ ., data = train)
 
 lda_predictions <- predict(lda_model)
-
-lda_predictions$class
 ```
 
 ### 4.2 quadratic discriminant analysis
@@ -549,8 +591,25 @@ lda_predictions$class
 qda_model <- qda(Outcome ~ ., data = train)
 
 qda_predictions <- predict(qda_model)
+```
+### 4.3 Predict and evaluated LDA and QDA
 
-qda_predictions$class
+```{r}
+lda_pred <- predict(lda_model, test)
+lda_classes <- lda_pred$class
+conf_matrix_lda <- confusionMatrix(lda_classes, test$Outcome)
+
+print("conf_matrix_lda")
+print(conf_matrix_lda$table)
+print(conf_matrix_lda$overall['Accuracy'])
+
+qda_pred <- predict(qda_model, test)
+qda_classes <- qda_pred$class
+conf_matrix_qda <- confusionMatrix(qda_classes, test$Outcome)
+
+print("conf_matrix_qda")
+print(conf_matrix_qda$table)
+print(conf_matrix_lda$overall['Accuracy'])
 ```
 
 
