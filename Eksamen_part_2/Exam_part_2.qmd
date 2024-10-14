@@ -121,7 +121,7 @@ print(aic_values)
 set.seed(101) # for reproducibility
 
 # Fit a regression tree model
-tree_model <- rpart(easygon ~ ., data = train, cp = 0)
+tree_model <- rpart(easygon ~ ., data = train)
 ```
 
 ### 2.2 complexity parameter table.
@@ -150,14 +150,6 @@ optimal_cp <- 0.057 ## from printcp/plotcp output. Closset to the mean
 pruned_tree_model <- prune(tree_model, cp = optimal_cp)
 ```
 
-### 2.5 plot of tree model and pruned tree model.
-
-```{r, fig.width=7, fig.height=7}
-par(mfrow = c(2,1))
-rpart.plot(tree_model, main = "Full tree", fallen.leaves = TRUE)
-rpart.plot(pruned_tree_model, main = paste("Pruned tree, cp = ", optimal_cp), fallen.leaves = TRUE)
-```
-
 ## 3. random forest (`randomForest`)
 
 ### 3.1 random forest
@@ -168,11 +160,7 @@ set.seed(101) # for reproducibility
 # Fit a random forest model
 rf_default <- randomForest(easygon ~ ., data = train, importance = TRUE)
 
-# Print model details
-rf_default
-
-# Plots the importance of each variable, helping identify which predictors are most influential. "Only for random forest"
-varImpPlot(rf_default)
+plot(rf_default)
 ```
 ### 3.2 Tuning random forest
 By fixing mtry with ntree we tune the random forest
@@ -180,19 +168,18 @@ By fixing mtry with ntree we tune the random forest
 ```{r}
 set.seed(101) 
 rf_tuned <- tuneRF(train[, -which(names(train) == "easygon")],  # Exclude target variable
-                    train$easygon,                             # Target variable
-                    ntreeTry = 200,                           # Number of trees to try
-                    stepFactor = 1.5,                        # Factor by which to increase mtry
-                    improve = 0.01,                          # Minimum improvement in OOB error
-                    trace = TRUE,                             # Print progress
+                    train$easygon,                              # Target variable
+                    ntreeTry = 500,                             # Number of trees to try "default 500"
+                    stepFactor = 1.5,                           # Factor by which to increase mtry
+                    improve = 0.01,                             # Minimum improvement in OOB error
+                    trace = TRUE,                               # Print progress
                     plot = TRUE)
 
 best_mtry_value <- rf_tuned[which.min(rf_tuned[, "OOBError"]), "mtry"] # select best model
 
 rf_final <- randomForest(easygon ~ ., 
                          data = train, 
-                         mtry = 7, 
-                         ntree = 200,        
+                         mtry = best_mtry_value,        
                          importance = TRUE)
 ```
 
@@ -473,7 +460,7 @@ print(confusion_matrix$overall['Accuracy'])
 ## 3.3 regression tree (`rpart`)
 
 ### 3.3.1 fit the Classification tree
-```{r, fig.width=15, fig.height=7}
+```{r}
 set.seed(202)
 
 Classification_tree <- rpart(Outcome ~ ., data = train, method = "class")
@@ -493,7 +480,7 @@ prunedTree <- prune(Classification_tree, cp = optimal_cp)
 ```
 ### 3.3.2 Visualize the tree and pruned tree
 
-```{r}
+```{r, fig.width=15, fig.height=7}
 par(mfrow = c(2,1))
 rpart.plot(Classification_tree, fallen.leaves = TRUE)
 rpart.plot(prunedTree, fallen.leaves = TRUE)
@@ -517,7 +504,6 @@ print(confMat$overall['Accuracy'])
 ```
 ## 3.4 random forest (`randomForest`)
 
-
 ### 3.4.1 train random forest. plot important variables
 ```{r, results="hide"}
 set.seed(202)
@@ -527,20 +513,20 @@ rf_model <- randomForest(Outcome ~ ., data = train, importance = TRUE)
 num_vars <- ncol(train) - 1  #last column is the outcome
 
 rf_tune_model <- tuneRF(
-  x = train[, -which(names(train) == "Outcome")],  # Predictor variables
-  y = train$Outcome,                                  # Response variable
+  x = train[, -which(names(train) == "Outcome")],    # Predictor variables
+  y = train$Outcome,                                 # Response variable
   mtryStart = sqrt(num_vars),                        # Starting mtry
-  ntreeTry = 100,                                    # Number of trees
-  stepFactor = 2,                                    # Factor to increase mtry
-  improve = 0.01,                                    # Minimum improvement for tuning
-  trace = TRUE                                        # Print progress
+  ntreeTry = 500,                                    # Number of trees same as defualt
+  stepFactor = 1,                                    # Factor to increase mtry
+  improve = 0.1,                                     # Minimum improvement for tuning
+  trace = FALSE                                      # Print progress
 )
 
 best_mtry <- rf_tune_model[which.min(rf_tune_model[, "OOBError"]), "mtry"]
 
-best_mtry
-
 final_rf_model <- randomForest(Outcome ~ ., data = train, mtry = best_mtry, importance = TRUE)
+
+plot(final_rf_model)
 
 ```
 ### 3.4.2 Make predictions.
@@ -564,17 +550,6 @@ print("Random forrest Tuned")
 print(confMat_tuned$table)
 print(confMat_tuned$overall['Accuracy'])
 ```
-### 3.4.2 plots
-
-```{r}
-# Visualizes how the model's error rate changes with the number of trees.
-plot(rf_model, main = "Random Forest Error Rates")
-
-# Plots the importance of each variable, helping identify which predictors are most influential. "Only for random forrest"
-varImpPlot(rf_model)
-```
-
-
 ## 4. linear/quadratic discriminant analysis
 
 ### 4.1 linear discriminant analysis
@@ -588,6 +563,7 @@ lda_predictions <- predict(lda_model)
 ### 4.2 quadratic discriminant analysis
 
 ```{r}
+set.seed(202)
 qda_model <- qda(Outcome ~ ., data = train)
 
 qda_predictions <- predict(qda_model)
