@@ -20,6 +20,7 @@ library(readr)
 library(dplyr)
 library(tidyr)
 library(MASS)
+library(caret)
 ```
 
 
@@ -77,7 +78,7 @@ allows the algorithm to add variables incrementally.
 ```{r, results="hide"}
 null_model <- lm(easygon ~ 1, data = train)
 
-lm_forward <- step(null_model, direction = "forward", scope = formula(lm_full))
+lm_forward <- step(null_model, direction = "forward", scope = formula(lm_full), trace = FALSE)
 lm_forward_aic <- AIC(lm_forward)
 ```
 
@@ -85,7 +86,7 @@ lm_forward_aic <- AIC(lm_forward)
 Starts with a full model then eliminate least significant predictor
 
 ```{r, results="hide"}
-lm_backward <- step(lm_full, direction = "backward")
+lm_backward <- step(lm_full, direction = "backward", trace = FALSE)
 lm_backward_aic <- AIC(lm_backward)
 ```
 
@@ -93,7 +94,8 @@ lm_backward_aic <- AIC(lm_backward)
 Starts with a full model that allow for both additions and removals.
 Since it goes back and forward we will use the null model.
 ```{r, results="hide"}
-lm_both <- step(null_model, direction = "both", scope = formula(lm_full))
+lm_both <- step(null_model, direction = "both", scope = formula(lm_full), trace = FALSE)
+
 lm_both_aic <- AIC(lm_both)
 ```
 
@@ -288,19 +290,19 @@ The dataset `diabetes.csv` is about risk factors for diabetes and contains 768 o
 # Exercise 1
 Read in and clean the data by detecting unexpected values of some variables, replace the values with `NA` and finally make a data set with only the complete cases.
 
+## 1.1 Quick look at the data
+
 ```{r}
 data_dir <- here::here("diabetes.csv") #set the directory to were the project and dataset is used
 
 dia_raw_dat = suppressMessages(read_csv(data_dir)) # Read csv file
 
-head(dia_raw_dat) #check for correct data type
-```
-```{r}
-summary(dia_raw_dat) #quick and dirty look at the raw data
+head(dia_raw_dat) #check for correct data type "obs outcome is not a factor"
+
+summary(dia_raw_dat) #quick and dirty look at the raw data alot of zeroes !
 ```
 
-
-# Diabetes information and dataset observations
+## Diabetes information and dataset observations
 
 1. Pregnancies: Number of times pregnant "Obs missing genders male/female"
 
@@ -324,6 +326,8 @@ zero value in any of the variable beside Pregnancy and Outcome is unrealistic
 
 Seems like the data set have used 0 and 0.0 to describe missing values. Needs to be changed to NA
 
+## 1.2 Clean the data set
+
 ```{r}
 dia_dat_with_NA <- dia_raw_dat |>
   mutate(	
@@ -345,6 +349,8 @@ summary(dia_clean_dat) #quick and dirty look at the clean data
 
 # Exercise 2
 Plot the response against each of the explanatory variables/features and add a smooth line as a very rough indication of how the probability of diabetes depends on the individual feature (note the response has to be numeric for the smooth line to work).
+
+## 2.1 Response plot
 
 ```{r, fig.width=7, fig.height=15}
 
@@ -371,7 +377,14 @@ ggplot(dia_long, aes(x = Value, y = Outcome)) +
 # Exercise 3
 Ensure Outcome is a factor and split the data in a training and test set as follows:
 
+## 3.1
+
 ```{r}
+#convert Outcome to factor !
+dia_clean_dat$Outcome <- factor(dia_clean_dat$Outcome, levels = c(0, 1), labels = c("No", "Yes"))
+
+head(dia_clean_dat)
+
 set.seed(202) # for reproducibility
 i_train <- sample(nrow(dia_clean_dat), .5*nrow(dia_clean_dat))
 train <- dia_clean_dat[i_train,]
@@ -385,19 +398,67 @@ Specify a number of classification models and report the corresponding confusion
 3. random forest (`randomForest`)
 4. linear/quadratic discriminant analysis
 
-## 1. logistic regression with stepwise selection (`glm` / `step`)
+## 3.2 logistic regression with stepwise selection (`glm` / `step`)
 
+### 3.2.1 fit log model with stepwise forward selection
 ```{r, results="hide"}
+set.seed(202)
 log_model <- glm(Outcome ~., data = train, family = "binomial")
 
 summary(log_model)
 
-log_model_stepwise <- step(log_model, direction = "both", trace = 1)
+# from the plot it suggest that Glucose, DiabetesPedigreeFunction, BMI and Blood pressure are important.
+log_model_refined <- glm(Outcome ~ Glucose + DiabetesPedigreeFunction + BMI +BloodPressure, data = train, family = "binomial")
+
+summary(log_model_refined)
+
+# Stepwise forward selection
+log_model_stepwise <- step(null_model, 
+                           direction = "forward", 
+                           scope = formula(log_model),
+                           trace = FALSE)
 
 summary(log_model_stepwise)
 ```
 
-## 2. regression tree (`rpart`)
+### 3.2.2 Make prediction using test set with the stepwise selected model and log model
+
+```{r}
+predicted_prob_log <- predict(log_model, newdata = test, type = "response")
+predicted_class_log <- ifelse(predicted_prob_log > 0.5, "Yes", "No")
+predicted_class_log <- factor(predicted_class_log, levels = c("No", "Yes"))
+
+predicted_prob_refine <- predict(log_model_refined, newdata = test, type = "response")
+predicted_class_refine <- ifelse(predicted_prob_refine > 0.5, "Yes", "No")
+predicted_class_refine <- factor(predicted_class_refine, levels = c("No", "Yes"))
+
+predicted_prob_stepwise <- predict(log_model_stepwise, newdata = test, type = "response")
+predicted_class_stepwise <- ifelse(predicted_prob_stepwise > 0.5, "Yes", "No")
+predicted_class_stepwise <- factor(predicted_class_stepwise, levels = c("No", "Yes"))
+
+```
+
+### 3.2.3 Evaluate the log model and stepwise selected model
+
+```{r}
+confusion_matrix <- confusionMatrix(predicted_class_log, test$Outcome, positive = "Yes")
+print("Confusion Matrix table log:")
+print(confusion_matrix$table)
+print(confusion_matrix$overall['Accuracy'])
+
+confusion_matrix <- confusionMatrix(predicted_class_refine, test$Outcome, positive = "Yes")
+print("Confusion Matrix table log refine:")
+print(confusion_matrix$table)
+print(confusion_matrix$overall['Accuracy'])
+
+confusion_matrix <- confusionMatrix(predicted_class_stepwise, test$Outcome, positive = "Yes")
+print("Confusion Matrix table log stepwise:")
+print(confusion_matrix$table)
+print(confusion_matrix$overall['Accuracy'])
+```
+
+
+## 3.3 regression tree (`rpart`)
 
 ```{r, fig.width=15, fig.height=7}
 set.seed(202)
@@ -408,7 +469,7 @@ tree_model <- rpart(Outcome ~ ., data = train, method = "anova")
 rpart.plot(tree_model, main = "Full tree")
 ```
 
-## 3. random forest (`randomForest`)
+## 3.4 random forest (`randomForest`)
 
 ```{r, results="hide"}
 set.seed(202)
