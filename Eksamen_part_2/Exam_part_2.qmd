@@ -145,9 +145,9 @@ X-cal Relative Error = cross-validated relative error
 ```{r, fig.width=7, fig.height=7}
 plotcp(tree_model)
 
-# X-axis: This represents the complexity parameter (CP), which controls the size of the tree.Lower CP values lead to more complex trees
+# X-axis: Represents the complexity parameter (CP). Lower CP values lead to larger, more complex trees.
 
-# Y-axis: This typically shows the cross-validated error (xerror). Lower values indicate better predictive performance.
+# Y-axis: Shows the cross-validated error (xerror). Lower values indicate better predictive performance.
 ```
 
 ### 2.4 Pick the optimal cp from printcp and previous plot. Then prune the tree.
