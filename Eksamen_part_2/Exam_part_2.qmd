@@ -469,6 +469,8 @@ Classification_tree <- rpart(Outcome ~ ., data = train, method = "class")
 
 ### 3.3.2 Prune the tree "select cp value"
 ```{r}
+printcp(Classification_tree)
+
 plotcp(Classification_tree)
 ```
 
@@ -593,6 +595,7 @@ for (model_name in names(models)) {
   
   # Print accuracy
   cat("Accuracy:", conf_matrix$overall['Accuracy'], "\n")
+  cat("Precision:", conf_matrix$byClass['Pos Pred Value'], "\n")
   
   cat("\n-------------------------------------------------\n")  # Separate models
 }
