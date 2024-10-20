@@ -157,7 +157,7 @@ Offers a balance of simplicity and predictive performance.
 from printcp cp = 0.046342, as it is within one standard error of the minimum xerror "0.86815" "1-SE Rule". more complex model.
 Provides improved flexibility and model fit.
 
-from plotcp output cp = 0.12 is the best performing but also the most complex.
+from plotcp output cp = 0.12 is the best performing least complex but also the least flexiable.
 
 from printcp()
 1-SE Rule Threshold = Minimum xerror + Standard error = 0.86815 + 0.13437 = 1.00252
