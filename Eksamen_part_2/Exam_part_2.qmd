@@ -169,6 +169,11 @@ optimal_cp <- 0.046342
 pruned_tree_model <- prune(tree_model, cp = optimal_cp)
 ```
 
+```{r, fig.width=15, fig.height=7}
+par(mfrow = c(2,1))
+rpart.plot(tree_model, fallen.leaves = TRUE, main = "Tree model")
+rpart.plot(pruned_tree_model, fallen.leaves = TRUE, main = "Pruned Tree model")
+```
 ## 3. Random forest (`randomForest`)
 
 ### 3.1 Random forest
@@ -485,8 +490,8 @@ prunedTree <- prune(Classification_tree, cp = optimal_cp)
 
 ```{r, fig.width=15, fig.height=7}
 par(mfrow = c(2,1))
-rpart.plot(Classification_tree, fallen.leaves = TRUE)
-rpart.plot(prunedTree, fallen.leaves = TRUE)
+rpart.plot(Classification_tree, fallen.leaves = TRUE, main = "Classification_tree")
+rpart.plot(prunedTree, fallen.leaves = TRUE, main = "pruned Classification tree")
 ```
 ### 3.3.5 Predict tree model and Pruned tree model and setup confusion Matrix.
 
