@@ -169,6 +169,8 @@ optimal_cp <- 0.046342
 pruned_tree_model <- prune(tree_model, cp = optimal_cp)
 ```
 
+### 2.5 Visualize the tree and pruned tree
+
 ```{r, fig.width=15, fig.height=7}
 par(mfrow = c(2,1))
 rpart.plot(tree_model, fallen.leaves = TRUE, main = "Tree model")
